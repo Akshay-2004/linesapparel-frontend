@@ -1,0 +1,149 @@
+"use client";
+
+import React, { useState } from "react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Checkbox } from "@/components/ui/checkbox";
+import Link from "next/link";
+import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { useApi } from "@/hooks/useApi";
+import { useRouter } from "next/navigation";
+interface User {
+  id: number;
+  name: string;
+  email: string;
+  role: string;
+}
+const formSchema = z.object({
+  email: z.string().email({ message: "Please enter a valid email address." }),
+  password: z
+    .string()
+    .min(6, { message: "Password must be at least 6 characters." }),
+});
+const SignInForm = () => {
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
+  const { fetchData, loading } = useApi<User>();
+  const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
+  const router = useRouter();
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    try {
+      const response = await fetchData("/auth/login", {
+        method: "POST",
+        data: {
+          email: values.email,
+          password: values.password,
+        },
+      });
+      if (response?.role === "admin" || response?.role === "super_admin") {
+        // Redirect to admin dashboard or perform admin-specific actions
+        router.replace("/dashboard");
+      }
+      if (response?.role === "client") {
+        router.replace("/");
+
+      }
+    } catch (error) {
+      console.error("Error during sign-in:", error);
+    }
+  }
+  return (
+    <div>
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="mt-10 space-y-6"
+        >
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Email address</FormLabel>
+                <FormControl>
+                  <Input placeholder="Enter your email" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Password</FormLabel>
+                <FormControl>
+                  <div className="relative">
+                    <Input
+                      type={showPassword ? "text" : "password"}
+                      placeholder="Enter your password"
+                      {...field}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                    >
+                      {showPassword ? (
+                        <EyeOff className="h-5 w-5" />
+                      ) : (
+                        <Eye className="h-5 w-5" />
+                      )}
+                    </button>
+                  </div>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <div className="flex  justify-end">
+
+
+            <Link
+              href="/forgot-password"
+              className="text-sm font-semibold text-primary hover:text-primary/90"
+            >
+              Forgot password?
+            </Link>
+          </div>
+
+          <Button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-primary hover:bg-primary/90"
+          >
+            {loading ? (
+              <span>
+                <Loader2 className="animate-spin " />
+              </span>
+            ) : (
+              "Sign in"
+            )}
+          </Button>
+        </form>
+      </Form>
+    </div>
+  );
+};
+
+export default SignInForm;
