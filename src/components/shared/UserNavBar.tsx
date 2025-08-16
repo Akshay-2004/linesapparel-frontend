@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { Menu, Search, ShoppingCart, ChevronRight, User as UserIcon } from "lucide-react";
+import { Menu, Search, ShoppingCart, ChevronRight, User as UserIcon, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -29,6 +29,7 @@ import {
 } from "@/components/ui/accordion";
 import { useUserDetails } from "@/hooks/useUserDetails";
 import { useCartStore } from "@/store/cartStore";
+import { useWishlistStore } from "@/store/wishlistStore";
 
 // Dynamic menu structure
 const menuItems = [
@@ -104,10 +105,14 @@ const UserNavBar = () => {
   const [showMobileSearch, setShowMobileSearch] = useState(false);
   const { user, isAuthenticated } = useUserDetails();
   const { cart, fetchCart } = useCartStore();
+  const { wishlisted, fetchWishlist } = useWishlistStore();
 
   React.useEffect(() => {
-    fetchCart();
-  }, [fetchCart]);
+    if (isAuthenticated() && user?.id) {
+      fetchCart();
+      fetchWishlist(user.id);
+    }
+  }, [user?.id]);
 
   // Calculate total quantity of items in cart
   const cartCount = cart?.items?.reduce((sum, item) => sum + (item.quantity || 0), 0) || 0;
@@ -219,21 +224,33 @@ const UserNavBar = () => {
           {/* Authentication */}
           <div className="flex items-center space-x-4">
             {isAuthenticated() ? (
-              <Link href="/profile">
-                {user?.image ? (
-                  <Image
-                    src={user.image}
-                    alt="User Avatar"
-                    width={32}
-                    height={32}
-                    className="rounded-full hidden md:block"
-                  />
-                ) : (
-                  <Button variant="ghost" className="hidden md:flex p-0">
-                    <UserIcon className="h-7 w-7" />
+              <>
+                <Link href="/profile">
+                  {user?.image ? (
+                    <Image
+                      src={user.image}
+                      alt="User Avatar"
+                      width={32}
+                      height={32}
+                      className="rounded-full hidden md:block"
+                    />
+                  ) : (
+                    <Button variant="ghost" className="hidden md:flex p-0">
+                      <UserIcon className="h-7 w-7" />
+                    </Button>
+                  )}
+                </Link>
+                <Link href="/wishlist">
+                  <Button variant="ghost" className="hidden md:flex relative p-2">
+                    <Heart className="h-5 w-5" />
+                    {wishlisted.length > 0 && (
+                      <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full px-1.5 py-0.5 min-w-[20px] text-center">
+                        {wishlisted.length}
+                      </span>
+                    )}
                   </Button>
-                )}
-              </Link>
+                </Link>
+              </>
             ) : (
               <Link href="/sign-in">
                 <Button variant="default" className="hidden md:flex">
@@ -306,22 +323,35 @@ const UserNavBar = () => {
               {/* Mobile Authentication */}
               <div className="flex flex-col space-y-2">
                 {isAuthenticated() ? (
-                  <Link href="/dashboard">
-                    <Button variant="default" className="w-full flex items-center justify-center">
-                      {user?.image ? (
-                        <Image
-                          src={user.image}
-                          alt="User Avatar"
-                          width={28}
-                          height={28}
-                          className="rounded-full mr-2"
-                        />
-                      ) : (
-                        <UserIcon className="h-5 w-5 mr-2" />
-                      )}
-                      Dashboard
-                    </Button>
-                  </Link>
+                  <>
+                    <Link href="/dashboard">
+                      <Button variant="default" className="w-full flex items-center justify-center">
+                        {user?.image ? (
+                          <Image
+                            src={user.image}
+                            alt="User Avatar"
+                            width={28}
+                            height={28}
+                            className="rounded-full mr-2"
+                          />
+                        ) : (
+                          <UserIcon className="h-5 w-5 mr-2" />
+                        )}
+                        Dashboard
+                      </Button>
+                    </Link>
+                    <Link href="/whishlist">
+                      <Button variant="outline" className="w-full flex items-center justify-center relative">
+                        <Heart className="h-4 w-4 mr-2" />
+                        <span>Wishlist</span>
+                        {wishlisted.length > 0 && (
+                          <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full px-1.5 py-0.5 min-w-[20px] text-center">
+                            {wishlisted.length}
+                          </span>
+                        )}
+                      </Button>
+                    </Link>
+                  </>
                 ) : (
                   <Link href="/sign-in">
                     <Button variant="default" className="w-full">Log In</Button>
