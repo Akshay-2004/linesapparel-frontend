@@ -46,7 +46,7 @@ export default function ContactPage() {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsSubmitting(true)
-    
+
     try {
       const response = await createInquiry({
         name: values.name,
@@ -54,7 +54,7 @@ export default function ContactPage() {
         purpose: values.purpose,
         message: values.message
       })
-      
+
       // Check if response exists and is successful
       if (response) {
         toast.success('Thank you for your inquiry! We\'ll get back to you soon.')
@@ -72,7 +72,7 @@ export default function ContactPage() {
   }
 
   return (
-    <div className='container mx-auto grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-16 py-16 px-4 md:px-0'>
+    <div className="max-w-[1200px] mx-auto px-6 md:px-8 grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16 py-16">
       <div className="flex flex-col space-y-6">
         <div>
           <h4 className="text-primary-6 text-sm font-medium mb-2">We&apos;re Here to Help—Always in Style</h4>
@@ -82,7 +82,7 @@ export default function ContactPage() {
             to help—fashionably fast.
           </p>
         </div>
-        
+
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <FormField
@@ -90,26 +90,40 @@ export default function ContactPage() {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Name</FormLabel>
+                  <FormLabel htmlFor="name">Name</FormLabel>
                   <FormControl>
-                    <Input placeholder="Name" {...field} />
+                    <Input
+                      id="name"
+                      placeholder="e.g. Jane Doe"
+                      aria-describedby="name-helper"
+                      {...field}
+                    />
                   </FormControl>
-                  <p className="text-sm text-muted-foreground">Enter your Name</p>
+                  <span id="name-helper" className="text-xs text-muted-foreground block mt-1">
+                    Enter your full name
+                  </span>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            
+
             <FormField
               control={form.control}
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel htmlFor="email">Email</FormLabel>
                   <FormControl>
-                    <Input placeholder="Email" {...field} />
+                    <Input
+                      id="email"
+                      placeholder="e.g. jane@email.com"
+                      aria-describedby="email-helper"
+                      {...field}
+                    />
                   </FormControl>
-                  <p className="text-sm text-muted-foreground">Enter your email address</p>
+                  <span id="email-helper" className="text-xs text-muted-foreground block mt-1">
+                    We'll never share your email.
+                  </span>
                   <FormMessage />
                 </FormItem>
               )}
@@ -142,7 +156,7 @@ export default function ContactPage() {
                 </FormItem>
               )}
             />
-            
+
             <FormField
               control={form.control}
               name="message"
@@ -150,10 +164,10 @@ export default function ContactPage() {
                 <FormItem>
                   <FormLabel>Your message</FormLabel>
                   <FormControl>
-                    <Textarea 
-                      placeholder="Type your message here" 
-                      className="min-h-[120px]" 
-                      {...field} 
+                    <Textarea
+                      placeholder="Type your message here"
+                      className="min-h-[120px]"
+                      {...field}
                     />
                   </FormControl>
                   <p className="text-sm text-muted-foreground">Your message will be sent to the support team.</p>
@@ -161,7 +175,7 @@ export default function ContactPage() {
                 </FormItem>
               )}
             />
-            
+
             <FormField
               control={form.control}
               name="terms"
@@ -179,10 +193,10 @@ export default function ContactPage() {
                 </FormItem>
               )}
             />
-            
-            <Button 
-              type="submit" 
-              className="bg-primary hover:bg-primary-5 w-32" 
+
+            <Button
+              type="submit"
+              className="bg-primary hover:bg-primary-5 w-32"
               disabled={!termsAccepted || isSubmitting}
             >
               {isSubmitting ? (
@@ -197,7 +211,6 @@ export default function ContactPage() {
           </form>
         </Form>
       </div>
-      
       <div>
         <Image src={ContactImage} alt='Contact Image' className='w-full h-auto rounded-xs' />
       </div>
