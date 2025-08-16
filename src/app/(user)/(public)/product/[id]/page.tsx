@@ -39,12 +39,13 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
-import { Star, X, ChevronLeft, ChevronRight, Link } from "lucide-react";
+import { Star, X, ChevronLeft, ChevronRight, Link, Heart } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { useApi } from "@/hooks/useApi";
 import { useReviewService, IReviewResponse, IStarDistribution } from "@/services/review.service";
 import SingleProductSkeleton from "@/components/skeletons/SingleProductSkeleton";
 import { useUserDetails } from "@/hooks/useUserDetails";
+import { useWishlistStore } from "@/store/wishlistStore";
 interface Product {
   id: string;
   handle: string;
@@ -160,6 +161,7 @@ const ProductPage = () => {
     error: reviewError,
     uploadProgress
   } = useReviewService();
+  const { isInWishlist, addToWishlist, removeFromWishlist } = useWishlistStore();
 
   const [selectedSize, setSelectedSize] = useState("");
   const [selectedVariant, setSelectedVariant] = useState("");
@@ -453,6 +455,32 @@ const ProductPage = () => {
     setShowReviewForm(!showReviewForm);
   };
 
+  const handleWishlistToggle = async () => {
+    if (!isAuthenticated()) {
+      toast.error("Please log in to add items to your wishlist");
+      return;
+    }
+
+    if (!user?.id || !data?.id) {
+      toast.error("Unable to add to wishlist");
+      return;
+    }
+
+    try {
+      const productId = extractProductId(data.id);
+      
+      if (isInWishlist(productId)) {
+        await removeFromWishlist(user.id, productId);
+        toast.success("Removed from wishlist");
+      } else {
+        await addToWishlist(user.id, productId);
+        toast.success("Added to wishlist");
+      }
+    } catch (error) {
+      toast.error("Failed to update wishlist");
+    }
+  };
+
   const handleImagePreview = (images: string[], index: number, reviewerName: string) => {
     setImagePreview({
       isOpen: true,
@@ -602,9 +630,20 @@ const ProductPage = () => {
 
           {/* Action Buttons */}
           <div className="flex flex-col gap-3 mb-6">
-            <Button onClick={handleAddToCart} className="w-full">
-              Add To Cart
-            </Button>
+            <div className="flex gap-3">
+              <Button onClick={handleAddToCart} className="flex-1">
+                Add To Cart
+              </Button>
+              <Button 
+                onClick={handleWishlistToggle}
+                variant="outline"
+                className={`${isInWishlist(data?.id ? extractProductId(data.id) : '') ? 'bg-red-50 border-red-300 text-red-600' : ''}`}
+              >
+                <Heart 
+                  className={`h-4 w-4 ${isInWishlist(data?.id ? extractProductId(data.id) : '') ? 'fill-current' : ''}`} 
+                />
+              </Button>
+            </div>
             <Button onClick={handleBuyNow} variant="outline" className="w-full">
               Buy Now
             </Button>
