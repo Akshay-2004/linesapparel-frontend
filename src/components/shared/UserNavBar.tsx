@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { Menu, Search, ShoppingCart, ChevronRight, User as UserIcon, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -17,8 +17,7 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
-import Logo from '@/assets/logo.png'
-import LogoFull from '@/assets/logo full.png'
+// Image imports: Use public folder instead of import
 import Image from "next/image";
 import { Input } from "@/components/ui/input";
 import {
@@ -30,6 +29,7 @@ import {
 import { useUserDetails } from "@/hooks/useUserDetails";
 import { useCartStore } from "@/store/cartStore";
 import { useWishlistStore } from "@/store/wishlistStore";
+import { usePathname } from "next/navigation";
 
 // Dynamic menu structure
 const menuItems = [
@@ -106,13 +106,21 @@ const UserNavBar = () => {
   const { user, isAuthenticated } = useUserDetails();
   const { cart, fetchCart } = useCartStore();
   const { wishlisted, fetchWishlist } = useWishlistStore();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const pathname = usePathname();
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (isAuthenticated() && user?.id) {
       fetchCart();
       fetchWishlist(user.id);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.id]);
+
+  // Close mobile menu on route change (App Router: use pathname)
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+  }, [pathname]);
 
   // Calculate total quantity of items in cart
   const cartCount = cart?.items?.reduce((sum, item) => sum + (item.quantity || 0), 0) || 0;
@@ -127,14 +135,20 @@ const UserNavBar = () => {
         {/* Logo */}
         <Link href="/" className="flex items-center mr-6 h-10 w-auto">
           <Image
-            src={LogoFull}
+            src="/logo full.png"
             alt="Logo"
             className="h-10 w-auto hidden md:block object-contain max-h-10"
+            width={120}
+            height={40}
+            priority
           />
           <Image
-            src={Logo}
+            src="/logo.png"
             alt="Logo"
             className="h-8 w-auto md:hidden object-contain max-h-8"
+            width={40}
+            height={32}
+            priority
           />
         </Link>
 
@@ -273,7 +287,7 @@ const UserNavBar = () => {
         </div>
 
         {/* Mobile Menu Button */}
-        <Sheet>
+        <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
           <SheetTrigger asChild>
             <Button variant="ghost" size="icon" className="md:hidden ml-2">
               <Menu className="h-5 w-5" />
@@ -284,7 +298,7 @@ const UserNavBar = () => {
             <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
             <div className="flex flex-col space-y-6 py-4">
               <Link href="/" className="flex items-center">
-                <Image src={LogoFull} alt="Logo" className="h-auto w-auto" />
+                <Image src="/logo full.png" alt="Logo" className="h-auto w-auto" width={120} height={40} priority />
               </Link>
 
               {/* Mobile Accordion Menu */}
