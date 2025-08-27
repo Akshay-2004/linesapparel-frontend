@@ -17,7 +17,6 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
-// Image imports: Use public folder instead of import
 import Image from "next/image";
 import { Input } from "@/components/ui/input";
 import {
@@ -29,85 +28,64 @@ import {
 import { useUserDetails } from "@/hooks/useUserDetails";
 import { useCartStore } from "@/store/cartStore";
 import { useWishlistStore } from "@/store/wishlistStore";
+import { useNavbarData } from "@/hooks/useNavbarData";
 import { usePathname } from "next/navigation";
-
-// Dynamic menu structure
-const menuItems = [
-  {
-    title: "WOMEN",
-    sections: [
-      {
-        title: "Women's Clothing",
-        items: [
-          { name: "T-Shirts", href: "/womens/t-shirts" },
-          { name: "Skirts", href: "/womens/skirts" },
-          { name: "Shorts", href: "/womens/shorts" },
-          { name: "Jeans", href: "/womens/jeans" }
-        ]
-      },
-      {
-        title: "Girls Clothing",
-        items: [
-          { name: "Dresses", href: "/girls/dresses" },
-          { name: "Tops", href: "/girls/tops" },
-          { name: "Jeans", href: "/girls/jeans" },
-          { name: "Accessories", href: "/girls/accessories" }
-        ]
-      }
-    ]
-  },
-  {
-    title: "MEN",
-    sections: [
-      {
-        title: "Men's Clothing",
-        items: [
-          { name: "T-Shirts", href: "/mens/t-shirts" },
-          { name: "Shirts", href: "/mens/shirts" },
-          { name: "Jeans", href: "/mens/jeans" },
-          { name: "Accessories", href: "/mens/accessories" }
-        ]
-      },
-      {
-        title: "Featured",
-        items: [
-          { name: "New Arrivals", href: "/mens/new" },
-          { name: "Best Sellers", href: "/mens/best-sellers" },
-          { name: "Sale", href: "/mens/sale" }
-        ]
-      }
-    ]
-  },
-  {
-    title: "KIDS",
-    sections: [
-      {
-        title: "Boy's Clothing",
-        items: [
-          { name: "T-Shirts", href: "/boys/t-shirts" },
-          { name: "Pants", href: "/boys/pants" },
-          { name: "Shoes", href: "/boys/shoes" }
-        ]
-      },
-      {
-        title: "Girl's Clothing",
-        items: [
-          { name: "Dresses", href: "/girls/dresses" },
-          { name: "Tops", href: "/girls/tops" },
-          { name: "Accessories", href: "/girls/accessories" }
-        ]
-      }
-    ]
-  }
-];
 
 const UserNavBar = () => {
   const [showMobileSearch, setShowMobileSearch] = useState(false);
   const { user, isAuthenticated } = useUserDetails();
   const { cart, fetchCart } = useCartStore();
   const { wishlisted, fetchWishlist } = useWishlistStore();
+  const { navbarData, loading: navbarLoading, error: navbarError } = useNavbarData();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
+
+  // Use dynamic navbar data or fallback to default
+  const menuItems = React.useMemo(() => {
+    if (navbarData && navbarData.navItems && navbarData.navItems.length > 0) {
+      return navbarData.navItems.map(section => ({
+        title: section.title,
+        sections: section.categories.map(category => ({
+          title: category.title,
+          items: category.items.map(item => ({
+            name: item.label,
+            href: item.href
+          }))
+        }))
+      }));
+    }
+    
+    // Fallback default menu structure
+    return [
+      {
+        title: "WOMEN",
+        sections: [
+          {
+            title: "Women's Clothing",
+            items: [
+              { name: "T-Shirts", href: "/womens/t-shirts" },
+              { name: "Skirts", href: "/womens/skirts" },
+              { name: "Shorts", href: "/womens/shorts" },
+              { name: "Jeans", href: "/womens/jeans" }
+            ]
+          }
+        ]
+      },
+      {
+        title: "MEN", 
+        sections: [
+          {
+            title: "Men's Clothing",
+            items: [
+              { name: "T-Shirts", href: "/mens/t-shirts" },
+              { name: "Shirts", href: "/mens/shirts" },
+              { name: "Jeans", href: "/mens/jeans" }
+            ]
+          }
+        ]
+      }
+    ];
+  }, [navbarData]);
 
   useEffect(() => {
     if (isAuthenticated() && user?.id) {
@@ -154,49 +132,59 @@ const UserNavBar = () => {
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-4 lg:space-x-6 mx-6">
-          <NavigationMenu>
-            <NavigationMenuList>
-              {menuItems.map((category, index) => (
-                <NavigationMenuItem key={index}>
-                  <NavigationMenuTrigger>{category.title}</NavigationMenuTrigger>
-                  <NavigationMenuContent>
-                    <div className="bg-white p-4 w-[400px] lg:w-[500px]">
-                      <div className={`grid ${category.sections.length > 1 ? 'grid-cols-2' : ''} gap-6`}>
-                        {category.sections.map((section, sectionIndex) => (
-                          <div key={sectionIndex}>
-                            <h3 className="text-sm font-medium mb-3 text-primary border-b pb-2">
-                              {section.title}
-                            </h3>
-                            <ul className="space-y-3">
-                              {section.items.map((item, itemIndex) => (
-                                <li key={itemIndex}>
-                                  <Link
-                                    href={item.href}
-                                    className="group flex items-center gap-2 text-sm hover:text-primary transition-colors"
-                                  >
-                                    <div className="w-2 h-2 rounded-full bg-gray-300 group-hover:bg-primary transition-colors"></div>
-                                    <span>{item.name}</span>
-                                  </Link>
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        ))}
+          {navbarLoading ? (
+            <div className="flex items-center space-x-4">
+              <div className="h-4 w-16 bg-gray-200 animate-pulse rounded"></div>
+              <div className="h-4 w-12 bg-gray-200 animate-pulse rounded"></div>
+              <div className="h-4 w-14 bg-gray-200 animate-pulse rounded"></div>
+            </div>
+          ) : navbarError ? (
+            <div className="text-sm text-red-500">Navigation unavailable</div>
+          ) : (
+            <NavigationMenu>
+              <NavigationMenuList>
+                {menuItems.map((category, index) => (
+                  <NavigationMenuItem key={index}>
+                    <NavigationMenuTrigger>{category.title}</NavigationMenuTrigger>
+                    <NavigationMenuContent>
+                      <div className="bg-white p-4 w-[400px] lg:w-[500px]">
+                        <div className={`grid ${category.sections.length > 1 ? 'grid-cols-2' : ''} gap-6`}>
+                          {category.sections.map((section, sectionIndex) => (
+                            <div key={sectionIndex}>
+                              <h3 className="text-sm font-medium mb-3 text-primary border-b pb-2">
+                                {section.title}
+                              </h3>
+                              <ul className="space-y-3">
+                                {section.items.map((item, itemIndex) => (
+                                  <li key={itemIndex}>
+                                    <Link
+                                      href={item.href}
+                                      className="group flex items-center gap-2 text-sm hover:text-primary transition-colors"
+                                    >
+                                      <div className="w-2 h-2 rounded-full bg-gray-300 group-hover:bg-primary transition-colors"></div>
+                                      <span>{item.name}</span>
+                                    </Link>
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          ))}
+                        </div>
+                        <div className="mt-5 pt-3 border-t">
+                          <Link
+                            href={`/${category.title.toLowerCase()}`}
+                            className="text-sm font-medium text-primary hover:underline"
+                          >
+                            View all {category.title}
+                          </Link>
+                        </div>
                       </div>
-                      <div className="mt-5 pt-3 border-t">
-                        <Link
-                          href={`/${category.title.toLowerCase()}`}
-                          className="text-sm font-medium text-primary hover:underline"
-                        >
-                          View all {category.title}
-                        </Link>
-                      </div>
-                    </div>
-                  </NavigationMenuContent>
-                </NavigationMenuItem>
-              ))}
-            </NavigationMenuList>
-          </NavigationMenu>
+                    </NavigationMenuContent>
+                  </NavigationMenuItem>
+                ))}
+              </NavigationMenuList>
+            </NavigationMenu>
+          )}
         </nav>
 
         <div className="flex items-center justify-end w-full md:gap-8">
@@ -302,37 +290,47 @@ const UserNavBar = () => {
               </Link>
 
               {/* Mobile Accordion Menu */}
-              <Accordion type="single" collapsible className="w-full">
-                {menuItems.map((category, index) => (
-                  <AccordionItem value={`item-${index}`} key={index}>
-                    <AccordionTrigger className="font-medium py-2">
-                      {category.title}
-                    </AccordionTrigger>
-                    <AccordionContent>
-                      {category.sections.map((section, sectionIndex) => (
-                        <div key={sectionIndex} className="mb-4">
-                          <div className="font-medium text-sm ml-2 mb-2 text-primary">
-                            {section.title}
+              {navbarLoading ? (
+                <div className="space-y-4">
+                  <div className="h-8 bg-gray-200 animate-pulse rounded"></div>
+                  <div className="h-8 bg-gray-200 animate-pulse rounded"></div>
+                  <div className="h-8 bg-gray-200 animate-pulse rounded"></div>
+                </div>
+              ) : navbarError ? (
+                <div className="text-sm text-red-500 text-center py-4">Navigation unavailable</div>
+              ) : (
+                <Accordion type="single" collapsible className="w-full">
+                  {menuItems.map((category, index) => (
+                    <AccordionItem value={`item-${index}`} key={index}>
+                      <AccordionTrigger className="font-medium py-2">
+                        {category.title}
+                      </AccordionTrigger>
+                      <AccordionContent>
+                        {category.sections.map((section, sectionIndex) => (
+                          <div key={sectionIndex} className="mb-4">
+                            <div className="font-medium text-sm ml-2 mb-2 text-primary">
+                              {section.title}
+                            </div>
+                            <ul className="ml-4 space-y-2">
+                              {section.items.map((item, itemIndex) => (
+                                <li key={itemIndex}>
+                                  <Link
+                                    href={item.href}
+                                    className="flex items-center hover:text-primary transition-colors"
+                                  >
+                                    <div className="w-2 h-2 bg-gray-300 rounded-full mr-2"></div>
+                                    <span className="text-sm">{item.name}</span>
+                                  </Link>
+                                </li>
+                              ))}
+                            </ul>
                           </div>
-                          <ul className="ml-4 space-y-2">
-                            {section.items.map((item, itemIndex) => (
-                              <li key={itemIndex}>
-                                <Link
-                                  href={item.href}
-                                  className="flex items-center hover:text-primary transition-colors"
-                                >
-                                  <div className="w-2 h-2 bg-gray-300 rounded-full mr-2"></div>
-                                  <span className="text-sm">{item.name}</span>
-                                </Link>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      ))}
-                    </AccordionContent>
-                  </AccordionItem>
-                ))}
-              </Accordion>
+                        ))}
+                      </AccordionContent>
+                    </AccordionItem>
+                  ))}
+                </Accordion>
+              )}
 
               {/* Mobile Authentication */}
               <div className="flex flex-col space-y-2">
