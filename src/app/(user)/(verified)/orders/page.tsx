@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { useApi } from '@/hooks/useApi';
+import { useOrderService, Order, orderUtils } from '@/services/order.service';
 import { 
   ArrowLeft, 
   Package, 
@@ -18,121 +18,30 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 
-interface OrderItem {
-  id: string;
-  title: string;
-  quantity: number;
-  variant: {
-    id: string;
-    title: string;
-    price: string;
-    image?: {
-      url: string;
-      altText: string;
-    };
-  };
-  product: {
-    id: string;
-    handle: string;
-    title: string;
-  };
-}
-
-interface Order {
-  id: string;
-  name: string;
-  createdAt: string;
-  totalPrice: string;
-  financialStatus: string;
-  fulfillmentStatus: string;
-  currencyCode: string;
-  processedAt: string;
-  lineItems: {
-    edges: Array<{
-      node: OrderItem;
-    }>;
-  };
-  shippingAddress?: {
-    firstName: string;
-    lastName: string;
-    address1: string;
-    city: string;
-    province: string;
-    country: string;
-    zip: string;
-  };
-}
-
-interface OrdersResponse {
-  orders: Order[];
-  customer: {
-    id: string;
-    email: string;
-    firstName: string;
-    lastName: string;
-  };
-  total_count: number;
-  current_page: number;
-  total_pages: number;
-  has_next_page: boolean;
-  has_previous_page: boolean;
-}
-
 export default function OrdersPage() {
   const router = useRouter();
-  const { data: ordersData, error, loading, fetchData } = useApi<OrdersResponse>();
-  const [currentPage, setCurrentPage] = useState(1);
-  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);  const loadOrders = async (page: number = 1) => {
+  const { getUserOrders, loading, error } = useOrderService();
+  const [ordersData, setOrdersData] = useState<{
+    orders: Order[];
+    customer: any;
+    totalCount: number;
+    pageInfo: any;
+  } | null>(null);
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+
+  const loadOrders = async () => {
     try {
-      await fetchData(`/shopify/orders/user/my-orders?page=${page}&limit=10`);
-    } catch (error) {
-      console.error('Failed to load orders:', error);
-      toast.error('Failed to load orders');
+      const data = await getUserOrders({ first: 10 });
+      setOrdersData(data);
+    } catch (err: any) {
+      console.error('Failed to load orders:', err);
+      toast.error(err.message || 'Failed to load orders');
     }
   };
 
   useEffect(() => {
-    loadOrders(currentPage);
-  }, [currentPage]);
-
-  const getStatusColor = (status: string) => {
-    switch (status.toLowerCase()) {
-      case 'paid':
-      case 'authorized':
-        return 'bg-green-100 text-green-800 border-green-200';
-      case 'pending':
-      case 'partially_paid':
-        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'refunded':
-      case 'voided':
-        return 'bg-red-100 text-red-800 border-red-200';
-      case 'fulfilled':
-      case 'shipped':
-        return 'bg-blue-100 text-blue-800 border-blue-200';
-      case 'unfulfilled':
-      case 'partial':
-        return 'bg-gray-100 text-gray-800 border-gray-200';
-      default:
-        return 'bg-gray-100 text-gray-800 border-gray-200';
-    }
-  };
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-  };
-
-  const formatPrice = (price: string, currency: string = 'USD') => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: currency
-    }).format(parseFloat(price));
-  };
+    loadOrders();
+  }, []);
 
   if (loading && !ordersData) {
     return (
@@ -183,7 +92,7 @@ export default function OrdersPage() {
                 </div>
                 <div>
                   <p className="text-sm text-gray-500">Total Orders</p>
-                  <p className="text-2xl font-bold text-gray-900">{ordersData.total_count}</p>
+                  <p className="text-2xl font-bold text-gray-900">{ordersData.totalCount}</p>
                 </div>
               </div>
               
@@ -231,132 +140,104 @@ export default function OrdersPage() {
       {/* Orders List */}
       {ordersData && ordersData.orders.length > 0 ? (
         <div className="space-y-4">
-          {ordersData.orders.map((order) => (
-            <Card key={order.id} className="shadow-lg hover:shadow-xl transition-shadow">
-              <CardHeader className="bg-gradient-to-r from-gray-50 to-slate-50">
-                <div className="flex items-center justify-between">
-                  <CardTitle className="flex items-center space-x-3">
-                    <Package className="h-5 w-5 text-gray-600" />
-                    <span>Order {order.name}</span>
-                  </CardTitle>                  <div className="flex items-center space-x-2">
-                    <Badge className={getStatusColor(order.financialStatus)}>
-                      {order.financialStatus}
-                    </Badge>
-                    {order.fulfillmentStatus && (
-                      <Badge className={getStatusColor(order.fulfillmentStatus)}>
-                        {order.fulfillmentStatus}
+          {ordersData.orders.map((order) => {
+            return (
+              <Card key={order.id} className="shadow-lg hover:shadow-xl transition-shadow">
+                <CardHeader className="bg-gradient-to-r from-gray-50 to-slate-50">
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="flex items-center space-x-3">
+                      <Package className="h-5 w-5 text-gray-600" />
+                      <span>Order {order.name}</span>
+                    </CardTitle>
+                    <div className="flex items-center space-x-2">
+                      <Badge className={orderUtils.getStatusColor(order.financialStatus)}>
+                        {order.financialStatus}
                       </Badge>
-                    )}
+                      {order.fulfillmentStatus && (
+                        <Badge className={orderUtils.getStatusColor(order.fulfillmentStatus)}>
+                          {order.fulfillmentStatus}
+                        </Badge>
+                      )}
+                    </div>
                   </div>
-                </div>
-              </CardHeader>
-              <CardContent className="p-6">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  {/* Order Details */}
-                  <div className="space-y-3">
-                    <div className="flex items-center space-x-2">
-                      <Calendar className="h-4 w-4 text-gray-400" />
-                      <span className="text-sm text-gray-500">Ordered:</span>
-                      <span className="text-sm font-medium">{formatDate(order.createdAt)}</span>
-                    </div>
-                    
-                    <div className="flex items-center space-x-2">
-                      <DollarSign className="h-4 w-4 text-gray-400" />
-                      <span className="text-sm text-gray-500">Total:</span>
-                      <span className="text-lg font-bold text-green-600">
-                        {formatPrice(order.totalPrice, order.currencyCode)}
-                      </span>
-                    </div>
-
-                    {order.shippingAddress && (
-                      <div className="flex items-start space-x-2">
-                        <Truck className="h-4 w-4 text-gray-400 mt-0.5" />
-                        <div className="text-sm">
-                          <span className="text-gray-500">Shipping to:</span>
-                          <p className="font-medium">
-                            {order.shippingAddress.firstName} {order.shippingAddress.lastName}
-                          </p>
-                          <p className="text-gray-600">
-                            {order.shippingAddress.address1}, {order.shippingAddress.city}
-                          </p>
-                        </div>
+                </CardHeader>
+                <CardContent className="p-6">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {/* Order Details */}
+                    <div className="space-y-3">
+                      <div className="flex items-center space-x-2">
+                        <Calendar className="h-4 w-4 text-gray-400" />
+                        <span className="text-sm text-gray-500">Ordered:</span>
+                        <span className="text-sm font-medium">{orderUtils.formatDate(order.processedAt)}</span>
                       </div>
-                    )}
-                  </div>
+                      
+                      <div className="flex items-center space-x-2">
+                        <DollarSign className="h-4 w-4 text-gray-400" />
+                        <span className="text-sm text-gray-500">Total:</span>
+                        <span className="text-lg font-bold text-green-600">
+                          {orderUtils.formatCurrency(order.totalPriceV2.amount, order.totalPriceV2.currencyCode)}
+                        </span>
+                      </div>
 
-                  {/* Order Items */}
-                  <div className="md:col-span-2">
-                    <h4 className="font-semibold text-gray-900 mb-3">Order Items</h4>
-                    <div className="space-y-2 max-h-40 overflow-y-auto">
-                      {order.lineItems.edges.map(({ node: item }) => (
-                        <div key={item.id} className="flex items-center space-x-3 p-2 bg-gray-50 rounded-lg">
-                          {item.variant.image && (
-                            <img
-                              src={item.variant.image.url}
-                              alt={item.variant.image.altText || item.title}
-                              className="w-12 h-12 object-cover rounded"
-                            />
-                          )}
-                          <div className="flex-1">
-                            <p className="font-medium text-sm">{item.title}</p>
-                            <p className="text-xs text-gray-500">{item.variant.title}</p>
-                            <p className="text-xs text-gray-600">
-                              Qty: {item.quantity} × {formatPrice(item.variant.price, order.currencyCode)}
+                      {order.shippingAddress && (
+                        <div className="flex items-start space-x-2">
+                          <Truck className="h-4 w-4 text-gray-400 mt-0.5" />
+                          <div className="text-sm">
+                            <span className="text-gray-500">Shipping to:</span>
+                            <p className="font-medium">
+                              {order.shippingAddress.firstName} {order.shippingAddress.lastName}
+                            </p>
+                            <p className="text-gray-600">
+                              {order.shippingAddress.address1}, {order.shippingAddress.city}
                             </p>
                           </div>
                         </div>
-                      ))}
+                      )}
+
+                    </div>
+
+                    {/* Order Items */}
+                    <div className="md:col-span-2">
+                      <h4 className="font-semibold text-gray-900 mb-3">Order Items</h4>
+                      <div className="space-y-2 max-h-40 overflow-y-auto">
+                        {order.lineItems.edges.map(({ node: item }) => (
+                          <div key={item.variant.id} className="flex items-center space-x-3 p-2 bg-gray-50 rounded-lg">
+                            {item.variant.image && (
+                              <img
+                                src={item.variant.image.url}
+                                alt={item.variant.image.altText || item.title}
+                                className="w-12 h-12 object-cover rounded"
+                              />
+                            )}
+                            <div className="flex-1">
+                              <p className="font-medium text-sm">{item.title}</p>
+                              <p className="text-xs text-gray-500">{item.variant.title}</p>
+                              <p className="text-xs text-gray-600">
+                                Qty: {item.quantity} × {orderUtils.formatCurrency(item.variant.priceV2.amount, item.variant.priceV2.currencyCode)}
+                              </p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                {/* Actions */}
-                <div className="flex justify-end mt-4 pt-4 border-t">
-                  <Button 
-                    variant="outline" 
-                    size="sm"
-                    onClick={() => setSelectedOrder(order)}
-                    className="flex items-center space-x-2"
-                  >
-                    <Eye className="h-4 w-4" />
-                    <span>View Details</span>
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))}          {/* Pagination */}
-          {ordersData.total_pages > 1 && (
-            <div className="flex justify-center items-center space-x-4 mt-6">
-              <Button 
-                variant="outline"
-                disabled={!ordersData.has_previous_page || currentPage === 1}
-                onClick={() => setCurrentPage(prev => prev - 1)}
-                className="flex items-center space-x-2"
-              >
-                <ArrowLeft className="h-4 w-4" />
-                <span>Previous</span>
-              </Button>
-              
-              <div className="flex items-center space-x-2">
-                <span className="text-sm text-gray-600">
-                  Page {ordersData.current_page} of {ordersData.total_pages}
-                </span>
-                <span className="text-sm text-gray-500">
-                  ({ordersData.total_count} total orders)
-                </span>
-              </div>
-              
-              <Button 
-                variant="outline"
-                disabled={!ordersData.has_next_page || currentPage === ordersData.total_pages}
-                onClick={() => setCurrentPage(prev => prev + 1)}
-                className="flex items-center space-x-2"
-              >
-                <span>Next</span>
-                <ArrowLeft className="h-4 w-4 rotate-180" />
-              </Button>
-            </div>
-          )}
+                  {/* Actions */}
+                  <div className="flex justify-end mt-4 pt-4 border-t">
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => setSelectedOrder(order)}
+                      className="flex items-center space-x-2"
+                    >
+                      <Eye className="h-4 w-4" />
+                      <span>View Details</span>
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
       ) : ordersData && ordersData.orders.length === 0 ? (
         /* Empty State */
@@ -376,5 +257,5 @@ export default function OrdersPage() {
         </Card>
       ) : null}
     </div>
-  )
+  );
 }
