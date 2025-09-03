@@ -3,16 +3,17 @@ import { persist } from "zustand/middleware";
 import { api } from "@/hooks/useApi";
 
 export interface WishlistItem {
-  productId: string;
+  id: string;
   title: string;
-  price: string;
-  image: string;
   handle: string;
-  addedAt: string;
+  price: string;
+  compareAtPrice?: string;
+  image: string;
+  available: boolean;
 }
 
 interface WishlistStore {
-  wishlist: WishlistItem[];
+  items: WishlistItem[];
   wishlisted: string[];
   loading: boolean;
   error: string | null;
@@ -26,7 +27,7 @@ interface WishlistStore {
 export const useWishlistStore = create<WishlistStore>()(
   persist(
     (set, get) => ({
-      wishlist: [],
+      items: [],
       wishlisted: [],
       loading: false,
       error: null,
@@ -35,15 +36,21 @@ export const useWishlistStore = create<WishlistStore>()(
         set({ loading: true, error: null });
         try {
           const res = await api.get(`/users/${userId}/wishlist`);
-          const data = res.data.data;
-          set({ 
-            wishlist: data.wishlistItems || [], 
-            wishlisted: data.wishlisted || [],
-            loading: false 
-          });
+          console.log('Wishlist API response:', res.data);
+          
+          if (res.data && res.data.success && res.data.data) {
+            set({ 
+              items: res.data.data.wishlistItems || [],
+              wishlisted: res.data.data.wishlisted || [],
+              loading: false 
+            });
+          } else {
+            console.error('Unexpected wishlist response structure:', res.data);
+            set({ loading: false });
+          }
         } catch (error: any) {
           set({ 
-            error: error.message || "Failed to fetch wishlist", 
+            error: error.response?.data?.message || error.message || "Failed to fetch wishlist", 
             loading: false 
           });
         }
@@ -53,15 +60,20 @@ export const useWishlistStore = create<WishlistStore>()(
         set({ loading: true, error: null });
         try {
           const res = await api.post(`/users/${userId}/wishlist`, { productId });
-          const data = res.data.data;
-          set({ 
-            wishlist: data.wishlistItems || [], 
-            wishlisted: data.wishlisted || [],
-            loading: false 
-          });
+          console.log('Add to wishlist response:', res.data);
+          
+          if (res.data && res.data.success && res.data.data) {
+            set({ 
+              items: res.data.data.wishlistItems || [],
+              wishlisted: res.data.data.wishlisted || [],
+              loading: false 
+            });
+          } else {
+            set({ loading: false });
+          }
         } catch (error: any) {
           set({ 
-            error: error.message || "Failed to add to wishlist", 
+            error: error.response?.data?.message || error.message || "Failed to add to wishlist", 
             loading: false 
           });
           throw error;
@@ -72,15 +84,20 @@ export const useWishlistStore = create<WishlistStore>()(
         set({ loading: true, error: null });
         try {
           const res = await api.delete(`/users/${userId}/wishlist/${productId}`);
-          const data = res.data.data;
-          set({ 
-            wishlist: data.wishlistItems || [], 
-            wishlisted: data.wishlisted || [],
-            loading: false 
-          });
+          console.log('Remove from wishlist response:', res.data);
+          
+          if (res.data && res.data.success && res.data.data) {
+            set({ 
+              items: res.data.data.wishlistItems || [],
+              wishlisted: res.data.data.wishlisted || [],
+              loading: false 
+            });
+          } else {
+            set({ loading: false });
+          }
         } catch (error: any) {
           set({ 
-            error: error.message || "Failed to remove from wishlist", 
+            error: error.response?.data?.message || error.message || "Failed to remove from wishlist", 
             loading: false 
           });
           throw error;
@@ -93,13 +110,13 @@ export const useWishlistStore = create<WishlistStore>()(
       },
 
       clearWishlist: () => {
-        set({ wishlist: [], wishlisted: [], error: null });
+        set({ items: [], wishlisted: [], error: null });
       },
     }),
     {
       name: "wishlist-store",
       partialize: (state) => ({
-        wishlist: state.wishlist,
+        items: state.items,
         wishlisted: state.wishlisted,
       }),
     }

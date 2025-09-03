@@ -27,7 +27,7 @@ export function WishlistItem({ item, onRemove, onAddToCart }: WishlistItemProps)
           </div>
         </Link>
         <button
-          onClick={() => onRemove(item.productId)}
+          onClick={() => onRemove(item.id)}
           className="absolute top-2 right-2 bg-white/80 backdrop-blur-sm rounded-full p-2 hover:bg-white transition-colors shadow-sm"
           aria-label="Remove from wishlist"
         >
@@ -50,9 +50,11 @@ export function WishlistItem({ item, onRemove, onAddToCart }: WishlistItemProps)
         <p className="text-xl font-bold text-gray-900">
           ${parseFloat(item.price).toFixed(2)}
         </p>
-        <p className="text-sm text-gray-500 mt-1">
-          Added {new Date(item.addedAt).toLocaleDateString()}
-        </p>
+        {item.compareAtPrice && parseFloat(item.compareAtPrice) > parseFloat(item.price) && (
+          <p className="text-sm text-gray-500 line-through">
+            ${parseFloat(item.compareAtPrice).toFixed(2)}
+          </p>
+        )}
       </CardContent>
       
       <CardFooter className="p-4 pt-0">

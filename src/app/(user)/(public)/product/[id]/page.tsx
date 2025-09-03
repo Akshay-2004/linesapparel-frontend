@@ -197,6 +197,9 @@ const ProductPage = () => {
     reviewerName: ''
   });
 
+  // Add state for size chart modal
+  const [showSizeChart, setShowSizeChart] = useState(false);
+
   // Extract numeric ID from Shopify product ID
   const extractProductId = (shopifyId: string): string => {
     // Extract number from "gid://shopify/Product/9748044251426"
@@ -468,7 +471,7 @@ const ProductPage = () => {
 
     try {
       const productId = extractProductId(data.id);
-      
+
       if (isInWishlist(productId)) {
         await removeFromWishlist(user.id, productId);
         toast.success("Removed from wishlist");
@@ -569,9 +572,16 @@ const ProductPage = () => {
             <div className="mb-6">
               <div className="flex items-center justify-between mb-2">
                 <label className="font-medium">Select Size</label>
-                <button className="text-sm text-gray-600 underline">
+                <Button
+                  type="button"
+                  variant="link"
+                  className="text-sm cursor-pointer text-gray-600 underline"
+                  onClick={() => setShowSizeChart(true)}
+                  aria-haspopup="dialog"
+                  aria-controls="size-chart-modal"
+                >
                   SIZE CHART &gt;
-                </button>
+                </Button>
               </div>
               <div className="flex flex-wrap gap-2">
                 {sizes.map((size) => (
@@ -634,13 +644,13 @@ const ProductPage = () => {
               <Button onClick={handleAddToCart} className="flex-1">
                 Add To Cart
               </Button>
-              <Button 
+              <Button
                 onClick={handleWishlistToggle}
                 variant="outline"
                 className={`${isInWishlist(data?.id ? extractProductId(data.id) : '') ? 'bg-red-50 border-red-300 text-red-600' : ''}`}
               >
-                <Heart 
-                  className={`h-4 w-4 ${isInWishlist(data?.id ? extractProductId(data.id) : '') ? 'fill-current' : ''}`} 
+                <Heart
+                  className={`h-4 w-4 ${isInWishlist(data?.id ? extractProductId(data.id) : '') ? 'fill-current' : ''}`}
                 />
               </Button>
             </div>
@@ -1085,6 +1095,111 @@ const ProductPage = () => {
                 )}
               </>
             )}
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Size Chart Modal */}
+      <Dialog open={showSizeChart} onOpenChange={setShowSizeChart}>
+        <DialogContent
+          id="size-chart-modal"
+          className="max-w-lg w-full max-h-[90vh] overflow-y-auto"
+          aria-label="Size Chart"
+        >
+          <DialogHeader>
+            <DialogTitle>Size Guide</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            {/* Example: Brand-specific measurements */}
+            <div>
+              <h4 className="font-semibold mb-2">Unisex T-Shirts (inches)</h4>
+              <div className="overflow-x-auto">
+                <table className="min-w-full text-sm border">
+                  <thead>
+                    <tr className="bg-gray-100">
+                      <th className="p-2 border">Size</th>
+                      <th className="p-2 border">Chest</th>
+                      <th className="p-2 border">Length</th>
+                      <th className="p-2 border">Waist</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td className="p-2 border">S</td>
+                      <td className="p-2 border">34-36"</td>
+                      <td className="p-2 border">27"</td>
+                      <td className="p-2 border">28-30"</td>
+                    </tr>
+                    <tr>
+                      <td className="p-2 border">M</td>
+                      <td className="p-2 border">38-40"</td>
+                      <td className="p-2 border">28"</td>
+                      <td className="p-2 border">32-34"</td>
+                    </tr>
+                    <tr>
+                      <td className="p-2 border">L</td>
+                      <td className="p-2 border">42-44"</td>
+                      <td className="p-2 border">29"</td>
+                      <td className="p-2 border">36-38"</td>
+                    </tr>
+                    <tr>
+                      <td className="p-2 border">XL</td>
+                      <td className="p-2 border">46-48"</td>
+                      <td className="p-2 border">30"</td>
+                      <td className="p-2 border">40-42"</td>
+                    </tr>
+                    {/* Add more rows as needed */}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            {/* Example: International conversions */}
+            <div>
+              <h4 className="font-semibold mb-2">International Conversion</h4>
+              <div className="overflow-x-auto">
+                <table className="min-w-full text-sm border">
+                  <thead>
+                    <tr className="bg-gray-100">
+                      <th className="p-2 border">US</th>
+                      <th className="p-2 border">UK</th>
+                      <th className="p-2 border">EU</th>
+                      <th className="p-2 border">JP</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td className="p-2 border">S</td>
+                      <td className="p-2 border">36</td>
+                      <td className="p-2 border">46</td>
+                      <td className="p-2 border">S</td>
+                    </tr>
+                    <tr>
+                      <td className="p-2 border">M</td>
+                      <td className="p-2 border">38</td>
+                      <td className="p-2 border">48</td>
+                      <td className="p-2 border">M</td>
+                    </tr>
+                    <tr>
+                      <td className="p-2 border">L</td>
+                      <td className="p-2 border">40</td>
+                      <td className="p-2 border">50</td>
+                      <td className="p-2 border">L</td>
+                    </tr>
+                    <tr>
+                      <td className="p-2 border">XL</td>
+                      <td className="p-2 border">42</td>
+                      <td className="p-2 border">52</td>
+                      <td className="p-2 border">XL</td>
+                    </tr>
+                    {/* Add more rows as needed */}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            {/* Example: Fit notes */}
+            <div className="bg-blue-50 border-l-4 border-blue-400 p-3 rounded text-blue-900 text-sm">
+              <strong>Fit Note:</strong> This style is a regular fit. For a looser fit, consider sizing up. If you’re between sizes, check the chest measurement for best results.
+            </div>
           </div>
         </DialogContent>
       </Dialog>

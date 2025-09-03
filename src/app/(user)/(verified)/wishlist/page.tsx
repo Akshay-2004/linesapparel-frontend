@@ -22,7 +22,7 @@ import { WishlistItem } from '@/components/pages/wishlist/WishlistItem';
 
 export default function WishlistPage() {
   const { user, isAuthenticated } = useUserDetails();
-  const { wishlist, loading, error, fetchWishlist, removeFromWishlist } = useWishlistStore();
+  const { items, loading, error, fetchWishlist, removeFromWishlist } = useWishlistStore();
   const { addToCart } = useCartStore();
 
   useEffect(() => {
@@ -42,13 +42,15 @@ export default function WishlistPage() {
     }
   };
 
+  console.log('Wishlist Data:', items);
+
   const handleAddToCart = async (item: any) => {
     try {
       // Extract product ID from Shopify format
-      const numericProductId = item.productId.replace('gid://shopify/Product/', '');
+      const numericProductId = item.id.replace('gid://shopify/Product/', '');
       
       await addToCart({
-        productId: item.productId,
+        productId: item.id,
         variantId: numericProductId, // This might need adjustment based on your cart implementation
         quantity: 1,
         price: parseFloat(item.price),
@@ -84,7 +86,7 @@ export default function WishlistPage() {
     <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
       <div className="container max-w-7xl mx-auto">
         <Card className="backdrop-blur-sm bg-white/90 shadow-none rounded-2xl border-0 w-full">
-          <CardHeader className="px-6 mx-16 py-8">
+          <CardHeader>
             <div className="flex flex-col md:flex-row md:items-center md:justify-between">
               <div className="flex items-center gap-4">
                 <Heart className="h-8 w-8 text-red-500 fill-current" />
@@ -93,7 +95,7 @@ export default function WishlistPage() {
                     My Wishlist
                   </CardTitle>
                   <p className="text-gray-600 mt-2">
-                    {wishlist.length} {wishlist.length === 1 ? 'item' : 'items'} saved for later
+                    {items.length} {items.length === 1 ? 'item' : 'items'} saved for later
                   </p>
                 </div>
               </div>
@@ -107,13 +109,13 @@ export default function WishlistPage() {
           </CardHeader>
 
           <CardContent className="px-6">
-            {wishlist.length === 0 ? (
+            {items.length === 0 ? (
               <EmptyWishlistState />
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {wishlist.map((item) => (
+                {items.map((item) => (
                   <WishlistItem
-                    key={item.productId}
+                    key={item.id}
                     item={item}
                     onRemove={handleRemoveFromWishlist}
                     onAddToCart={handleAddToCart}

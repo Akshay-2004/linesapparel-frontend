@@ -15,7 +15,8 @@ import {
   PlusCircle,
   Quote,
   Star,
-  Mail, // Better option for inquiries
+  Mail,
+  Heading, // Better option for inquiries
 } from "lucide-react";
 
 export interface NavItem {
@@ -38,9 +39,9 @@ export const navigation: NavItem[] = [
         icon: PlusCircle,
       },
       { name: "Homepage", href: "/dashboard/pages/homepage", icon: Home },
+      { name: "Navbar", href: "/dashboard/pages/navbar", icon: Heading },
       { name: "Legal Pages", href: "/dashboard/pages/legal", icon: FileText },
-      { name: "Contact Page", href: "/dashboard/pages/contact", icon: Phone },
-      { name: "About Page", href: "/dashboard/pages/about", icon: Info },
+      // { name: "About Page", href: "/dashboard/pages/about", icon: Info },
     ],
   },
   {
