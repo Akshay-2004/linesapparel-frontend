@@ -15,6 +15,8 @@ import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import { Eye, EyeOff, LoaderPinwheel } from "lucide-react";
 import { useApi } from "@/hooks/useApi";
+import { useRouter } from "next/navigation";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 const formSchema = z
   .object({
@@ -40,7 +42,9 @@ const formSchema = z
 export default function SignUpForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const { loading, fetchData } = useApi();
+  const [successMessage, setSuccessMessage] = useState("");
+  const { loading, error, fetchData } = useApi();
+  const router = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -65,7 +69,6 @@ export default function SignUpForm() {
   }, [password, confirmPassword, form]);
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    // Handle form submission here
     try {
       const response = await fetchData("/auth/register", {
         method: "POST",
@@ -76,9 +79,18 @@ export default function SignUpForm() {
           phone: values.phone,
         },
       });
-      console.log("Registration successful:", response);
+      
+      if (response) {
+        setSuccessMessage("Registration successful! Redirecting to email verification...");
+        console.log("Registration successful:", response);
+        
+        // Redirect to verify page with email parameter
+        setTimeout(() => {
+          router.push(`/verify?email=${encodeURIComponent(values.email)}`);
+        }, 1500);
+      }
     } catch (error) {
-      console.log(error);
+      console.error("Registration failed:", error);
     }
   }
 
@@ -96,6 +108,19 @@ export default function SignUpForm() {
           onSubmit={form.handleSubmit(onSubmit)}
           className="space-y-2 grid grid-cols-1 gap-3"
         >
+          {error && (
+            <Alert variant="destructive" className="col-span-full">
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
+          
+          {successMessage && (
+            <Alert className="col-span-full border-green-200 bg-green-50">
+              <AlertDescription className="text-green-800">
+                {successMessage}
+              </AlertDescription>
+            </Alert>
+          )}
           <div className="col-span-full">
             <FormField
               control={form.control}
