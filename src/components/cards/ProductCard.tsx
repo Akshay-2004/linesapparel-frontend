@@ -23,7 +23,7 @@ export function ProductCard({
   showButton = true,
 }: ProductCardProps) {
   return (
-    <Card className="w-full pb-0 p-4   custom-shadow hover:scale-105 transition-transform duration-200 "  >
+    <Card className="w-full pb-0 p-4 custom-shadow hover:scale-105 transition-transform duration-200 "  >
       <div className="overflow-hidden aspect-[3/4] w-full">
         <Image
           src={image}
@@ -47,7 +47,7 @@ export function ProductCard({
           </p>
           {showButton && (
             <Button
-              className="mt-3 border border-primary-5 rounded-none w-full text-primary-5 text-sm font-medium font-['Inter'] leading-normal"
+              className="mt-3 rounded-none w-full text-primary-5 text-sm font-medium font-['Inter'] leading-normal"
               variant="outline"
             >
               View

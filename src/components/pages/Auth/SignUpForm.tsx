@@ -17,6 +17,36 @@ import { Eye, EyeOff, LoaderPinwheel } from "lucide-react";
 import { useApi } from "@/hooks/useApi";
 import { useRouter } from "next/navigation";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+// Common country codes
+const countryCodes = [
+  { code: "+1", name: "CA/US", flag: "🇺🇸🇨🇦", id: "ca-us" },
+  { code: "+44", name: "UK", flag: "🇬🇧", id: "uk" },
+  { code: "+49", name: "DE", flag: "🇩🇪", id: "de" },
+  { code: "+33", name: "FR", flag: "🇫🇷", id: "fr" },
+  { code: "+39", name: "IT", flag: "🇮🇹", id: "it" },
+  { code: "+34", name: "ES", flag: "🇪🇸", id: "es" },
+  { code: "+81", name: "JP", flag: "🇯🇵", id: "jp" },
+  { code: "+86", name: "CN", flag: "🇨🇳", id: "cn" },
+  { code: "+91", name: "IN", flag: "🇮🇳", id: "in" },
+  { code: "+61", name: "AU", flag: "🇦🇺", id: "au" },
+  { code: "+55", name: "BR", flag: "🇧🇷", id: "br" },
+  { code: "+52", name: "MX", flag: "🇲🇽", id: "mx" },
+  { code: "+7", name: "RU", flag: "🇷🇺", id: "ru" },
+  { code: "+82", name: "KR", flag: "🇰🇷", id: "kr" },
+  { code: "+31", name: "NL", flag: "🇳🇱", id: "nl" },
+  { code: "+46", name: "SE", flag: "🇸🇪", id: "se" },
+  { code: "+47", name: "NO", flag: "🇳🇴", id: "no" },
+  { code: "+45", name: "DK", flag: "🇩🇰", id: "dk" },
+  { code: "+41", name: "CH", flag: "🇨🇭", id: "ch" },
+];
 
 const formSchema = z
   .object({
@@ -30,6 +60,9 @@ const formSchema = z
       message: "Password must be at least 6 characters.",
     }),
     confirmPassword: z.string(),
+    countryCode: z.string().min(1, {
+      message: "Please select a country code.",
+    }),
     phone: z.string().min(10, {
       message: "Please enter a valid phone number.",
     }),
@@ -52,6 +85,7 @@ export default function SignUpForm() {
       email: "",
       password: "",
       confirmPassword: "",
+      countryCode: "+1",
       phone: "",
     },
     mode: "onChange", // Enable real-time validation
@@ -70,13 +104,16 @@ export default function SignUpForm() {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
+      // Combine country code with phone number
+      const fullPhoneNumber = values.countryCode + values.phone;
+      
       const response = await fetchData("/auth/register", {
         method: "POST",
         data: {
           name: values.name,
           email: values.email,
           password: values.password,
-          phone: values.phone,
+          phone: fullPhoneNumber,
         },
       });
       
@@ -154,23 +191,56 @@ export default function SignUpForm() {
               </FormItem>
             )}
           />
-          <FormField
-            control={form.control}
-            name="phone"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Phone</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="Enter your phone number"
-                    type="tel"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <div className="grid grid-cols-3 gap-2">
+            <FormField
+              control={form.control}
+              name="countryCode"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Country</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Code" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {countryCodes.map((country) => (
+                        <SelectItem 
+                          key={country.id} 
+                          value={country.code}
+                        >
+                          <span className="flex items-center gap-2">
+                            <span>{country.flag}</span>
+                            <span>{country.name}</span>
+                            <span className="text-muted-foreground">({country.code})</span>
+                          </span>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="phone"
+              render={({ field }) => (
+                <FormItem className="col-span-2">
+                  <FormLabel>Phone Number</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Enter your phone number"
+                      type="tel"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
           <FormField
             control={form.control}
             name="password"

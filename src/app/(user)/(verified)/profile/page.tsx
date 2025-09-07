@@ -29,7 +29,7 @@ export default function ProfilePage() {
     try {
       await logout();
       toast.success('Logged out successfully');
-      router.push('/auth/login');
+      router.push('/');
     } catch (error) {
       toast.error('Failed to logout');
     }

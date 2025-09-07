@@ -29,16 +29,18 @@ import { useUserDetails } from "@/hooks/useUserDetails";
 import { useCartStore } from "@/store/cartStore";
 import { useWishlistStore } from "@/store/wishlistStore";
 import { useNavbarData } from "@/hooks/useNavbarData";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 const UserNavBar = () => {
   const [showMobileSearch, setShowMobileSearch] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const { user, isAuthenticated } = useUserDetails();
   const { cart, fetchCart } = useCartStore();
   const { wishlisted, fetchWishlist } = useWishlistStore();
   const { navbarData, loading: navbarLoading, error: navbarError } = useNavbarData();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
 
   // Use dynamic navbar data or fallback to default
   const menuItems = React.useMemo(() => {
@@ -105,6 +107,27 @@ const UserNavBar = () => {
 
   const toggleMobileSearch = () => {
     setShowMobileSearch(!showMobileSearch);
+  };
+
+  const handleSearch = (query: string) => {
+    const trimmedQuery = query.trim();
+    if (trimmedQuery) {
+      router.push(`/search?q=${encodeURIComponent(trimmedQuery)}`);
+      setShowMobileSearch(false); // Close mobile search after navigation
+      setSearchQuery(""); // Clear search query
+    }
+  };
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    handleSearch(searchQuery);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleSearch(searchQuery);
+    }
   };
 
   return (
@@ -191,13 +214,24 @@ const UserNavBar = () => {
           {/* Desktop Search Box */}
           <div className="flex-1 hidden md:flex justify-end">
             <div className="w-full max-w-md">
-              <div className="relative">
+              <form onSubmit={handleSearchSubmit} className="relative">
                 <Input
                   type="text"
                   placeholder="Search..."
-                  className="w-full"
+                  className="w-full pr-10"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onKeyDown={handleKeyDown}
                 />
-              </div>
+                <Button
+                  type="submit"
+                  variant="ghost"
+                  size="icon"
+                  className="absolute right-0 top-0 h-full px-3"
+                >
+                  <Search className="h-4 w-4" />
+                </Button>
+              </form>
             </div>
           </div>
 
@@ -205,12 +239,25 @@ const UserNavBar = () => {
           <div className="md:hidden flex items-center">
             {showMobileSearch ? (
               <div className="absolute left-0 top-0 w-full h-14 flex items-center px-4 bg-white z-50">
-                <Input
-                  type="text"
-                  placeholder="Search..."
-                  className="w-full"
-                  autoFocus
-                />
+                <form onSubmit={handleSearchSubmit} className="flex-1 flex items-center">
+                  <Input
+                    type="text"
+                    placeholder="Search..."
+                    className="flex-1"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onKeyDown={handleKeyDown}
+                    autoFocus
+                  />
+                  <Button 
+                    type="submit" 
+                    variant="ghost" 
+                    size="icon" 
+                    className="ml-2"
+                  >
+                    <Search className="h-5 w-5" />
+                  </Button>
+                </form>
                 <Button variant="ghost" size="icon" className="ml-2" onClick={toggleMobileSearch}>
                   <ChevronRight className="h-5 w-5" />
                 </Button>

@@ -19,11 +19,18 @@ import Link from "next/link";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { useApi } from "@/hooks/useApi";
 import { useRouter } from "next/navigation";
+import { useUserDetails, type UserDetails, EUserRole } from "@/hooks/useUserDetails";
+
 interface User {
-  id: number;
+  id: string;
   name: string;
   email: string;
-  role: string;
+  image?: string;
+  role: EUserRole;
+  phone?: string;
+  verified: boolean;
+  createdAt: string;
+  updatedAt: string;
 }
 const formSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address." }),
@@ -40,9 +47,11 @@ const SignInForm = () => {
     },
   });
   const { fetchData, loading } = useApi<User>();
+  const { refreshUserData, login } = useUserDetails();
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
   const router = useRouter();
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
       const response = await fetchData("/auth/login", {
@@ -52,13 +61,18 @@ const SignInForm = () => {
           password: values.password,
         },
       });
-      if (response?.role === "admin" || response?.role === "super_admin") {
-        // Redirect to admin dashboard or perform admin-specific actions
-        router.replace("/dashboard");
-      }
-      if (response?.role === "client") {
-        router.replace("/");
-
+      
+      if (response) {
+        // Update global auth state immediately after successful login
+        login(response);
+        
+        if (response?.role === EUserRole.admin || response?.role === EUserRole.superAdmin) {
+          // Redirect to admin dashboard or perform admin-specific actions
+          router.replace("/dashboard");
+        }
+        if (response?.role === EUserRole.client) {
+          router.replace("/");
+        }
       }
     } catch (error) {
       console.error("Error during sign-in:", error);
