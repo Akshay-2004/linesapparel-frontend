@@ -30,6 +30,8 @@ import { useCartStore } from "@/store/cartStore";
 import { useWishlistStore } from "@/store/wishlistStore";
 import { useNavbarData } from "@/hooks/useNavbarData";
 import { usePathname, useRouter } from "next/navigation";
+import FullLogo from '@/assets/logo full.png'
+import logo from '@/assets/logo.png'
 
 const UserNavBar = () => {
   const [showMobileSearch, setShowMobileSearch] = useState(false);
@@ -136,7 +138,7 @@ const UserNavBar = () => {
         {/* Logo */}
         <Link href="/" className="flex items-center mr-6 h-10 w-auto">
           <Image
-            src="/logo full.png"
+            src={FullLogo}
             alt="Logo"
             className="h-10 w-auto hidden md:block object-contain max-h-10"
             width={120}
@@ -144,7 +146,7 @@ const UserNavBar = () => {
             priority
           />
           <Image
-            src="/logo.png"
+            src={logo}
             alt="Logo"
             className="h-8 w-auto md:hidden object-contain max-h-8"
             width={40}

@@ -23,7 +23,7 @@ export function ProductCard({
   showButton = true,
 }: ProductCardProps) {
   return (
-    <Card className="w-full pb-0 p-4 custom-shadow hover:scale-105 transition-transform duration-200 "  >
+    <Card className="w-full pb-0 p-4 m-2 custom-shadow hover:scale-105 transition-transform duration-200 "  >
       <div className="overflow-hidden aspect-[3/4] w-full">
         <Image
           src={image}

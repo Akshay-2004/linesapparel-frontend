@@ -3,44 +3,43 @@ import Link from 'next/link'
 import { FaFacebook, FaInstagram, FaTwitter, FaLinkedin, FaYoutube } from 'react-icons/fa'
 import Logo from '@/assets/logowhite.png'
 import Image from 'next/image'
+import { FaShopify } from "react-icons/fa";
 
 const Footer = () => {
   return (
     <footer className="bg-neutral-900 text-gray-200">
-      <div className="max-w-screen-xl mx-auto px-4 py-12">
+      <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-5 gap-10">
           {/* Logo & Contact */}
-          <div className="flex flex-col gap-4">
+          <div className="flex items-start flex-col gap-4">
             <Image src={Logo} alt="Logo" className="object-contain h-8 w-auto mb-2" />
-            <p className="text-sm text-gray-400">Lines Apparel is a leading online fashion store offering a wide range of clothing and accessories for men and women.</p>
+            <p className="text-sm text-gray-400">LinesApparel is a premium online fashion destination offering curated collections of clothing and accessories for modern lifestyles.</p>
             <p className='text-sm text-gray-400'>Address: 123 Fashion St, Style City, CA 12345</p>
+          </div>
+
+          {/* Customer Service */}
+          <div>
+            <h3 className="uppercase font-bold text-gray-100 text-xs mb-2">Customer Service</h3>
+            <ul className="space-y-1">
+              <li><Link href="/contact" className="hover:underline">Contact Us</Link></li>
+              <li><Link href="/faq" className="hover:underline">FAQ</Link></li>
+              <li><Link href="/shipping" className="hover:underline">Shipping Info</Link></li>
+              <li><Link href="/returns" className="hover:underline">Returns & Exchanges</Link></li>
+            </ul>
+            <div className="flex flex-col gap-1 mt-2 text-xs text-gray-400">
+              <span>Free Shipping on Orders $50+</span>
+              <span>30-Day Return Policy</span>
+            </div>
           </div>
 
           {/* Company */}
           <div>
-            <div>
-              <h3 className="uppercase font-bold text-gray-100 text-xs mb-2">Customer Service</h3>
-              <ul className="space-y-1">
-                <li><Link href="/contact" className="hover:underline">Contact Us</Link></li>
-                <li><Link href="/track-order" className="hover:underline">Track Order</Link></li>
-                <li><Link href="/return-order" className="hover:underline">Return Order</Link></li>
-                <li><Link href="/cancel-order" className="hover:underline">Cancel Order</Link></li>
-              </ul>
-              <div className="flex flex-col gap-1 mt-2 text-xs text-gray-400">
-                <span>15 Days Return Policy*</span>
-                <span>Cash On Delivery*</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Download the App */}
-          <div>
             <h3 className="uppercase font-bold text-gray-100 text-xs mb-2">Company</h3>
             <ul className="space-y-1">
-              <li><Link href="/about" className="hover:underline">About Us</Link></li>
+              <li><Link href="/about" className="hover:underline">About LinesApparel</Link></li>
               <li><Link href="/legal/terms-of-service" className="hover:underline">Terms & Conditions</Link></li>
               <li><Link href="/legal/privacy-policy" className="hover:underline">Privacy Policy</Link></li>
-              <li><Link href="/careers" className="hover:underline">We are Hiring</Link></li>
+              <li><Link href="/contact" className="hover:underline">Contact Us</Link></li>
             </ul>
           </div>
 
@@ -79,13 +78,21 @@ const Footer = () => {
         <hr className="my-8 border-neutral-700" />
 
         <div className="flex flex-col md:flex-row justify-between items-center gap-2">
-          <div className="flex gap-2 items-center">
-            <span className="uppercase font-bold text-gray-100 text-xs">100% Secure Payment</span>
-            <img src="https://upload.wikimedia.org/wikipedia/commons/4/41/Visa_Logo.png" alt="Visa" className="h-5" />
-            <img src="https://upload.wikimedia.org/wikipedia/commons/0/04/Mastercard-logo.png" alt="Mastercard" className="h-5" />
-            {/* Add more payment icons as needed */}
+          <div className="flex items-center gap-3">
+            <span className="text-sm font-semibold text-gray-300">Powered by</span>
+            <FaShopify className="h-6 w-auto" /> Shopify
           </div>
-          <p className="text-xs text-gray-400 mt-2 md:mt-0">© 2025 Try N Test Foundation. All rights reserved.</p>
+          <div className="flex flex-col items-center md:items-end gap-1">
+            <p className="text-xs text-gray-400">© 2025 LinesApparel. All rights reserved.</p>
+            <a
+              href="https://tryntest.in"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs text-gray-500 hover:text-gray-300 transition-colors"
+            >
+              Crafted by Try N Test Foundation
+            </a>
+          </div>
         </div>
       </div>
     </footer>
