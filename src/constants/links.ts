@@ -32,12 +32,12 @@ export const navigation: NavItem[] = [
     name: "Pages",
     icon: FileText,
     submenu: [
-      { name: "All Pages", href: "/dashboard/pages", icon: FileText },
-      {
-        name: "Create Page",
-        href: "/dashboard/pages/create",
-        icon: PlusCircle,
-      },
+      // { name: "All Pages", href: "/dashboard/pages", icon: FileText },
+      // {
+      //   name: "Create Page",
+      //   href: "/dashboard/pages/create",
+      //   icon: PlusCircle,
+      // },
       { name: "Homepage", href: "/dashboard/pages/homepage", icon: Home },
       { name: "Navbar", href: "/dashboard/pages/navbar", icon: Heading },
       { name: "Legal Pages", href: "/dashboard/pages/legal", icon: FileText },

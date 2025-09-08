@@ -115,8 +115,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       setLoading(true);
       setError(null);
+      console.log('🔄 Refreshing user data...');
       const userData = await fetchData("/auth/me");
       if (userData) {
+        console.log('✅ User data refreshed successfully:', userData.name, userData.role);
         const processedUser: UserDetails = {
           ...userData,
           role: userData.role as EUserRole || EUserRole.client,
@@ -125,10 +127,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setUser(processedUser);
         return processedUser;
       }
+      console.log('⚠️ No user data returned from API');
       setUser(null);
       return null;
     } catch (error) {
-      console.error("Failed to refresh user data:", error);
+      console.error("❌ Failed to refresh user data:", error);
       setError(error instanceof Error ? error.message : "Failed to fetch user data");
       setUser(null);
       return null;
@@ -173,8 +176,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // Fetch user data on mount only once
   useEffect(() => {
     if (!isInitialized) {
-      refreshUserData();
-      setIsInitialized(true);
+      // Add a small delay to ensure cookies are properly loaded
+      const timer = setTimeout(() => {
+        refreshUserData();
+        setIsInitialized(true);
+      }, 100);
+
+      return () => clearTimeout(timer);
     }
   }, [refreshUserData, isInitialized]);
 

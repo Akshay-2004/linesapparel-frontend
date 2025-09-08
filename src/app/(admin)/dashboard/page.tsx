@@ -1,54 +1,110 @@
-import React from "react";
+"use client"
+import React, { useEffect, useState } from "react";
 import StatsCard from "@/components/cards/StatsCard";
 import DataTable from "@/components/shared/DataTable";
-import Graph from "@/components/shared/Graph";
 import { FaShoppingCart, FaUsers, FaBoxOpen, FaDollarSign } from "react-icons/fa";
+import { useApi } from "@/hooks/useApi";
 
-const stats = [
-  { title: "Total Sales", value: "$12,340", icon: <FaDollarSign color="#22c55e" /> },
-  { title: "Orders", value: 320, icon: <FaShoppingCart color="#3b82f6" /> },
-  { title: "Products", value: 58, icon: <FaBoxOpen color="#f59e42" /> },
-  { title: "Customers", value: 210, icon: <FaUsers color="#a855f7" /> },
-];
+interface DashboardStats {
+  totalUsers: number;
+  totalCarts: number;
+  totalInquiries: number;
+  totalReviews: number;
+  totalTestimonials: number;
+  totalSales: number;
+}
 
-const salesData = [
-  { label: "Jan", value: 1200 },
-  { label: "Feb", value: 2100 },
-  { label: "Mar", value: 800 },
-  { label: "Apr", value: 1600 },
-  { label: "May", value: 2400 },
-  { label: "Jun", value: 1800 },
-];
-
-const orderColumns = ["Order ID", "Customer", "Amount", "Status", "Date"];
-const orderData = [
-  { "Order ID": "#1001", Customer: "Alice", Amount: "$120.00", Status: "Paid", Date: "2024-06-01" },
-  { "Order ID": "#1002", Customer: "Bob", Amount: "$80.00", Status: "Pending", Date: "2024-06-02" },
-  { "Order ID": "#1003", Customer: "Charlie", Amount: "$150.00", Status: "Paid", Date: "2024-06-03" },
-  { "Order ID": "#1004", Customer: "Diana", Amount: "$60.00", Status: "Refunded", Date: "2024-06-04" },
-  { "Order ID": "#1005", Customer: "Eve", Amount: "$200.00", Status: "Paid", Date: "2024-06-05" },
-];
+interface RecentOrder {
+  id: string;
+  customer: string;
+  amount: string;
+  status: string;
+  date: string;
+}
 
 const AdminDashboard = () => {
+  const { fetchData, loading: statsLoading, error: statsError } = useApi<DashboardStats>();
+  const { fetchData: fetchOrders, loading: ordersLoading, error: ordersError } = useApi<RecentOrder[]>();
+  const [stats, setStats] = useState<DashboardStats | null>(null);
+  const [recentOrders, setRecentOrders] = useState<RecentOrder[]>([]);
+
+  const orderColumns = ["Order ID", "Customer", "Amount", "Status", "Date"];
+
+  useEffect(() => {
+    const loadDashboardData = async () => {
+      try {
+        // Fetch dashboard stats
+        const statsData = await fetchData("/dashboard/stats");
+        if (statsData) {
+          setStats(statsData);
+        }
+
+        // Fetch recent orders
+        const ordersData = await fetchOrders("/dashboard/recent-orders");
+        if (ordersData) {
+          setRecentOrders(ordersData);
+        }
+      } catch (error) {
+        console.error("Error loading dashboard data:", error);
+      }
+    };
+
+    loadDashboardData();
+  }, [fetchData, fetchOrders]);
+
+  // Prepare stats for display
+  const displayStats = stats ? [
+    { title: "Total Sales", value: `$${stats.totalSales.toLocaleString()}`, icon: <FaDollarSign color="#22c55e" /> },
+    { title: "Users", value: stats.totalUsers, icon: <FaUsers color="#3b82f6" /> },
+    { title: "Carts", value: stats.totalCarts, icon: <FaShoppingCart color="#f59e42" /> },
+    { title: "Inquiries", value: stats.totalInquiries, icon: <FaBoxOpen color="#a855f7" /> },
+    { title: "Reviews", value: stats.totalReviews, icon: <FaDollarSign color="#22c55e" /> },
+    { title: "Testimonials", value: stats.totalTestimonials, icon: <FaUsers color="#3b82f6" /> },
+  ] : [
+    { title: "Total Sales", value: "Loading...", icon: <FaDollarSign color="#22c55e" /> },
+    { title: "Users", value: "Loading...", icon: <FaUsers color="#3b82f6" /> },
+    { title: "Carts", value: "Loading...", icon: <FaShoppingCart color="#f59e42" /> },
+    { title: "Inquiries", value: "Loading...", icon: <FaBoxOpen color="#a855f7" /> },
+    { title: "Reviews", value: "Loading...", icon: <FaDollarSign color="#22c55e" /> },
+    { title: "Testimonials", value: "Loading...", icon: <FaUsers color="#3b82f6" /> },
+  ];
+
   return (
     <div className="p-8">
       <h1 className="text-3xl font-bold mb-6">Dashboard</h1>
-      <div className="flex gap-6 mb-8 flex-wrap items-stretch">
-        {stats.map((stat) => (
+
+      {/* Error messages */}
+      {(statsError || ordersError) && (
+        <div className="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+          <p className="font-semibold">Error loading dashboard data:</p>
+          <p>{statsError || ordersError}</p>
+        </div>
+      )}
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+        {displayStats.map((stat) => (
           <StatsCard key={stat.title} {...stat} />
         ))}
       </div>
-      <div className="flex gap-8 items-start mb-8 flex-col lg:flex-row">
-        <div className="flex-2 w-full lg:w-2/5">
-          <h2 className="text-xl mb-3 font-semibold">Sales Overview</h2>
-          <div className=" bg-white rounded-lg">
-            <Graph data={salesData} height={220} />
+
+      <div className="w-full">
+        <h2 className="text-xl mb-3 font-semibold">Recent Orders</h2>
+        {ordersLoading ? (
+          <div className="bg-white rounded-lg p-4">
+            <p className="text-gray-500">Loading recent orders...</p>
           </div>
-        </div>
-        <div className="flex-3 w-full lg:w-3/5">
-          <h2 className="text-xl mb-3 font-semibold">Recent Orders</h2>
-          <DataTable columns={orderColumns} data={orderData} />
-        </div>
+        ) : (
+          <DataTable
+            columns={orderColumns}
+            data={recentOrders.length > 0 ? recentOrders.map(order => ({
+              "Order ID": `#${order.id}`,
+              "Customer": order.customer,
+              "Amount": order.amount,
+              "Status": order.status,
+              "Date": order.date
+            })) : []}
+          />
+        )}
       </div>
     </div>
   );

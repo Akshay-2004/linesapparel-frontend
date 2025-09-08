@@ -11,15 +11,16 @@ export default function AdminLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const { loading, isAdmin } = useUserDetails();
+  const { loading, isAdmin, user } = useUserDetails();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
-    if (!loading && !isAdmin()) {
+    // Only redirect if we're not loading AND we have confirmed the user is not an admin
+    if (!loading && user !== null && !isAdmin()) {
       router.push("/");
     }
-  }, [loading, isAdmin, router]);
+  }, [loading, isAdmin, router, user]);
 
   const toggleSidebar = () => setIsCollapsed((prev) => !prev);
 
