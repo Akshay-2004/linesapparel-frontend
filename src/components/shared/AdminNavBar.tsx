@@ -34,7 +34,7 @@ const AdminNavBar = ({ isCollapsed, toggleSidebar }: NavbarProps) => {
           variant="ghost"
           size="icon"
           onClick={toggleSidebar}
-          className="transition-all duration-200 ease-in-out"
+          className=" md:block hidden transition-all duration-200 ease-in-out"
           aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
         >
           {isCollapsed ? (
@@ -43,7 +43,7 @@ const AdminNavBar = ({ isCollapsed, toggleSidebar }: NavbarProps) => {
             <ChevronLeft className="h-5 w-5" />
           )}
         </Button>
-        <div className="flex items-center gap-4">
+        <div className="flex ml-auto max-sm:justify-end items-center gap-4">
           <div className="flex items-center gap-2">
             <User className="h-6 w-6" />
             <span className="text-sm font-medium">Admin</span>

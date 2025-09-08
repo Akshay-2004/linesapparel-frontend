@@ -85,9 +85,9 @@ export default function AddTestimonialPage() {
     setSaving(true);
     try {
       const formDataToSend = createFormData(formData, imageFile || undefined);
-      
+
       const response = await createTestimonial(formDataToSend);
-      
+
       if (response) {
         toast.success('Testimonial created successfully');
         router.push('/dashboard/testimonials');
@@ -106,11 +106,11 @@ export default function AddTestimonialPage() {
 
   return (
     <div className="container mx-auto p-6 space-y-8 max-w-4xl">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-4">
-          <Button 
-            variant="outline" 
-            size="sm" 
+      <div className="flex flex-wrap items-center justify-between">
+        <div className="flex flex-col lg:flex-row items-start lg:items-center space-x-4">
+          <Button
+            variant="outline"
+            size="sm"
             onClick={handleCancel}
             className="flex items-center"
           >
@@ -118,21 +118,21 @@ export default function AddTestimonialPage() {
             Back
           </Button>
           <div>
-            <h1 className="text-4xl font-bold tracking-tight text-gray-900">Add Testimonial</h1>
-            <p className="text-lg text-gray-600 mt-2">Create a new customer testimonial</p>
+            <h1 className="text-xl lg:text-4xl font-bold tracking-tight text-gray-900">Add Testimonial</h1>
+            <p className="text-base lg:text-lg text-gray-600 mt-2">Create a new customer testimonial</p>
           </div>
         </div>
         <div className="flex items-center space-x-4">
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             onClick={handleCancel}
             disabled={saving || loading}
           >
             Cancel
           </Button>
-          <Button 
-            onClick={handleSave} 
-            disabled={saving || loading} 
+          <Button
+            onClick={handleSave}
+            disabled={saving || loading}
             size="lg"
             className="flex items-center"
           >
@@ -155,8 +155,8 @@ export default function AddTestimonialPage() {
                   {uploadProgress}%
                 </span>
               </div>
-              <Progress 
-                value={uploadProgress} 
+              <Progress
+                value={uploadProgress}
                 className="w-full h-3"
                 indicatorClassName="bg-gradient-to-r from-green-500 to-blue-600 transition-all duration-300"
               />
@@ -197,7 +197,7 @@ export default function AddTestimonialPage() {
           {/* Customer Information */}
           <div className="space-y-6">
             <h3 className="text-lg font-semibold text-gray-900">Customer Information</h3>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <Label htmlFor="name" className="text-sm font-medium text-gray-700">
@@ -212,7 +212,7 @@ export default function AddTestimonialPage() {
                   required
                 />
               </div>
-              
+
               <div>
                 <Label htmlFor="occupation" className="text-sm font-medium text-gray-700">
                   Occupation *
@@ -246,7 +246,7 @@ export default function AddTestimonialPage() {
           {/* Testimonial Content */}
           <div className="space-y-6">
             <h3 className="text-lg font-semibold text-gray-900">Testimonial Content</h3>
-            
+
             <div>
               <Label htmlFor="quote" className="text-sm font-medium text-gray-700">
                 Testimonial Quote *
@@ -265,29 +265,30 @@ export default function AddTestimonialPage() {
               </p>
             </div>
 
-            <div>
+            <div className='flex flex-col lg:flex-row '>
               <Label className="text-sm font-medium text-gray-700">
                 Star Rating *
               </Label>
-              <div className="flex items-center space-x-2 mt-2">
-                {[1, 2, 3, 4, 5].map((rating) => (
-                  <button
-                    key={rating}
-                    type="button"
-                    onClick={() => handleStarClick(rating)}
-                    className={`p-1 rounded-md transition-colors ${
-                      rating <= formData.stars
+              <div className="flex items-center flex-col lg:flex-row space-x-2 mt-2">
+                <div className='flex items-center '>
+
+                  {[1, 2, 3, 4, 5].map((rating) => (
+                    <button
+                      key={rating}
+                      type="button"
+                      onClick={() => handleStarClick(rating)}
+                      className={`p-1 rounded-md transition-colors ${rating <= formData.stars
                         ? 'text-yellow-400 hover:text-yellow-500'
                         : 'text-gray-300 hover:text-gray-400'
-                    }`}
-                  >
-                    <Star 
-                      className={`h-8 w-8 ${
-                        rating <= formData.stars ? 'fill-current' : ''
-                      }`} 
-                    />
-                  </button>
-                ))}
+                        }`}
+                    >
+                      <Star
+                        className={`h-8 w-8 ${rating <= formData.stars ? 'fill-current' : ''
+                          }`}
+                      />
+                    </button>
+                  ))}
+                </div>
                 <span className="ml-4 text-sm text-gray-600">
                   {formData.stars} out of 5 stars
                 </span>
@@ -298,7 +299,7 @@ export default function AddTestimonialPage() {
           {/* Image Upload */}
           <div className="space-y-6">
             <h3 className="text-lg font-semibold text-gray-900">Customer Photo</h3>
-            
+
             <ImageUploadField
               label="Customer Photo (Optional)"
               onFileSelect={handleImageSelect}
@@ -310,7 +311,7 @@ export default function AddTestimonialPage() {
           {/* Publication Settings */}
           <div className="space-y-6">
             <h3 className="text-lg font-semibold text-gray-900">Publication Settings</h3>
-            
+
             <div className="flex items-center space-x-3">
               <input
                 type="checkbox"

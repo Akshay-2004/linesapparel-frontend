@@ -11,8 +11,8 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { toast } from 'sonner';
 import { useInquiryService } from '@/services/inquiry.service';
 import { IInquiry, INQUIRY_PURPOSES } from '@/types/inquiry.interface';
-import { 
-  Search, 
+import {
+  Search,
   Filter,
   Mail,
   User,
@@ -86,7 +86,7 @@ export default function InquiriesPage() {
       }
 
       const response = await getAllInquiries(params);
-      
+
       if (response && response.inquiries) {
         setInquiries(response.inquiries);
         setTotalPages(response.pagination?.totalPages || 1);
@@ -126,7 +126,7 @@ export default function InquiriesPage() {
 
   const handleDeleteConfirm = async () => {
     setDeleteConfirmation(prev => ({ ...prev, isDeleting: true }));
-    
+
     try {
       await deleteInquiry(deleteConfirmation.inquiryId);
       toast.success('Inquiry deleted successfully');
@@ -145,7 +145,7 @@ export default function InquiriesPage() {
 
   const handleDeleteCancel = () => {
     if (deleteConfirmation.isDeleting) return;
-    
+
     setDeleteConfirmation({
       isOpen: false,
       inquiryId: '',
@@ -200,19 +200,19 @@ export default function InquiriesPage() {
   }
 
   return (
-    <div className="container mx-auto p-6 space-y-8 max-w-7xl">
+    <div className="container mx-auto p-4 sm:p-6 space-y-8 max-w-7xl">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-4xl font-bold tracking-tight text-gray-900">Customer Inquiries</h1>
-          <p className="text-lg text-gray-600 mt-2">
+          <h1 className="text-2xl sm:text-4xl font-bold tracking-tight text-gray-900">Customer Inquiries</h1>
+          <p className="text-sm sm:text-lg text-gray-600 mt-2">
             Manage customer inquiries and support requests ({totalCount} total)
           </p>
         </div>
-        <div className="flex items-center space-x-4">
-          <div className="text-right">
-            <div className="text-sm text-gray-500">Quick Stats</div>
-            <div className="flex space-x-4 text-sm">
+        <div className="flex items-center sm:space-x-4">
+          <div className="sm:text-right">
+            <div className="text-xs sm:text-sm text-gray-500">Quick Stats</div>
+            <div className="flex space-x-3 sm:space-x-4 text-xs sm:text-sm">
               <span className="text-green-600 font-medium">
                 {inquiries.filter(i => i.resolved).length} Resolved
               </span>
@@ -248,7 +248,7 @@ export default function InquiriesPage() {
                   className="rounded-r-none"
                   onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
                 />
-                <Button 
+                <Button
                   onClick={handleSearch}
                   className="rounded-l-none"
                   variant="outline"
@@ -348,7 +348,7 @@ export default function InquiriesPage() {
           {inquiries.map((inquiry) => (
             <Card key={inquiry._id} className="shadow-lg hover:shadow-xl transition-shadow">
               <CardHeader className="pb-4">
-                <div className="flex items-start justify-between">
+                <div className="flex flex-col md:flex-row gap-2 items-start justify-between">
                   <div className="flex items-center space-x-3">
                     <Avatar className="h-10 w-10">
                       <AvatarFallback className="bg-gray-200">
@@ -408,7 +408,7 @@ export default function InquiriesPage() {
                 )}
 
                 {/* Actions */}
-                <div className="flex items-center justify-between pt-4 border-t">
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between pt-4 border-t">
                   <Button
                     variant="destructive"
                     size="sm"
@@ -447,15 +447,15 @@ export default function InquiriesPage() {
                 <h3 className="text-lg font-semibold text-gray-900">Confirm Deletion</h3>
               </div>
             </div>
-            
+
             <div className="mb-6">
               <p className="text-gray-600">
-                Are you sure you want to delete <span className="font-semibold text-gray-900">{deleteConfirmation.customerName}'s</span> inquiry? 
+                Are you sure you want to delete <span className="font-semibold text-gray-900">{deleteConfirmation.customerName}'s</span> inquiry?
               </p>
               <p className="text-sm text-red-600 mt-2">
                 This action cannot be undone and will permanently remove the inquiry and any resolution messages.
               </p>
-              
+
               {deleteConfirmation.isDeleting && (
                 <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
                   <div className="flex items-center space-x-2">
@@ -498,7 +498,7 @@ export default function InquiriesPage() {
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="text-sm text-gray-700">
             Showing {((currentPage - 1) * limit) + 1} to {Math.min(currentPage * limit, totalCount)} of {totalCount} inquiries
           </div>
@@ -510,7 +510,7 @@ export default function InquiriesPage() {
             >
               Previous
             </Button>
-            
+
             {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
               const page = i + 1;
               return (
