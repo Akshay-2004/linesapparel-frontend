@@ -1,29 +1,58 @@
 'use client';
 
-import React from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import { useUserDetails, EUserRole } from '@/hooks/useUserDetails';
-import { 
-  User, 
-  Mail, 
-  Phone, 
-  MapPin, 
+import {
+  User,
+  Mail,
+  Phone,
+  MapPin,
   Calendar,
   Settings,
   ShoppingBag,
   Shield,
   CheckCircle,
-  XCircle
+  XCircle,
+  Pencil,
+  Save,
+  X
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { useUserService } from '@/services/user.service';
 
 export default function ProfilePage() {
   const router = useRouter();
   const { user, loading, error, isAdmin, logout } = useUserDetails();
+  const { updateUserProfile } = useUserService();
+
+  const [isEditing, setIsEditing] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    phone: '',
+
+  });
+
+  const initFormFromUser = useMemo(() => {
+    if (!user) return () => { };
+    return () => setFormData({
+      name: user.name || '',
+      email: user.email || '',
+      phone: user.phone || '',
+
+    });
+  }, [user]);
 
   const handleLogout = async () => {
     try {
@@ -41,6 +70,46 @@ export default function ProfilePage() {
 
   const navigateToOrders = () => {
     router.push('/orders');
+  };
+
+  const handleEnterEdit = () => {
+    initFormFromUser();
+    setIsEditing(true);
+  };
+
+  const handleCancelEdit = () => {
+    setIsEditing(false);
+  };
+
+  const handleSave = async () => {
+    if (!user) return;
+    try {
+      setIsSaving(true);
+      await updateUserProfile(user.id, {
+        name: formData.name.trim() || undefined,
+        email: formData.email.trim() || undefined,
+        phone: formData.phone.trim() || undefined,
+      } as any);
+      toast.success('Profile updated');
+      // Optimistically update local UI
+      setIsEditing(false);
+      window.location.reload();
+    } catch (e) {
+      toast.error('Failed to update profile');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleAvatarEdit = () => {
+    fileInputRef.current?.click();
+  };
+
+  const onAvatarFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    toast.info('Change profile photo action not yet implemented');
+    e.currentTarget.value = '';
   };
 
   if (loading) {
@@ -117,8 +186,8 @@ export default function ProfilePage() {
             Manage your account information and preferences
           </p>
         </div>
-        <Button 
-          variant="outline" 
+        <Button
+          variant="outline"
           onClick={handleLogout}
           className="text-red-600 hover:text-red-700 hover:bg-red-50"
         >
@@ -129,75 +198,133 @@ export default function ProfilePage() {
       {/* Profile Information Card */}
       <Card className="shadow-lg">
         <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50">
-          <CardTitle className="flex items-center space-x-3">
-            <User className="h-6 w-6 text-blue-600" />
-            <span>Personal Information</span>
-          </CardTitle>
+          <div className="flex items-center justify-between">
+            <CardTitle className="flex items-center space-x-3">
+              <User className="h-6 w-6 text-blue-600" />
+              <span>Personal Information</span>
+            </CardTitle>
+            {!isEditing ? (
+              <Button variant="ghost" size="icon" aria-label="Edit personal information" onClick={handleEnterEdit}>
+                <Pencil className="h-5 w-5" />
+              </Button>
+            ) : (
+              <div className="flex items-center gap-2">
+                <Button size="sm" onClick={handleSave} disabled={isSaving}>
+                  <Save className="h-4 w-4 mr-2" /> Save
+                </Button>
+                <Button size="sm" variant="outline" onClick={handleCancelEdit}>
+                  <X className="h-4 w-4 mr-2" /> Cancel
+                </Button>
+              </div>
+            )}
+          </div>
         </CardHeader>
         <CardContent className="p-6">
           <div className="flex items-start space-x-6">
             {/* Avatar */}
-            <Avatar className="h-20 w-20">
-              <AvatarImage src={user.image} alt={user.name} />
-              <AvatarFallback className="text-lg font-semibold bg-blue-100 text-blue-700">
-                {getInitials(user.name)}
-              </AvatarFallback>
-            </Avatar>
+            <div className="relative">
+              <Avatar className="h-20 w-20">
+                <AvatarImage src={user.image} alt={user.name} />
+                <AvatarFallback className="text-lg font-semibold bg-blue-100 text-blue-700">
+                  {getInitials(user.name)}
+                </AvatarFallback>
+              </Avatar>
+              <button
+                type="button"
+                className="absolute -bottom-1 -right-1 h-8 w-8 rounded-full bg-white shadow flex items-center justify-center border hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                aria-label="Change profile photo"
+                onClick={handleAvatarEdit}
+              >
+                <Pencil className="h-4 w-4 text-gray-700" />
+              </button>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={onAvatarFileChange}
+              />
+            </div>
 
             {/* User Details */}
             <div className="flex-1 space-y-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <h2 className="text-2xl font-semibold text-gray-900">{user.name}</h2>
-                  <div className="flex items-center space-x-3 mt-1">
-                    <Badge className={getRoleBadgeColor(user.role)}>
-                      {user.role === EUserRole.superAdmin ? 'Super Admin' : 
-                       user.role === EUserRole.admin ? 'Admin' : 'Client'}
-                    </Badge>
-                    <div className="flex items-center space-x-1">
-                      {user.verified ? (
-                        <>
-                          <CheckCircle className="h-4 w-4 text-green-500" />
-                          <span className="text-sm text-green-600">Verified</span>
-                        </>
-                      ) : (
-                        <>
-                          <XCircle className="h-4 w-4 text-red-500" />
-                          <span className="text-sm text-red-600">Not Verified</span>
-                        </>
-                      )}
+                  {!isEditing ? (
+                    <>
+                      <h2 className="text-2xl font-semibold text-gray-900">{user.name}</h2>
+                      <div className="flex items-center space-x-3 mt-1">
+                        <Badge className={getRoleBadgeColor(user.role)}>
+                          {user.role === EUserRole.superAdmin ? 'Super Admin' :
+                            user.role === EUserRole.admin ? 'Admin' : 'Client'}
+                        </Badge>
+                        <div className="flex items-center space-x-1">
+                          {user.verified ? (
+                            <>
+                              <CheckCircle className="h-4 w-4 text-green-500" />
+                              <span className="text-sm text-green-600">Verified</span>
+                            </>
+                          ) : (
+                            <>
+                              <XCircle className="h-4 w-4 text-red-500" />
+                              <span className="text-sm text-red-600">Not Verified</span>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="name">Name</Label>
+                        <Input id="name" value={formData.name} onChange={(e) => setFormData(v => ({ ...v, name: e.target.value }))} />
+                      </div>
+                      <div>
+                        <Label htmlFor="email">Email</Label>
+                        <Input id="email" type="email" value={formData.email} onChange={(e) => setFormData(v => ({ ...v, email: e.target.value }))} />
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="flex items-center space-x-3">
-                  <Mail className="h-5 w-5 text-gray-400" />
-                  <div>
-                    <p className="text-sm text-gray-500">Email</p>
-                    <p className="font-medium">{user.email}</p>
-                  </div>
-                </div>
-
-                {user.phone && (
+              {!isEditing ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="flex items-center space-x-3">
-                    <Phone className="h-5 w-5 text-gray-400" />
+                    <Mail className="h-5 w-5 text-gray-400" />
                     <div>
-                      <p className="text-sm text-gray-500">Phone</p>
-                      <p className="font-medium">{user.phone}</p>
+                      <p className="text-sm text-gray-500">Email</p>
+                      <p className="font-medium">{user.email}</p>
                     </div>
                   </div>
-                )}
 
-                <div className="flex items-center space-x-3">
-                  <Calendar className="h-5 w-5 text-gray-400" />
-                  <div>
-                    <p className="text-sm text-gray-500">Member Since</p>
-                    <p className="font-medium">{formatDate(user.createdAt)}</p>
+                  {user.phone && (
+                    <div className="flex items-center space-x-3">
+                      <Phone className="h-5 w-5 text-gray-400" />
+                      <div>
+                        <p className="text-sm text-gray-500">Phone</p>
+                        <p className="font-medium">{user.phone}</p>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="flex items-center space-x-3">
+                    <Calendar className="h-5 w-5 text-gray-400" />
+                    <div>
+                      <p className="text-sm text-gray-500">Member Since</p>
+                      <p className="font-medium">{formatDate(user.createdAt)}</p>
+                    </div>
                   </div>
                 </div>
-              </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="phone">Phone</Label>
+                    <Input id="phone" value={formData.phone} onChange={(e) => setFormData(v => ({ ...v, phone: e.target.value }))} />
+                  </div>
+
+                </div>
+              )}
             </div>
           </div>
         </CardContent>
@@ -214,8 +341,8 @@ export default function ProfilePage() {
         <CardContent className="p-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {/* Orders Button */}
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               className="h-20 flex flex-col items-center justify-center space-y-2 hover:bg-blue-50 hover:border-blue-200"
               onClick={navigateToOrders}
             >
@@ -225,8 +352,8 @@ export default function ProfilePage() {
 
             {/* Admin Dashboard Button - Only show for admins */}
             {isAdmin() && (
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 className="h-20 flex flex-col items-center justify-center space-y-2 hover:bg-purple-50 hover:border-purple-200"
                 onClick={navigateToDashboard}
               >
@@ -235,15 +362,7 @@ export default function ProfilePage() {
               </Button>
             )}
 
-            {/* Edit Profile Button */}
-            <Button 
-              variant="outline" 
-              className="h-20 flex flex-col items-center justify-center space-y-2 hover:bg-gray-50 hover:border-gray-200"
-              onClick={() => toast.info('Profile editing coming soon')}
-            >
-              <User className="h-6 w-6 text-gray-600" />
-              <span className="font-medium">Edit Profile</span>
-            </Button>
+            {/* Removed standalone Edit Profile button - moved into header */}
           </div>
         </CardContent>
       </Card>
@@ -277,12 +396,12 @@ export default function ProfilePage() {
                 )}
               </div>
             </div>
-            
+
             <div className="flex items-center justify-between">
               <span className="text-gray-600">Account Type</span>
               <Badge className={getRoleBadgeColor(user.role)}>
-                {user.role === EUserRole.superAdmin ? 'Super Admin' : 
-                 user.role === EUserRole.admin ? 'Admin' : 'Client'}
+                {user.role === EUserRole.superAdmin ? 'Super Admin' :
+                  user.role === EUserRole.admin ? 'Admin' : 'Client'}
               </Badge>
             </div>
 
