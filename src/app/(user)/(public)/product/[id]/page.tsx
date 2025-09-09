@@ -200,6 +200,39 @@ const ProductPage = () => {
   // Add state for size chart modal
   const [showSizeChart, setShowSizeChart] = useState(false);
 
+  // Local storage key for helpful votes
+  const HELPFUL_VOTES_KEY = 'helpful_votes';
+
+  // Utility functions for local storage management
+  const getHelpfulVotes = (): Set<string> => {
+    if (typeof window === 'undefined') return new Set();
+    try {
+      const stored = localStorage.getItem(HELPFUL_VOTES_KEY);
+      return stored ? new Set(JSON.parse(stored)) : new Set();
+    } catch {
+      return new Set();
+    }
+  };
+
+  const addHelpfulVote = (reviewId: string): void => {
+    if (typeof window === 'undefined') return;
+    const votes = getHelpfulVotes();
+    votes.add(reviewId);
+    localStorage.setItem(HELPFUL_VOTES_KEY, JSON.stringify([...votes]));
+  };
+
+  const removeHelpfulVote = (reviewId: string): void => {
+    if (typeof window === 'undefined') return;
+    const votes = getHelpfulVotes();
+    votes.delete(reviewId);
+    localStorage.setItem(HELPFUL_VOTES_KEY, JSON.stringify([...votes]));
+  };
+
+  const hasVotedHelpful = (reviewId: string): boolean => {
+    const votes = getHelpfulVotes();
+    return votes.has(reviewId);
+  };
+
   // Extract numeric ID from Shopify product ID
   const extractProductId = (shopifyId: string): string => {
     // Extract number from "gid://shopify/Product/9748044251426"
@@ -296,8 +329,21 @@ const ProductPage = () => {
   };
 
   const handleHelpfulClick = async (reviewId: string, helpful: boolean) => {
+    const hasVoted = hasVotedHelpful(reviewId);
+    const action = hasVoted ? 'remove' : 'add';
+    
     try {
-      await toggleHelpful(reviewId, helpful);
+      if (hasVoted) {
+        // Remove the vote
+        await toggleHelpful(reviewId, helpful, 'remove');
+        removeHelpfulVote(reviewId);
+        toast.success(`Removed ${helpful ? 'helpful' : 'not helpful'} vote.`);
+      } else {
+        // Add the vote
+        await toggleHelpful(reviewId, helpful, 'add');
+        addHelpfulVote(reviewId);
+        toast.success(`Review marked as ${helpful ? 'helpful' : 'not helpful'}.`);
+      }
 
       // Refresh reviews to show updated counts
       if (data?.id) {
@@ -305,10 +351,8 @@ const ProductPage = () => {
         const reviewsData = await getProductReviews(productId);
         setReviews(reviewsData);
       }
-
-      toast.success(`Review marked as ${helpful ? 'helpful' : 'not helpful'}.`);
     } catch (error) {
-      console.error('Error marking review as helpful:', error);
+      console.error('Error toggling helpful vote:', error);
       toast.error("Failed to update review. Please try again.");
     }
   };
@@ -929,12 +973,12 @@ const ProductPage = () => {
                       <div key={review._id} className="border-b border-gray-200 pb-4">
                         <div className="flex items-center gap-3 mb-2">
                           <div className="h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center text-gray-500">
-                            {review.userId.name.charAt(0).toUpperCase()}
+                            {review.userId?.name ? review.userId.name.charAt(0).toUpperCase() : 'A'}
                           </div>
                           <div className="flex-1">
                             <div className="flex items-center justify-between">
                               <div className="flex items-center gap-2">
-                                <span className="font-medium">{review.userId.name}</span>
+                                <span className="font-medium">{review.userId?.name || 'Anonymous'}</span>
                                 <span className="text-gray-500">• {new Date(review.createdAt).toLocaleDateString()}</span>
                                 {review.verifiedBuyer && (
                                   <span className="bg-green-100 text-green-700 text-xs px-2 py-1 rounded">Verified Buyer</span>
@@ -965,7 +1009,7 @@ const ProductPage = () => {
                                 {review.imageUrls.map((imageUrl, index) => (
                                   <button
                                     key={index}
-                                    onClick={() => handleImagePreview(review.imageUrls!, index, review.userId.name)}
+                                    onClick={() => handleImagePreview(review.imageUrls!, index, review.userId?.name || 'Anonymous')}
                                     className="w-16 h-16 bg-gray-100 rounded overflow-hidden hover:opacity-80 transition-opacity cursor-pointer"
                                   >
                                     <Image
@@ -985,8 +1029,14 @@ const ProductPage = () => {
                           <div className="flex items-center gap-4">
                             <button
                               onClick={() => handleHelpfulClick(review._id, true)}
-                              className="flex items-center gap-1 text-gray-500 hover:text-green-600 disabled:opacity-50"
+                              className={cn(
+                                "flex items-center gap-1 transition-colors",
+                                hasVotedHelpful(review._id)
+                                  ? "text-green-600 hover:text-green-700"
+                                  : "text-gray-500 hover:text-green-600"
+                              )}
                               disabled={reviewLoading}
+                              title={hasVotedHelpful(review._id) ? "Click to remove helpful vote" : "Mark as helpful"}
                             >
                               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                                 <path d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z" />
@@ -995,8 +1045,14 @@ const ProductPage = () => {
                             </button>
                             <button
                               onClick={() => handleHelpfulClick(review._id, false)}
-                              className="flex items-center gap-1 text-gray-500 hover:text-red-600 disabled:opacity-50"
+                              className={cn(
+                                "flex items-center gap-1 transition-colors",
+                                hasVotedHelpful(review._id)
+                                  ? "text-red-600 hover:text-red-700"
+                                  : "text-gray-500 hover:text-red-600"
+                              )}
                               disabled={reviewLoading}
+                              title={hasVotedHelpful(review._id) ? "Click to remove not helpful vote" : "Mark as not helpful"}
                             >
                               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                                 <path d="M18 9.5a1.5 1.5 0 11-3 0v-6a1.5 1.5 0 013 0v6zM14 9.667v-5.43a2 2 0 00-1.105-1.79l-.05-.025A4 4 0 0011.055 2H5.64a2 2 0 00-1.962 1.608l-1.2 6A2 2 0 004.44 12H8v4a2 2 0 002 2 1 1 0 001-1v-.667a4 4 0 01-.8-2.4l1.4-1.866a4 4 0 00.8-2.4z" />
