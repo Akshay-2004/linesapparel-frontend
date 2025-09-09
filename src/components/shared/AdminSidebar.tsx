@@ -32,7 +32,7 @@ const AdminSidebar = ({ isCollapsed, toggleSidebar }: SidebarProps) => {
     const pathname = usePathname();
     const [isMounted, setIsMounted] = useState(false);
     const [openSubmenus, setOpenSubmenus] = useState<string[]>([]);
-
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     useEffect(() => {
         setIsMounted(true);
     }, []);
@@ -44,7 +44,9 @@ const AdminSidebar = ({ isCollapsed, toggleSidebar }: SidebarProps) => {
                 : [...prev, name]
         );
     };
-
+    useEffect(() => {
+        setIsMobileMenuOpen(false)
+    }, [pathname])
     const NavItem = ({ item }: { item: NavItemProps }) => {
         const hasSubmenu = item.submenu && item.submenu.length > 0;
         const isSubmenuOpen = openSubmenus.includes(item.name);
@@ -182,7 +184,7 @@ const AdminSidebar = ({ isCollapsed, toggleSidebar }: SidebarProps) => {
 
             {/* Mobile Sidebar */}
             <div className="md:hidden">
-                <Sheet>
+                <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
                     <SheetTrigger asChild>
                         <Button variant="ghost" size="icon" className="ml-2">
                             <Layers className="h-6 w-6" />

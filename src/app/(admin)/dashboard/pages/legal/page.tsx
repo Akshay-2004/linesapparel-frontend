@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import { useLegalPagesService, LegalPage, LegalPageType, LegalPageData, UpdateLegalPageData } from '@/services/legal-pages.service';
-import { 
+import {
   RefreshCw,
   FileText,
   Edit,
@@ -121,7 +121,7 @@ export default function LegalPagesPage() {
 
   const handleEditClick = (pageType: LegalPageType, existingPage?: LegalPage) => {
     const pageData = existingPage?.data || {};
-    
+
     setEditModal({
       isOpen: true,
       pageType: pageType.key,
@@ -145,7 +145,7 @@ export default function LegalPagesPage() {
 
   const handleSave = async () => {
     setEditModal(prev => ({ ...prev, isUpdating: true }));
-    
+
     try {
       // Create markdown file from editor content
       const markdownFile = createMarkdownFile(
@@ -168,7 +168,7 @@ export default function LegalPagesPage() {
       await createOrUpdateLegalPage(editModal.pageType, updateData);
       toast.success(`${editModal.pageName} ${editModal.existingPage ? 'updated' : 'created'} successfully`);
       await fetchData();
-      
+
       setEditModal({
         isOpen: false,
         pageType: '',
@@ -207,7 +207,7 @@ export default function LegalPagesPage() {
   const downloadMarkdown = async (page: LegalPage) => {
     try {
       let content = page.data?.content || '';
-      
+
       // If we have a markdown URL, fetch the latest content
       if (page.data?.markdownUrl) {
         try {
@@ -217,7 +217,7 @@ export default function LegalPagesPage() {
           // Fallback to stored content on fetch error
         }
       }
-      
+
       const blob = new Blob([content], { type: 'text/markdown' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -227,7 +227,7 @@ export default function LegalPagesPage() {
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
-      
+
       toast.success('Markdown file downloaded successfully');
     } catch (error) {
       toast.error('Failed to download Markdown file');
@@ -245,7 +245,7 @@ export default function LegalPagesPage() {
 
   const handleDeleteConfirm = async () => {
     setDeleteConfirmation(prev => ({ ...prev, isDeleting: true }));
-    
+
     try {
       await deleteLegalPage(deleteConfirmation.pageType);
       toast.success(`${deleteConfirmation.pageName} deleted successfully`);
@@ -269,11 +269,10 @@ export default function LegalPagesPage() {
   const getStatusBadge = (isActive: boolean) => {
     return (
       <span
-        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-          isActive
-            ? 'bg-green-100 text-green-800'
-            : 'bg-red-100 text-red-800'
-        }`}
+        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${isActive
+          ? 'bg-green-100 text-green-800'
+          : 'bg-red-100 text-red-800'
+          }`}
       >
         {isActive ? 'Active' : 'Inactive'}
       </span>
@@ -302,7 +301,7 @@ export default function LegalPagesPage() {
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
-    
+
     // Check if it's a markdown file
     if (file.type !== 'text/markdown' && !file.name.endsWith('.md')) {
       toast.error('Please upload a valid markdown (.md) file');
@@ -320,13 +319,13 @@ export default function LegalPagesPage() {
         toast.success(`File "${file.name}" loaded successfully`);
       }
     };
-    
+
     reader.onerror = () => {
       toast.error('Failed to read the file');
     };
-    
+
     reader.readAsText(file);
-    
+
     // Reset the input so the same file can be uploaded again if needed
     event.target.value = '';
   };
@@ -334,20 +333,20 @@ export default function LegalPagesPage() {
   return (
     <div className="container mx-auto p-6 space-y-8 max-w-7xl">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col md:flex-row md:items-center justify-between">
         <div>
-          <h1 className="text-4xl font-bold tracking-tight text-gray-900">Legal Pages</h1>
-          <p className="text-lg text-gray-600 mt-2">
+          <h1 className="text-xl lg:text-4xl font-bold tracking-tight text-gray-900">Legal Pages</h1>
+          <p className="text-base lg:text-lg text-gray-600 mt-2">
             Manage legal documents and policies with markdown editor ({legalPages.length} created)
           </p>
         </div>
-        
-        <Button 
+
+        <Button
           onClick={handleRefresh}
           disabled={isRefreshing || loading}
           variant="outline"
           size="lg"
-          className="flex items-center"
+          className="flex  items-center"
         >
           <RefreshCw className={`h-5 w-5 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
           {isRefreshing ? 'Refreshing...' : 'Refresh'}
@@ -358,7 +357,7 @@ export default function LegalPagesPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {pageTypes.map((pageType) => {
           const existingPage = getExistingPage(pageType.key);
-          
+
           return (
             <Card key={pageType.key} className="shadow-lg hover:shadow-xl transition-shadow">
               <CardHeader className="pb-4">
@@ -452,7 +451,7 @@ export default function LegalPagesPage() {
                           Delete
                         </Button>
                       </div>
-                      
+
                       <div className="flex items-center space-x-2">
                         <Button
                           variant="ghost"
@@ -515,7 +514,7 @@ export default function LegalPagesPage() {
                   <span>Markdown Editor</span>
                 </div>
               </div>
-              
+
               <div className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
@@ -591,8 +590,8 @@ export default function LegalPagesPage() {
                       </Button>
                     </div>
                   </div>
-                  
-                  <div 
+
+                  <div
                     className="border rounded-lg overflow-hidden bg-white"
                     style={{ minHeight: '500px' }}
                   >
@@ -606,7 +605,7 @@ export default function LegalPagesPage() {
                       preview="edit"
                       data-color-mode="light"
                       hideToolbar={false}
-                      // Remove the problematic visibleDragBar prop
+                    // Remove the problematic visibleDragBar prop
                     />
                   </div>
                   <div className="flex items-start justify-between mt-2">
@@ -631,8 +630,8 @@ export default function LegalPagesPage() {
                 <Button
                   onClick={handleSave}
                   disabled={
-                    editModal.isUpdating || 
-                    !editModal.formData.title.trim() || 
+                    editModal.isUpdating ||
+                    !editModal.formData.title.trim() ||
                     !editModal.formData.markdownContent.trim()
                   }
                   className="flex items-center"
@@ -663,10 +662,10 @@ export default function LegalPagesPage() {
               <AlertTriangle className="h-6 w-6 text-red-500" />
               <h3 className="text-lg font-semibold text-gray-900">Confirm Deletion</h3>
             </div>
-            
+
             <div className="mb-6">
               <p className="text-gray-600">
-                Are you sure you want to delete <span className="font-semibold text-gray-900">{deleteConfirmation.pageName}</span>? 
+                Are you sure you want to delete <span className="font-semibold text-gray-900">{deleteConfirmation.pageName}</span>?
               </p>
               <p className="text-sm text-red-600 mt-2">
                 This action cannot be undone and will permanently remove the legal page.

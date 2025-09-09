@@ -7,10 +7,10 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import { useUserService, IUser, UserStats } from '@/services/user.service';
-import { 
-  Search, 
-  Users, 
-  Edit, 
+import {
+  Search,
+  Users,
+  Edit,
   Trash2,
   Filter,
   User,
@@ -128,7 +128,7 @@ export default function UsersPage() {
       }
 
       const response = await getAllUsers(params);
-      
+
       if (response && response.users) {
         setUsers(response.users);
         setTotalPages(response.pagination?.totalPages || 1);
@@ -177,7 +177,7 @@ export default function UsersPage() {
 
   const handleDeleteConfirm = async () => {
     setDeleteConfirmation(prev => ({ ...prev, isDeleting: true }));
-    
+
     try {
       await deleteUser(deleteConfirmation.userId);
       toast.success('User deleted successfully');
@@ -208,7 +208,7 @@ export default function UsersPage() {
 
   const handleRoleChangeConfirm = async () => {
     setRoleChangeModal(prev => ({ ...prev, isChanging: true }));
-    
+
     try {
       await changeUserRole(roleChangeModal.userId, { role: roleChangeModal.newRole as any });
       toast.success('User role updated successfully');
@@ -243,9 +243,9 @@ export default function UsersPage() {
 
   const handleEditConfirm = async () => {
     if (!editUserModal.user) return;
-    
+
     setEditUserModal(prev => ({ ...prev, isUpdating: true }));
-    
+
     try {
       await updateUserProfile(editUserModal.user._id, editUserModal.formData);
       toast.success('User profile updated successfully');
@@ -314,16 +314,16 @@ export default function UsersPage() {
   return (
     <div className="container mx-auto p-6 space-y-8 max-w-7xl">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-2 md:flex-row lg:items-center justify-between">
         <div>
-          <h1 className="text-4xl font-bold tracking-tight text-gray-900">User Management</h1>
-          <p className="text-lg text-gray-600 mt-2">
+          <h1 className="text-xl lg:text-4xl font-bold tracking-tight text-gray-900">User Management</h1>
+          <p className="text-base lg:text-lg text-gray-600 mt-2">
             Manage user accounts and permissions ({totalCount} total)
           </p>
         </div>
-        
+
         {/* Refresh Button */}
-        <Button 
+        <Button
           onClick={handleRefresh}
           disabled={isRefreshing || loading}
           variant="outline"
@@ -413,7 +413,7 @@ export default function UsersPage() {
                   className="rounded-r-none"
                   onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
                 />
-                <Button 
+                <Button
                   onClick={handleSearch}
                   className="rounded-l-none"
                   variant="outline"
@@ -489,9 +489,9 @@ export default function UsersPage() {
           {users.map((user) => (
             <Card key={user._id} className="shadow-lg hover:shadow-xl transition-shadow">
               <CardHeader className="pb-4">
-                <div className="flex items-start justify-between">
-                  <div className="flex items-center space-x-3">
-                    <div className="flex-shrink-0">
+                <div className="flex flex-col gap-2 lg:flex-row mx-auto items-start justify-between">
+                  <div className="flex flex-col lg:flex-row  items-center space-x-3">
+                    <div className="lg:flex-shrink-0">
                       <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
                         <User className="h-6 w-6 text-white" />
                       </div>
@@ -524,7 +524,7 @@ export default function UsersPage() {
                 </div>
 
                 {/* Actions */}
-                <div className="flex items-center justify-between pt-4 border-t">
+                <div className="flex flex-wrap gap-2 mx-auto items-center justify-between pt-4 border-t">
                   <div className="flex items-center space-x-2">
                     {/* Edit Button */}
                     <Button
@@ -578,10 +578,10 @@ export default function UsersPage() {
               <AlertTriangle className="h-6 w-6 text-red-500" />
               <h3 className="text-lg font-semibold text-gray-900">Confirm Deletion</h3>
             </div>
-            
+
             <div className="mb-6">
               <p className="text-gray-600">
-                Are you sure you want to delete <span className="font-semibold text-gray-900">{deleteConfirmation.userName}</span>? 
+                Are you sure you want to delete <span className="font-semibold text-gray-900">{deleteConfirmation.userName}</span>?
               </p>
               <p className="text-sm text-red-600 mt-2">
                 This action cannot be undone and will permanently remove the user account.
@@ -616,12 +616,12 @@ export default function UsersPage() {
               <UserCheck className="h-6 w-6 text-blue-500" />
               <h3 className="text-lg font-semibold text-gray-900">Change User Role</h3>
             </div>
-            
+
             <div className="mb-6">
               <p className="text-gray-600 mb-4">
                 Change role for <span className="font-semibold text-gray-900">{roleChangeModal.userName}</span>
               </p>
-              
+
               <Label htmlFor="new-role" className="text-sm font-medium text-gray-700">
                 New Role
               </Label>
@@ -664,7 +664,7 @@ export default function UsersPage() {
               <Edit className="h-6 w-6 text-blue-500" />
               <h3 className="text-lg font-semibold text-gray-900">Edit User Profile</h3>
             </div>
-            
+
             <div className="mb-6 space-y-4">
               <div>
                 <Label htmlFor="edit-name" className="text-sm font-medium text-gray-700">
@@ -746,7 +746,7 @@ export default function UsersPage() {
             >
               Previous
             </Button>
-            
+
             {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
               const page = i + 1;
               return (

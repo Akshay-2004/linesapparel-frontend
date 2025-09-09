@@ -52,10 +52,10 @@ const NavbarManagement = () => {
       if (response) {
         setNavbarData(response);
         setIsInitialized(true);
-        
+
         // Check if this is the default navbar (no saved navbar in database)
         setIsDefault(response.message?.includes('Default navbar') || false);
-        
+
         // Convert to editing format
         const editingFormat = response.navItems?.map((section: any) => ({
           title: section.title,
@@ -101,7 +101,7 @@ const NavbarManagement = () => {
           title: "MEN",
           categories: [
             {
-              title: "Men's Clothing", 
+              title: "Men's Clothing",
               items: [
                 { label: "T-Shirts", keyword: "mens-tshirts", href: "/mens/t-shirts" },
                 { label: "Shirts", keyword: "mens-shirts", href: "/mens/shirts" },
@@ -129,7 +129,7 @@ const NavbarManagement = () => {
       const updateData: IUpdateNavbarData = {
         navItems: editingData
       };
-      
+
       const response = await updateNavbar(updateData);
       if (response) {
         setMessage({ type: 'success', text: 'Navbar updated successfully!' });
@@ -185,9 +185,9 @@ const NavbarManagement = () => {
 
   const updateCategory = (sectionIndex: number, categoryIndex: number, field: keyof ICreateNavbarCategory, value: any) => {
     const newData = [...editingData];
-    newData[sectionIndex].categories[categoryIndex] = { 
-      ...newData[sectionIndex].categories[categoryIndex], 
-      [field]: value 
+    newData[sectionIndex].categories[categoryIndex] = {
+      ...newData[sectionIndex].categories[categoryIndex],
+      [field]: value
     };
     setEditingData(newData);
   };
@@ -211,9 +211,9 @@ const NavbarManagement = () => {
 
   const updateItem = (sectionIndex: number, categoryIndex: number, itemIndex: number, field: keyof ICreateNavbarItem, value: string) => {
     const newData = [...editingData];
-    newData[sectionIndex].categories[categoryIndex].items[itemIndex] = { 
-      ...newData[sectionIndex].categories[categoryIndex].items[itemIndex], 
-      [field]: value 
+    newData[sectionIndex].categories[categoryIndex].items[itemIndex] = {
+      ...newData[sectionIndex].categories[categoryIndex].items[itemIndex],
+      [field]: value
     };
     setEditingData(newData);
   };
@@ -239,16 +239,16 @@ const NavbarManagement = () => {
 
   return (
     <div className="container mx-auto p-6 space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex md:flex-row gap-2 flex-col justify-between lg:items-center">
         <div>
-          <h1 className="text-3xl font-bold">Navbar Management</h1>
+          <h1 className="lg:text-3xl font-bold">Navbar Management</h1>
           <p className="text-muted-foreground">Customize your website navigation structure</p>
         </div>
-        
+
         {/* Action buttons */}
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           {!isInitialized ? (
-            <Button 
+            <Button
               onClick={initializeNavbar}
               disabled={loading}
               className="flex items-center gap-2"
@@ -258,8 +258,8 @@ const NavbarManagement = () => {
             </Button>
           ) : (
             <>
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 onClick={() => setIsEditing(!isEditing)}
                 disabled={loading}
                 className="flex items-center gap-2"
@@ -277,8 +277,8 @@ const NavbarManagement = () => {
                 )}
               </Button>
               {isEditing && (
-                <Button 
-                  onClick={handleSave} 
+                <Button
+                  onClick={handleSave}
                   disabled={loading}
                   className="flex items-center gap-2"
                 >
@@ -327,9 +327,9 @@ const NavbarManagement = () => {
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>
             Error: {error}
-            <Button 
-              variant="outline" 
-              size="sm" 
+            <Button
+              variant="outline"
+              size="sm"
               onClick={fetchNavbarData}
               className="ml-2"
             >
@@ -360,7 +360,7 @@ const NavbarManagement = () => {
                 <p>• Fully customizable after initialization</p>
               </div>
             </div>
-            <Button 
+            <Button
               onClick={initializeNavbar}
               disabled={loading}
               size="lg"
@@ -455,7 +455,7 @@ const NavbarManagement = () => {
                       </div>
                     </AccordionTrigger>
                     <AccordionContent className="space-y-4">
-                      <div className="flex items-center gap-2">
+                      <div className="flex  items-center gap-2">
                         <div className="flex-1">
                           <Label htmlFor={`section-title-${sectionIndex}`}>Section Title</Label>
                           <Input
@@ -465,13 +465,17 @@ const NavbarManagement = () => {
                             placeholder="Section title (e.g., WOMEN, MEN, KIDS)"
                           />
                         </div>
-                        <Button
-                          variant="destructive"
-                          size="icon"
-                          onClick={() => removeSection(sectionIndex)}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
+                        <div className='max-sm:mt-auto  '>
+
+                          <Button
+                            variant="destructive"
+                            size="icon"
+
+                            onClick={() => removeSection(sectionIndex)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
                       </div>
 
                       <div className="space-y-4 ml-4">
@@ -497,13 +501,15 @@ const NavbarManagement = () => {
                                   placeholder="Category title (e.g., Women's Clothing)"
                                 />
                               </div>
-                              <Button
-                                variant="destructive"
-                                size="icon"
-                                onClick={() => removeCategory(sectionIndex, categoryIndex)}
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </Button>
+                              <div className='max-sm:mt-auto  '>
+                                <Button
+                                  variant="destructive"
+                                  size="icon"
+                                  onClick={() => removeCategory(sectionIndex, categoryIndex)}
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </div>
                             </div>
 
                             <div className="space-y-2 ml-4">
@@ -518,7 +524,7 @@ const NavbarManagement = () => {
                               </Button>
 
                               {category.items.map((item, itemIndex) => (
-                                <div key={itemIndex} className="grid grid-cols-1 md:grid-cols-4 gap-2 items-end p-3 border rounded">
+                                <div key={itemIndex} className="grid grid-cols-1 md:grid-cols-4 gap-2 items-end p-3 gap-2 border rounded">
                                   <div>
                                     <Label htmlFor={`item-label-${sectionIndex}-${categoryIndex}-${itemIndex}`}>Label</Label>
                                     <Input
@@ -549,6 +555,7 @@ const NavbarManagement = () => {
                                   <Button
                                     variant="destructive"
                                     size="icon"
+
                                     onClick={() => removeItem(sectionIndex, categoryIndex, itemIndex)}
                                   >
                                     <Trash2 className="h-4 w-4" />

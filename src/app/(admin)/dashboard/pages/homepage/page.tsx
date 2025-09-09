@@ -183,9 +183,9 @@ export default function HomepageManagement() {
     setSaving(true);
     try {
       const formData = createFormData(homepageData, uploadFiles);
-      
+
       const response = await updateHomepage(formData);
-      
+
       if (response) {
         toast.success('Homepage updated successfully');
         setUploadFiles({});
@@ -196,7 +196,7 @@ export default function HomepageManagement() {
         try {
           const formData = createFormData(homepageData, uploadFiles);
           const response = await createHomepage(formData);
-          
+
           if (response) {
             toast.success('Homepage created successfully');
             setUploadFiles({});
@@ -436,10 +436,10 @@ export default function HomepageManagement() {
 
   return (
     <div className="container mx-auto p-6 space-y-8 max-w-7xl">
-      <div className="flex items-center justify-between">
+      <div className="flex md:flex-row flex-col gap-2 items-center justify-between">
         <div>
-          <h1 className="text-4xl font-bold tracking-tight text-gray-900">Homepage Management</h1>
-          <p className="text-lg text-gray-600 mt-2">Manage your homepage content and layout</p>
+          <h1 className="text-xl md:text-4xl font-bold tracking-tight text-gray-900">Homepage Management</h1>
+          <p className="text-sm md:text-lg text-gray-600 mt-2">Manage your homepage content and layout</p>
         </div>
         <div className="flex items-center space-x-4">
           <Button variant="outline" size="lg">
@@ -466,8 +466,8 @@ export default function HomepageManagement() {
                   {uploadProgress}%
                 </span>
               </div>
-              <Progress 
-                value={uploadProgress} 
+              <Progress
+                value={uploadProgress}
                 className="w-full h-3"
                 indicatorClassName="bg-gradient-to-r from-blue-500 to-purple-600 transition-all duration-300"
               />
@@ -506,7 +506,7 @@ export default function HomepageManagement() {
               Add Slide
             </Button>
           </div>
-          <p className="text-sm text-gray-600 mt-2">
+          <p className="text-sm text-gray-600 mt-2 max-sm:mb-1">
             Hero images should be high-quality and capture attention. They're displayed prominently at the top of your homepage.
           </p>
         </CardHeader>
@@ -771,8 +771,8 @@ export default function HomepageManagement() {
       {/* Product Sections */}
       <Card className="shadow-lg">
         <CardHeader className="bg-gradient-to-r from-orange-50 to-red-50">
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-2xl font-bold text-gray-900">Product Sections</CardTitle>
+          <div className="flex flex-col md:flex-row items-center justify-between">
+            <CardTitle className="text-xl lg:text-2xl font-bold text-gray-900">Product Sections</CardTitle>
             <Button onClick={addProductSection} size="lg" className="flex items-center">
               <Plus className="h-5 w-5 mr-2" />
               Add Section

@@ -9,13 +9,13 @@ import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import { useTestimonialService } from '@/services/testimonial.service';
 import { ITestimonial } from '@/types/testimonial.interface';
-import { 
-  Plus, 
-  Search, 
-  Star, 
-  MapPin, 
-  Briefcase, 
-  Edit, 
+import {
+  Plus,
+  Search,
+  Star,
+  MapPin,
+  Briefcase,
+  Edit,
   Trash2,
   Filter,
   User,
@@ -90,7 +90,7 @@ export default function TestimonialsPage() {
       }
 
       const response = await getAllTestimonials(params);
-      
+
       // The response is directly { testimonials, pagination }
       if (response && response.testimonials) {
         setTestimonials(response.testimonials);
@@ -103,7 +103,7 @@ export default function TestimonialsPage() {
       }
     } catch (error: any) {
       toast.error('Failed to fetch testimonials');
-      
+
       // Set empty state on error
       setTestimonials([]);
       setTotalPages(1);
@@ -142,7 +142,7 @@ export default function TestimonialsPage() {
 
   const handleDeleteConfirm = async () => {
     setDeleteConfirmation(prev => ({ ...prev, isDeleting: true }));
-    
+
     try {
       await deleteTestimonial(deleteConfirmation.testimonialId);
       toast.success('Testimonial deleted successfully');
@@ -161,7 +161,7 @@ export default function TestimonialsPage() {
 
   const handleDeleteCancel = () => {
     if (deleteConfirmation.isDeleting) return; // Prevent cancel during deletion
-    
+
     setDeleteConfirmation({
       isOpen: false,
       testimonialId: '',
@@ -176,11 +176,10 @@ export default function TestimonialsPage() {
         {[1, 2, 3, 4, 5].map((star) => (
           <Star
             key={star}
-            className={`h-4 w-4 ${
-              star <= rating
-                ? 'text-yellow-400 fill-current'
-                : 'text-gray-300'
-            }`}
+            className={`h-4 w-4 ${star <= rating
+              ? 'text-yellow-400 fill-current'
+              : 'text-gray-300'
+              }`}
           />
         ))}
       </div>
@@ -190,11 +189,10 @@ export default function TestimonialsPage() {
   const getStatusBadge = (published: boolean) => {
     return (
       <span
-        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-          published
-            ? 'bg-green-100 text-green-800'
-            : 'bg-yellow-100 text-yellow-800'
-        }`}
+        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${published
+          ? 'bg-green-100 text-green-800'
+          : 'bg-yellow-100 text-yellow-800'
+          }`}
       >
         {published ? 'Published' : 'Draft'}
       </span>
@@ -215,14 +213,14 @@ export default function TestimonialsPage() {
   return (
     <div className="container mx-auto p-6 space-y-8 max-w-7xl">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col lg:flex-row gap-2 lg:items-center justify-between">
         <div>
-          <h1 className="text-4xl font-bold tracking-tight text-gray-900">Testimonials</h1>
-          <p className="text-lg text-gray-600 mt-2">
+          <h1 className="text-xl lg:text-4xl font-bold tracking-tight text-gray-900">Testimonials</h1>
+          <p className="text-base lg:text-lg text-gray-600 mt-2">
             Manage customer testimonials and reviews ({totalCount} total)
           </p>
         </div>
-        <Button 
+        <Button
           onClick={() => router.push('/dashboard/testimonials/add')}
           size="lg"
           className="flex items-center"
@@ -256,7 +254,7 @@ export default function TestimonialsPage() {
                   className="rounded-r-none"
                   onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
                 />
-                <Button 
+                <Button
                   onClick={handleSearch}
                   className="rounded-l-none"
                   variant="outline"
@@ -360,7 +358,7 @@ export default function TestimonialsPage() {
           {testimonials.map((testimonial) => (
             <Card key={testimonial._id} className="shadow-lg hover:shadow-xl transition-shadow">
               <CardHeader className="pb-4">
-                <div className="flex items-start justify-between">
+                <div className="flex flex-col lg:flex-row mx-auto items-start justify-between">
                   <div className="flex items-center space-x-3">
                     <div className="flex-shrink-0">
                       {testimonial.imageUrl ? (
@@ -410,7 +408,7 @@ export default function TestimonialsPage() {
                 </blockquote>
 
                 {/* Actions */}
-                <div className="flex items-center justify-between pt-4 border-t">
+                <div className="flex max-sm:flex-wrap gap-2 mx-auto items-center justify-between pt-4 border-t">
                   <div className="flex items-center space-x-2">
                     {/* Delete Button - Left side */}
                     <Button
@@ -468,15 +466,15 @@ export default function TestimonialsPage() {
                 <h3 className="text-lg font-semibold text-gray-900">Confirm Deletion</h3>
               </div>
             </div>
-            
+
             <div className="mb-6">
               <p className="text-gray-600">
-                Are you sure you want to delete <span className="font-semibold text-gray-900">{deleteConfirmation.testimonialName}'s</span> testimonial? 
+                Are you sure you want to delete <span className="font-semibold text-gray-900">{deleteConfirmation.testimonialName}'s</span> testimonial?
               </p>
               <p className="text-sm text-red-600 mt-2">
                 This action cannot be undone and will permanently remove the testimonial and any associated images.
               </p>
-              
+
               {deleteConfirmation.isDeleting && (
                 <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
                   <div className="flex items-center space-x-2">
@@ -533,7 +531,7 @@ export default function TestimonialsPage() {
             >
               Previous
             </Button>
-            
+
             {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
               const page = i + 1;
               return (

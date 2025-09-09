@@ -71,7 +71,7 @@ export const DraggableProductSection: React.FC<DraggableProductSectionProps> = (
   return (
     <div ref={setNodeRef} style={style}>
       <Card className="mb-6 border-2 border-dashed border-gray-300 hover:border-gray-400 transition-colors shadow-sm">
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4 bg-gradient-to-r from-yellow-50 to-orange-50">
+        <CardHeader className="flex  flex-row items-center justify-between space-y-0 pb-4 bg-gradient-to-r from-yellow-50 to-orange-50">
           <div className="flex items-center space-x-3">
             <div
               {...attributes}
@@ -80,7 +80,7 @@ export const DraggableProductSection: React.FC<DraggableProductSectionProps> = (
             >
               <GripVertical className="h-5 w-5 text-gray-500" />
             </div>
-            <h3 className="text-xl font-bold text-gray-900">Product Section {index + 1}</h3>
+            <h3 className="lg:text-xl font-bold text-gray-900">Product Section {index + 1}</h3>
           </div>
           <Button
             variant="destructive"
@@ -89,7 +89,7 @@ export const DraggableProductSection: React.FC<DraggableProductSectionProps> = (
             className="hover:bg-red-600"
           >
             <Trash2 className="h-4 w-4 mr-1" />
-            Delete
+
           </Button>
         </CardHeader>
         <CardContent className="space-y-6 p-6">
