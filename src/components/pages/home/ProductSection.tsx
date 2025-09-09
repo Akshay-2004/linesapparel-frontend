@@ -7,6 +7,7 @@ import ProductTitleSection from "@/components/shared/ProductTitleSection";
 import Carousel from "@/components/ui/carousel";
 import { useApi } from '@/hooks/useApi';
 import Link from 'next/link';
+import { ProductSkeleton } from '@/components/skeletons/ProductSkeleton';
 
 // Dummy product data (we'll use this until the real product API is connected)
 
@@ -85,9 +86,20 @@ export default function ProductSection({ sectionData }: ProductSectionProps) {
 
         <div className="mt-6">
           {loading ? (
-            <div className="flex justify-center items-center min-h-[400px]">
-              <p>Loading products...</p>
-            </div>
+            <Carousel
+              cardsPerView={{ base: 1, md: 2, lg: 4 }}
+              autoPlay={false}
+              interval={4000}
+            >
+              {[...Array(6)].map((_, index) => (
+                <div
+                  key={`skeleton-${index}`}
+                  className="h-full min-h-[400px] flex"
+                >
+                  <ProductSkeleton />
+                </div>
+              ))}
+            </Carousel>
           ) : (
             <Carousel
               cardsPerView={{ base: 1, md: 2, lg: 4 }}
