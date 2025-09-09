@@ -157,10 +157,10 @@ export function useReviewService() {
     });
   };
 
-  const toggleHelpful = async (reviewId: string, helpful: boolean): Promise<IReview> => {
+  const toggleHelpful = async (reviewId: string, helpful: boolean, action: 'add' | 'remove' = 'add'): Promise<IReview> => {
     return await fetchData(`${baseUrl}/${reviewId}/helpful`, {
       method: 'PATCH',
-      data: { helpful },
+      data: { helpful, action },
       timeout: 30000
     });
   };
