@@ -92,7 +92,7 @@ const VerifyOTPForm: React.FC<VerifyOTPFormProps> = ({
         if (onVerificationSuccess) {
           onVerificationSuccess();
         } else {
-          router.push("/");
+          router.push("/login");
         }
       }, 2000);
     } catch (err) {
