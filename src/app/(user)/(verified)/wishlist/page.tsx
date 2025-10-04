@@ -42,8 +42,6 @@ export default function WishlistPage() {
     }
   };
 
-  console.log('Wishlist Data:', items);
-
   const handleAddToCart = async (item: any) => {
     try {
       // Extract product ID from Shopify format

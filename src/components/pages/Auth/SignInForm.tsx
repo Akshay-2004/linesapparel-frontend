@@ -83,16 +83,20 @@ const SignInForm = () => {
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="mt-10 space-y-6"
+          className="mt-6 sm:mt-10 space-y-4 sm:space-y-6"
         >
           <FormField
             control={form.control}
             name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Email address</FormLabel>
+                <FormLabel className="text-sm sm:text-base">Email address</FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter your email" {...field} />
+                  <Input 
+                    placeholder="Enter your email" 
+                    className="h-10 sm:h-11"
+                    {...field} 
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -104,12 +108,13 @@ const SignInForm = () => {
             name="password"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Password</FormLabel>
+                <FormLabel className="text-sm sm:text-base">Password</FormLabel>
                 <FormControl>
                   <div className="relative">
                     <Input
                       type={showPassword ? "text" : "password"}
                       placeholder="Enter your password"
+                      className="h-10 sm:h-11 pr-10"
                       {...field}
                     />
                     <button
@@ -118,9 +123,9 @@ const SignInForm = () => {
                       className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
                     >
                       {showPassword ? (
-                        <EyeOff className="h-5 w-5" />
+                        <EyeOff className="h-4 w-4 sm:h-5 sm:w-5" />
                       ) : (
-                        <Eye className="h-5 w-5" />
+                        <Eye className="h-4 w-4 sm:h-5 sm:w-5" />
                       )}
                     </button>
                   </div>
@@ -130,12 +135,10 @@ const SignInForm = () => {
             )}
           />
 
-          <div className="flex  justify-end">
-
-
+          <div className="flex justify-end">
             <Link
               href="/forgot-password"
-              className="text-sm font-semibold text-primary hover:text-primary/90"
+              className="text-xs sm:text-sm font-semibold text-primary hover:text-primary/90"
             >
               Forgot password?
             </Link>
@@ -144,11 +147,11 @@ const SignInForm = () => {
           <Button
             type="submit"
             disabled={loading}
-            className="w-full bg-primary hover:bg-primary/90"
+            className="w-full h-10 sm:h-11 bg-primary hover:bg-primary/90"
           >
             {loading ? (
               <span>
-                <Loader2 className="animate-spin " />
+                <Loader2 className="animate-spin h-4 w-4 sm:h-5 sm:w-5" />
               </span>
             ) : (
               "Sign in"

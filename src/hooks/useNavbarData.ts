@@ -15,19 +15,15 @@ export function useNavbarData() {
       setError(null);
       const response = await getNavbar();
       
-      console.log('UseNavbarData - Raw response:', response);
-      
       // The useApi hook returns the data directly, not wrapped in success/data
       if (response && response.navItems) {
-        console.log('UseNavbarData - Setting navbar data:', response);
+
         setNavbarData(response);
       } else {
         // Handle the case where response has success/data structure
         if (response && response.success && response.data) {
-          console.log('UseNavbarData - Setting navbar data from success wrapper:', response.data);
           setNavbarData(response.data);
         } else {
-          console.log('UseNavbarData - No valid navbar data found, using fallback');
           setError(response?.message || 'Failed to fetch navbar data');
         }
       }

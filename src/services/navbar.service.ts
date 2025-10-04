@@ -12,7 +12,6 @@ export function useNavbarService() {
         timeout: 30000 // 30 seconds for GET requests
       });
       
-      console.log('Navbar API response:', result);
       return result;
     } catch (err) {
       console.error('Navbar service error:', err);
@@ -30,8 +29,6 @@ export function useNavbarService() {
         },
         timeout: 30000,
       });
-      
-      console.log('Navbar update response:', result);
       return result;
     } catch (err) {
       console.error('Navbar update error:', err);
@@ -45,8 +42,7 @@ export function useNavbarService() {
         method: 'DELETE',
         timeout: 30000
       });
-      
-      console.log('Navbar delete response:', result);
+
       return result;
     } catch (err) {
       console.error('Navbar delete error:', err);

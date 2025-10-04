@@ -119,7 +119,6 @@ export default function SignUpForm() {
       
       if (response) {
         setSuccessMessage("Registration successful! Redirecting to email verification...");
-        console.log("Registration successful:", response);
         
         // Redirect to verify page with email parameter
         setTimeout(() => {
@@ -132,18 +131,11 @@ export default function SignUpForm() {
   }
 
   return (
-    <div className="w-full  space-y-8">
-      <div className="text-center">
-        <h2 className="text-2xl font-bold">Create an Account</h2>
-        <p className="text-muted-foreground mt-2">
-          Enter your details to register
-        </p>
-      </div>
-
+    <div className="w-full space-y-6 sm:space-y-8">
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="space-y-2 grid grid-cols-1 gap-3"
+          className="space-y-3 sm:space-y-4 grid grid-cols-1 gap-3 sm:gap-4"
         >
           {error && (
             <Alert variant="destructive" className="col-span-full">
@@ -164,9 +156,13 @@ export default function SignUpForm() {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Name</FormLabel>
+                  <FormLabel className="text-sm sm:text-base">Name</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter your name" {...field} />
+                    <Input 
+                      placeholder="Enter your name" 
+                      className="h-10 sm:h-11"
+                      {...field} 
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -179,11 +175,12 @@ export default function SignUpForm() {
             name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Email</FormLabel>
+                <FormLabel className="text-sm sm:text-base">Email</FormLabel>
                 <FormControl>
                   <Input
                     placeholder="Enter your email"
                     type="email"
+                    className="h-10 sm:h-11"
                     {...field}
                   />
                 </FormControl>
@@ -191,17 +188,17 @@ export default function SignUpForm() {
               </FormItem>
             )}
           />
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-4 gap-2 sm:gap-3">
             <FormField
               control={form.control}
               name="countryCode"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Country</FormLabel>
+                  <FormLabel className="text-xs sm:text-sm">Code</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Code" />
+                      <SelectTrigger className="h-10 sm:h-11 text-xs sm:text-sm">
+                        <SelectValue placeholder="+1" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -210,10 +207,10 @@ export default function SignUpForm() {
                           key={country.id} 
                           value={country.code}
                         >
-                          <span className="flex items-center gap-2">
-                            <span>{country.flag}</span>
-                            <span>{country.name}</span>
-                            <span className="text-muted-foreground">({country.code})</span>
+                          <span className="flex items-center gap-1">
+                            <span className="text-xs">{country.flag}</span>
+                            <span className="hidden sm:inline text-xs">{country.name}</span>
+                            <span className="text-xs">{country.code}</span>
                           </span>
                         </SelectItem>
                       ))}
@@ -227,12 +224,13 @@ export default function SignUpForm() {
               control={form.control}
               name="phone"
               render={({ field }) => (
-                <FormItem className="col-span-2">
-                  <FormLabel>Phone Number</FormLabel>
+                <FormItem className="col-span-3">
+                  <FormLabel className="text-xs sm:text-sm">Phone Number</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="Enter your phone number"
+                      placeholder="Enter phone number"
                       type="tel"
+                      className="h-10 sm:h-11"
                       {...field}
                     />
                   </FormControl>
@@ -246,12 +244,13 @@ export default function SignUpForm() {
             name="password"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Password</FormLabel>
+                <FormLabel className="text-sm sm:text-base">Password</FormLabel>
                 <FormControl>
                   <div className="relative">
                     <Input
                       placeholder="Enter your password"
                       type={showPassword ? "text" : "password"}
+                      className="h-10 sm:h-11 pr-10"
                       {...field}
                     />
                     <Button
@@ -279,12 +278,13 @@ export default function SignUpForm() {
             name="confirmPassword"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Confirm Password</FormLabel>
+                <FormLabel className="text-sm sm:text-base">Confirm Password</FormLabel>
                 <FormControl>
                   <div className="relative">
                     <Input
                       placeholder="Confirm your password"
                       type={showConfirmPassword ? "text" : "password"}
+                      className="h-10 sm:h-11 pr-10"
                       {...field}
                     />
                     <Button
@@ -309,10 +309,10 @@ export default function SignUpForm() {
             )}
           />
 
-          <Button disabled={loading} type="submit" className="w-full">
+          <Button disabled={loading} type="submit" className="w-full h-10 sm:h-11">
             {loading ? (
               <span>
-                <LoaderPinwheel className="animate-spin" />
+                <LoaderPinwheel className="animate-spin h-4 w-4 sm:h-5 sm:w-5" />
               </span>
             ) : (
               <span>Sign Up</span>

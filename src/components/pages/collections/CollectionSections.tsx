@@ -141,8 +141,6 @@ const CollectionSections = ({ handle }: { handle: string }) => {
     fetchCollectionData(true);
   };
 
-  console.log("Collection Data:", data);
-
   if (loading && !data) {
     return (
       <div className="container mx-auto px-4 py-8">

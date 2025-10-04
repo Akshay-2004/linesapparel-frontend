@@ -36,7 +36,6 @@ export const useWishlistStore = create<WishlistStore>()(
         set({ loading: true, error: null });
         try {
           const res = await api.get(`/users/${userId}/wishlist`);
-          console.log('Wishlist API response:', res.data);
           
           if (res.data && res.data.success && res.data.data) {
             set({ 
@@ -60,7 +59,6 @@ export const useWishlistStore = create<WishlistStore>()(
         set({ loading: true, error: null });
         try {
           const res = await api.post(`/users/${userId}/wishlist`, { productId });
-          console.log('Add to wishlist response:', res.data);
           
           if (res.data && res.data.success && res.data.data) {
             set({ 
@@ -84,7 +82,6 @@ export const useWishlistStore = create<WishlistStore>()(
         set({ loading: true, error: null });
         try {
           const res = await api.delete(`/users/${userId}/wishlist/${productId}`);
-          console.log('Remove from wishlist response:', res.data);
           
           if (res.data && res.data.success && res.data.data) {
             set({ 

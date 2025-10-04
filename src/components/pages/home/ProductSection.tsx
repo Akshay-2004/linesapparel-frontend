@@ -49,7 +49,6 @@ export default function ProductSection({ sectionData }: ProductSectionProps) {
   const getProductByTag = async () => {
     try {
       const response = await fetchData(`/shopify/collections/handle/${tag}?limit=6`)
-      console.log(tag, response)
     } catch (error) {
       console.error('Error fetching products:', error);
     }

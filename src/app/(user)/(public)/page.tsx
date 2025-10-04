@@ -69,6 +69,27 @@ const fallbackHeroData = {
   interval: 5000
 };
 
+// Helper functions to check if sections have meaningful content
+const hasValidHeroContent = (hero: any) => {
+  return hero && hero.slides && Array.isArray(hero.slides) && hero.slides.length > 0 &&
+    hero.slides.some((slide: any) => slide.imageUrl && (slide.title || slide.subtitle));
+};
+
+const hasValidFashionContent = (fashion: any) => {
+  return fashion && 
+    (fashion.header1 || fashion.header2 || fashion.description) &&
+    fashion.banners && Array.isArray(fashion.banners) && fashion.banners.length > 0 &&
+    fashion.banners.some((banner: any) => banner.imageUrl && banner.title);
+};
+
+const hasValidBannerContent = (banner: any) => {
+  return banner && banner.imageUrl && banner.title && banner.buttonText && banner.buttonLink;
+};
+
+const hasValidProductSectionContent = (section: any) => {
+  return section && section.title && section.tag && section.buttonText && section.buttonLink;
+};
+
 export default function Home() {
   const [homepageData, setHomepageData] = useState<IHomepageData | null>(null);
   const { getHomepage, loading, error } = useHomepageService();
@@ -95,30 +116,36 @@ export default function Home() {
     return <HomePageSkeleton />;
   }
 
-    if (!homepageData && error) {
+  if (!homepageData && error) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen">
         <Hero heroData={fallbackHeroData} />
       </div>
     );
   }
 
+  // Only get sections if homepage data exists
   const productSections = homepageData?.productSections || [];
   const banners = homepageData?.banners || [];
 
-  const firstProductSection = productSections[0];
-  const remainingProductSections = productSections.slice(1);
+  // Filter product sections to only those with valid content
+  const validProductSections = productSections.filter(hasValidProductSectionContent);
+  const firstValidProductSection = validProductSections[0];
+  const remainingValidProductSections = validProductSections.slice(1);
+
+  // Filter banners to only those with valid content
+  const validBanners = banners.filter(hasValidBannerContent);
 
   return (
     <>
-      {homepageData?.hero && <Hero heroData={homepageData.hero} />}
-      {homepageData?.fashion && <Fashion fashionData={homepageData.fashion} />}
-      {banners[0] && <HomeBanner1 bannerData={banners[0]} />}
-      {firstProductSection && <ProductSection sectionData={firstProductSection} />}
-      {banners[1] && <HomeBanner2 bannerData={banners[1]} />}
+      {homepageData && hasValidHeroContent(homepageData.hero) && <Hero heroData={homepageData.hero} />}
+      {homepageData && hasValidFashionContent(homepageData.fashion) && <Fashion fashionData={homepageData.fashion} />}
+      {validBanners[0] && <HomeBanner1 bannerData={validBanners[0]} />}
+      {firstValidProductSection && <ProductSection sectionData={firstValidProductSection} />}
+      {validBanners[1] && <HomeBanner2 bannerData={validBanners[1]} />}
 
-      {remainingProductSections.length > 0 &&
-        remainingProductSections.map((section, index) => (
+      {remainingValidProductSections.length > 0 &&
+        remainingValidProductSections.map((section, index) => (
           <ProductSection key={`product-section-${index + 1}`} sectionData={section} />
         ))}
 
