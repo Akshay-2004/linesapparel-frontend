@@ -1,14 +1,21 @@
-"use client"
+"use client";
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { Menu, Search, ShoppingCart, ChevronRight, User as UserIcon, Heart } from "lucide-react";
+import {
+  Menu,
+  Search,
+  ShoppingCart,
+  ChevronRight,
+  User as UserIcon,
+  Heart,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
   SheetContent,
   SheetTrigger,
-  SheetTitle
+  SheetTitle,
 } from "@/components/ui/sheet";
 import {
   NavigationMenu,
@@ -30,8 +37,8 @@ import { useCartStore } from "@/store/cartStore";
 import { useWishlistStore } from "@/store/wishlistStore";
 import { useNavbarData } from "@/hooks/useNavbarData";
 import { usePathname, useRouter } from "next/navigation";
-import FullLogo from '@/assets/logo full.png'
-import logo from '@/assets/logo.png'
+import FullLogo from "@/assets/logo full.png";
+import logo from "@/assets/logo.png";
 
 const UserNavBar = () => {
   const [showMobileSearch, setShowMobileSearch] = useState(false);
@@ -39,7 +46,11 @@ const UserNavBar = () => {
   const { user, isAuthenticated } = useUserDetails();
   const { cart, fetchCart } = useCartStore();
   const { wishlisted, fetchWishlist } = useWishlistStore();
-  const { navbarData, loading: navbarLoading, error: navbarError } = useNavbarData();
+  const {
+    navbarData,
+    loading: navbarLoading,
+    error: navbarError,
+  } = useNavbarData();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
@@ -47,18 +58,18 @@ const UserNavBar = () => {
   // Use dynamic navbar data or fallback to default
   const menuItems = React.useMemo(() => {
     if (navbarData && navbarData.navItems && navbarData.navItems.length > 0) {
-      return navbarData.navItems.map(section => ({
+      return navbarData.navItems.map((section) => ({
         title: section.title,
-        sections: section.categories.map(category => ({
+        sections: section.categories.map((category) => ({
           title: category.title,
-          items: category.items.map(item => ({
+          items: category.items.map((item) => ({
             name: item.label,
-            href: item.href
-          }))
-        }))
+            href: item.href,
+          })),
+        })),
       }));
     }
-    
+
     // Fallback default menu structure
     return [
       {
@@ -70,24 +81,24 @@ const UserNavBar = () => {
               { name: "T-Shirts", href: "/womens/t-shirts" },
               { name: "Skirts", href: "/womens/skirts" },
               { name: "Shorts", href: "/womens/shorts" },
-              { name: "Jeans", href: "/womens/jeans" }
-            ]
-          }
-        ]
+              { name: "Jeans", href: "/womens/jeans" },
+            ],
+          },
+        ],
       },
       {
-        title: "MEN", 
+        title: "MEN",
         sections: [
           {
             title: "Men's Clothing",
             items: [
               { name: "T-Shirts", href: "/mens/t-shirts" },
               { name: "Shirts", href: "/mens/shirts" },
-              { name: "Jeans", href: "/mens/jeans" }
-            ]
-          }
-        ]
-      }
+              { name: "Jeans", href: "/mens/jeans" },
+            ],
+          },
+        ],
+      },
     ];
   }, [navbarData]);
 
@@ -105,7 +116,8 @@ const UserNavBar = () => {
   }, [pathname]);
 
   // Calculate total quantity of items in cart
-  const cartCount = cart?.items?.reduce((sum, item) => sum + (item.quantity || 0), 0) || 0;
+  const cartCount =
+    cart?.items?.reduce((sum, item) => sum + (item.quantity || 0), 0) || 0;
 
   const toggleMobileSearch = () => {
     setShowMobileSearch(!showMobileSearch);
@@ -126,15 +138,15 @@ const UserNavBar = () => {
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       e.preventDefault();
       handleSearch(searchQuery);
     }
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-white">
-      <div className="flex h-14 items-center mx-4 md:mx-auto md:container">
+    <header className="sticky top-0 px-4 z-50 w-full border-b bg-white">
+      <div className="flex h-14 items-center mx-6 md:mx-auto md:container">
         {/* Logo */}
         <Link href="/" className="flex items-center mr-6 h-10 w-auto">
           <Image
@@ -170,10 +182,16 @@ const UserNavBar = () => {
               <NavigationMenuList>
                 {menuItems.map((category, index) => (
                   <NavigationMenuItem key={index}>
-                    <NavigationMenuTrigger>{category.title}</NavigationMenuTrigger>
+                    <NavigationMenuTrigger>
+                      {category.title}
+                    </NavigationMenuTrigger>
                     <NavigationMenuContent>
                       <div className="bg-white p-4 w-[400px] lg:w-[500px]">
-                        <div className={`grid ${category.sections.length > 1 ? 'grid-cols-2' : ''} gap-6`}>
+                        <div
+                          className={`grid ${
+                            category.sections.length > 1 ? "grid-cols-2" : ""
+                          } gap-6`}
+                        >
                           {category.sections.map((section, sectionIndex) => (
                             <div key={sectionIndex}>
                               <h3 className="text-sm font-medium mb-3 text-primary border-b pb-2">
@@ -241,7 +259,10 @@ const UserNavBar = () => {
           <div className="md:hidden flex items-center">
             {showMobileSearch ? (
               <div className="absolute left-0 top-0 w-full h-14 flex items-center px-4 bg-white z-50">
-                <form onSubmit={handleSearchSubmit} className="flex-1 flex items-center">
+                <form
+                  onSubmit={handleSearchSubmit}
+                  className="flex-1 flex items-center"
+                >
                   <Input
                     type="text"
                     placeholder="Search..."
@@ -251,16 +272,21 @@ const UserNavBar = () => {
                     onKeyDown={handleKeyDown}
                     autoFocus
                   />
-                  <Button 
-                    type="submit" 
-                    variant="ghost" 
-                    size="icon" 
+                  <Button
+                    type="submit"
+                    variant="ghost"
+                    size="icon"
                     className="ml-2"
                   >
                     <Search className="h-5 w-5" />
                   </Button>
                 </form>
-                <Button variant="ghost" size="icon" className="ml-2" onClick={toggleMobileSearch}>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="ml-2"
+                  onClick={toggleMobileSearch}
+                >
                   <ChevronRight className="h-5 w-5" />
                 </Button>
               </div>
@@ -292,7 +318,10 @@ const UserNavBar = () => {
                   )}
                 </Link>
                 <Link href="/wishlist">
-                  <Button variant="ghost" className="hidden md:flex relative p-2">
+                  <Button
+                    variant="ghost"
+                    className="hidden md:flex relative p-2"
+                  >
                     <Heart className="h-5 w-5" />
                     {wishlisted.length > 0 && (
                       <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full px-1.5 py-0.5 min-w-[20px] text-center">
@@ -335,7 +364,14 @@ const UserNavBar = () => {
             <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
             <div className="flex flex-col space-y-6 py-4">
               <Link href="/" className="flex items-center">
-                <Image src="/logo full.png" alt="Logo" className="h-auto w-auto" width={120} height={40} priority />
+                <Image
+                  src="/logo full.png"
+                  alt="Logo"
+                  className="h-auto w-auto"
+                  width={120}
+                  height={40}
+                  priority
+                />
               </Link>
 
               {/* Mobile Accordion Menu */}
@@ -346,7 +382,9 @@ const UserNavBar = () => {
                   <div className="h-8 bg-gray-200 animate-pulse rounded"></div>
                 </div>
               ) : navbarError ? (
-                <div className="text-sm text-red-500 text-center py-4">Navigation unavailable</div>
+                <div className="text-sm text-red-500 text-center py-4">
+                  Navigation unavailable
+                </div>
               ) : (
                 <Accordion type="single" collapsible className="w-full">
                   {menuItems.map((category, index) => (
@@ -386,7 +424,10 @@ const UserNavBar = () => {
                 {isAuthenticated() ? (
                   <>
                     <Link href="/dashboard">
-                      <Button variant="default" className="w-full flex items-center justify-center">
+                      <Button
+                        variant="default"
+                        className="w-full flex items-center justify-center"
+                      >
                         {user?.image ? (
                           <Image
                             src={user.image}
@@ -402,7 +443,10 @@ const UserNavBar = () => {
                       </Button>
                     </Link>
                     <Link href="/whishlist">
-                      <Button variant="outline" className="w-full flex items-center justify-center relative">
+                      <Button
+                        variant="outline"
+                        className="w-full flex items-center justify-center relative"
+                      >
                         <Heart className="h-4 w-4 mr-2" />
                         <span>Wishlist</span>
                         {wishlisted.length > 0 && (
@@ -415,11 +459,16 @@ const UserNavBar = () => {
                   </>
                 ) : (
                   <Link href="/sign-in">
-                    <Button variant="default" className="w-full">Log In</Button>
+                    <Button variant="default" className="w-full">
+                      Log In
+                    </Button>
                   </Link>
                 )}
                 <Link href="/cart">
-                  <Button variant="outline" className="w-full flex items-center justify-center relative">
+                  <Button
+                    variant="outline"
+                    className="w-full flex items-center justify-center relative"
+                  >
                     <ShoppingCart className="h-4 w-4 mr-2" />
                     <span>Cart</span>
                     {cartCount > 0 && (
