@@ -106,7 +106,7 @@ export default function SignUpForm() {
     try {
       // Combine country code with phone number
       const fullPhoneNumber = values.countryCode + values.phone;
-      
+
       const response = await fetchData("/auth/register", {
         method: "POST",
         data: {
@@ -116,10 +116,12 @@ export default function SignUpForm() {
           phone: fullPhoneNumber,
         },
       });
-      
+
       if (response) {
-        setSuccessMessage("Registration successful! Redirecting to email verification...");
-        
+        setSuccessMessage(
+          "Registration successful! Redirecting to email verification..."
+        );
+
         // Redirect to verify page with email parameter
         setTimeout(() => {
           router.push(`/verify?email=${encodeURIComponent(values.email)}`);
@@ -142,7 +144,7 @@ export default function SignUpForm() {
               <AlertDescription>{error}</AlertDescription>
             </Alert>
           )}
-          
+
           {successMessage && (
             <Alert className="col-span-full border-green-200 bg-green-50">
               <AlertDescription className="text-green-800">
@@ -158,10 +160,10 @@ export default function SignUpForm() {
                 <FormItem>
                   <FormLabel className="text-sm sm:text-base">Name</FormLabel>
                   <FormControl>
-                    <Input 
-                      placeholder="Enter your name" 
+                    <Input
+                      placeholder="Enter your name"
                       className="h-10 sm:h-11"
-                      {...field} 
+                      {...field}
                     />
                   </FormControl>
                   <FormMessage />
@@ -193,23 +195,25 @@ export default function SignUpForm() {
               control={form.control}
               name="countryCode"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="col-span-1  md:w-max ">
                   <FormLabel className="text-xs sm:text-sm">Code</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
                     <FormControl>
-                      <SelectTrigger className="h-10 sm:h-11 text-xs sm:text-sm">
+                      <SelectTrigger className="h-10 max-sm:w-16 md:w-auto  sm:h-11 text-xs sm:text-sm">
                         <SelectValue placeholder="+1" />
                       </SelectTrigger>
                     </FormControl>
-                    <SelectContent>
+                    <SelectContent className="max-sm:w-16">
                       {countryCodes.map((country) => (
-                        <SelectItem 
-                          key={country.id} 
-                          value={country.code}
-                        >
+                        <SelectItem key={country.id} value={country.code}>
                           <span className="flex items-center gap-1">
                             <span className="text-xs">{country.flag}</span>
-                            <span className="hidden sm:inline text-xs">{country.name}</span>
+                            <span className="hidden sm:inline text-xs">
+                              {country.name}
+                            </span>
                             <span className="text-xs">{country.code}</span>
                           </span>
                         </SelectItem>
@@ -225,7 +229,9 @@ export default function SignUpForm() {
               name="phone"
               render={({ field }) => (
                 <FormItem className="col-span-3">
-                  <FormLabel className="text-xs sm:text-sm">Phone Number</FormLabel>
+                  <FormLabel className="text-xs sm:text-sm">
+                    Phone Number
+                  </FormLabel>
                   <FormControl>
                     <Input
                       placeholder="Enter phone number"
@@ -278,7 +284,9 @@ export default function SignUpForm() {
             name="confirmPassword"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-sm sm:text-base">Confirm Password</FormLabel>
+                <FormLabel className="text-sm sm:text-base">
+                  Confirm Password
+                </FormLabel>
                 <FormControl>
                   <div className="relative">
                     <Input
@@ -309,7 +317,11 @@ export default function SignUpForm() {
             )}
           />
 
-          <Button disabled={loading} type="submit" className="w-full h-10 sm:h-11">
+          <Button
+            disabled={loading}
+            type="submit"
+            className="w-full h-10 sm:h-11"
+          >
             {loading ? (
               <span>
                 <LoaderPinwheel className="animate-spin h-4 w-4 sm:h-5 sm:w-5" />
