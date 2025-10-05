@@ -39,7 +39,7 @@ const Footer = () => {
               Customer Service
             </h3>
             <ul className="space-y-1">
-              <li>
+              {/* <li>
                 <Link href="/contact" className="hover:underline">
                   Contact Us
                 </Link>
@@ -48,7 +48,7 @@ const Footer = () => {
                 <Link href="/faq" className="hover:underline">
                   FAQ
                 </Link>
-              </li>
+              </li> */}
               <li>
                 <Link href="/legal/shipping-policy" className="hover:underline">
                   Shipping Info
@@ -72,11 +72,11 @@ const Footer = () => {
               Company
             </h3>
             <ul className="space-y-1">
-              <li>
+              {/* <li>
                 <Link href="/about" className="hover:underline">
                   About LinesApparel
                 </Link>
-              </li>
+              </li> */}
               <li>
                 <Link
                   href="/legal/terms-of-service"
