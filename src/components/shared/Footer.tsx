@@ -59,11 +59,12 @@ const Footer = () => {
                   Returns & Exchanges
                 </Link>
               </li>
+              <li>
+                <Link href="/legal/cookie-policy" className="hover:underline">
+                  Cookie Policy
+                </Link>
+              </li>
             </ul>
-            <div className="flex flex-col gap-1 mt-2 text-xs text-gray-400">
-              <span>Free Shipping on Orders $50+</span>
-              <span>30-Day Return Policy</span>
-            </div>
           </div>
 
           {/* Company */}
