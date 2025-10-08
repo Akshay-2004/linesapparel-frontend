@@ -29,8 +29,9 @@ const Footer = () => {
               lifestyles.
             </p>
             <p className="text-sm text-gray-400">
-              Address: 123 Fashion St, Style City, CA 12345
+              Address: 2081,cathers drive ,nanaimo,V9R6R9 , canada
             </p>
+            <p className="text-sm text-gray-400">Contact: +1(236)238 2587</p>
           </div>
 
           {/* Customer Service */}
