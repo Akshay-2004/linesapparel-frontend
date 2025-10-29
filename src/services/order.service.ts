@@ -19,7 +19,7 @@ interface OrderItem {
       handle: string;
       title: string;
     };
-  };
+  } | null;
 }
 
 interface ShippingAddress {

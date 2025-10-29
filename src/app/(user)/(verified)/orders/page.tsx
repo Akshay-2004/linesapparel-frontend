@@ -200,9 +200,9 @@ export default function OrdersPage() {
                     <div className="md:col-span-2">
                       <h4 className="font-semibold text-gray-900 mb-3">Order Items</h4>
                       <div className="space-y-2 max-h-40 overflow-y-auto">
-                        {order.lineItems.edges.map(({ node: item }) => (
-                          <div key={item.variant.id} className="flex items-center space-x-3 p-2 bg-gray-50 rounded-lg">
-                            {item.variant.image && (
+                        {order.lineItems.edges.map(({ node: item }, index) => (
+                          <div key={item.variant?.id || `${order.id}-item-${index}`} className="flex items-center space-x-3 p-2 bg-gray-50 rounded-lg">
+                            {item.variant?.image && (
                               <img
                                 src={item.variant.image.url}
                                 alt={item.variant.image.altText || item.title}
@@ -211,9 +211,12 @@ export default function OrdersPage() {
                             )}
                             <div className="flex-1">
                               <p className="font-medium text-sm">{item.title}</p>
-                              <p className="text-xs text-gray-500">{item.variant.title}</p>
+                              <p className="text-xs text-gray-500">{item.variant?.title || 'N/A'}</p>
                               <p className="text-xs text-gray-600">
-                                Qty: {item.quantity} × {orderUtils.formatCurrency(item.variant.priceV2.amount, item.variant.priceV2.currencyCode)}
+                                Qty: {item.quantity} × {item.variant?.priceV2 
+                                  ? orderUtils.formatCurrency(item.variant.priceV2.amount, item.variant.priceV2.currencyCode)
+                                  : 'N/A'
+                                }
                               </p>
                             </div>
                           </div>
