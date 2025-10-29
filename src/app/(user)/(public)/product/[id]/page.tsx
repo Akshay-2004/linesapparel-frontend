@@ -740,13 +740,13 @@ const ProductPage = () => {
           {/* Product Gallery - Now on right side, full width */}
           <div className="w-full">
             {/* Main Image */}
-            <div className="mb-4 overflow-hidden bg-gray-50 rounded-md">
+            <div className="mb-4 overflow-hidden bg-gray-50 rounded-md h-[500px] flex items-center justify-center">
               <Image
                 src={productImages[activeImageIndex]}
                 alt={data.title}
                 width={600}
                 height={800}
-                className="w-full h-auto object-contain"
+                className="max-w-full max-h-full object-contain"
                 priority
               />
             </div>
