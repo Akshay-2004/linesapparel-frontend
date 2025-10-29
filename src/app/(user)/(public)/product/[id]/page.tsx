@@ -39,7 +39,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
-import { Star, X, ChevronLeft, ChevronRight, Link, Heart } from "lucide-react";
+import { Star, X, ChevronLeft, ChevronRight, Link, Heart, ZoomIn, Plus, Minus } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { useApi } from "@/hooks/useApi";
 import { useReviewService, IReviewResponse, IStarDistribution } from "@/services/review.service";
@@ -199,6 +199,13 @@ const ProductPage = () => {
 
   // Add state for size chart modal
   const [showSizeChart, setShowSizeChart] = useState(false);
+
+  // Add state for enlarged image modal
+  const [showEnlargedImage, setShowEnlargedImage] = useState(false);
+  const [imageZoom, setImageZoom] = useState(1);
+  const [imagePan, setImagePan] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
 
   // Local storage key for helpful votes
   const HELPFUL_VOTES_KEY = 'helpful_votes';
@@ -560,6 +567,56 @@ const ProductPage = () => {
     });
   };
 
+  // Enlarged image modal functions
+  const openEnlargedImage = () => {
+    setShowEnlargedImage(true);
+    setImageZoom(1);
+    setImagePan({ x: 0, y: 0 });
+  };
+
+  const closeEnlargedImage = () => {
+    setShowEnlargedImage(false);
+    setImageZoom(1);
+    setImagePan({ x: 0, y: 0 });
+  };
+
+  const handleZoomIn = () => {
+    setImageZoom(prev => Math.min(prev + 0.5, 3));
+  };
+
+  const handleZoomOut = () => {
+    setImageZoom(prev => Math.max(prev - 0.5, 0.5));
+  };
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (imageZoom > 1) {
+      setIsDragging(true);
+      setDragStart({ x: e.clientX - imagePan.x, y: e.clientY - imagePan.y });
+    }
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (isDragging && imageZoom > 1) {
+      setImagePan({
+        x: e.clientX - dragStart.x,
+        y: e.clientY - dragStart.y
+      });
+    }
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  const handleWheel = (e: React.WheelEvent) => {
+    e.preventDefault();
+    if (e.deltaY < 0) {
+      handleZoomIn();
+    } else {
+      handleZoomOut();
+    }
+  };
+
   return (
     <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Breadcrumb */}
@@ -742,7 +799,7 @@ const ProductPage = () => {
           {/* Product Gallery - Now on right side, full width */}
           <div className="w-full">
             {/* Main Image */}
-            <div className="mb-4 overflow-hidden bg-gray-50 rounded-md h-[500px] flex items-center justify-center">
+            <div className="mb-4 overflow-hidden bg-gray-50 rounded-md h-[500px] flex items-center justify-center relative group">
               <Image
                 src={productImages[activeImageIndex]}
                 alt={data.title}
@@ -751,6 +808,14 @@ const ProductPage = () => {
                 className="max-w-full max-h-full object-contain"
                 priority
               />
+              {/* Enlarge Button */}
+              <button
+                onClick={openEnlargedImage}
+                className="absolute bottom-4 right-4 bg-white/80 hover:bg-white text-gray-800 p-2 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                title="Enlarge image"
+              >
+                <ZoomIn className="h-5 w-5" />
+              </button>
             </div>
 
             {/* Thumbnail Gallery */}
@@ -1261,7 +1326,169 @@ const ProductPage = () => {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Enlarged Image Modal */}
+      <EnlargedImageModal
+        open={showEnlargedImage}
+        onClose={closeEnlargedImage}
+        imageSrc={productImages[activeImageIndex]}
+        imageAlt={`${data.title} - View ${activeImageIndex + 1}`}
+        title={data.title}
+        imageIndex={activeImageIndex}
+        totalImages={productImages.length}
+        onPrevious={() => setActiveImageIndex(prev => prev === 0 ? productImages.length - 1 : prev - 1)}
+        onNext={() => setActiveImageIndex(prev => (prev + 1) % productImages.length)}
+      />
     </div>
+  );
+};
+
+{/* Enlarged Image Modal */}
+const EnlargedImageModal = ({ 
+  open, 
+  onClose, 
+  imageSrc, 
+  imageAlt, 
+  title,
+  imageIndex,
+  totalImages,
+  onPrevious,
+  onNext 
+}: {
+  open: boolean;
+  onClose: () => void;
+  imageSrc: string;
+  imageAlt: string;
+  title: string;
+  imageIndex: number;
+  totalImages: number;
+  onPrevious: () => void;
+  onNext: () => void;
+}) => {
+  const [imageZoom, setImageZoom] = useState(1);
+  const [imagePan, setImagePan] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+
+  const handleZoomIn = () => setImageZoom(prev => Math.min(prev + 0.5, 3));
+  const handleZoomOut = () => setImageZoom(prev => Math.max(prev - 0.5, 0.5));
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (imageZoom > 1) {
+      setIsDragging(true);
+      setDragStart({ x: e.clientX - imagePan.x, y: e.clientY - imagePan.y });
+    }
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (isDragging && imageZoom > 1) {
+      setImagePan({
+        x: e.clientX - dragStart.x,
+        y: e.clientY - dragStart.y
+      });
+    }
+  };
+
+  const handleMouseUp = () => setIsDragging(false);
+
+  const handleWheel = (e: React.WheelEvent) => {
+    e.preventDefault();
+    if (e.deltaY < 0) {
+      handleZoomIn();
+    } else {
+      handleZoomOut();
+    }
+  };
+
+  useEffect(() => {
+    if (!open) {
+      setImageZoom(1);
+      setImagePan({ x: 0, y: 0 });
+    }
+  }, [open]);
+
+  return (
+    <Dialog open={open} onOpenChange={onClose}>
+      <DialogContent className="max-w-[95vw] max-h-[95vh] w-full h-full p-0">
+        <DialogHeader className="absolute top-4 left-4 z-10 bg-black/50 text-white p-2 rounded">
+          <DialogTitle className="text-white">
+            {title} - Image {imageIndex + 1} of {totalImages}
+          </DialogTitle>
+        </DialogHeader>
+
+        <div className="relative w-full h-full bg-black flex items-center justify-center overflow-hidden">
+          <button
+            onClick={onClose}
+            className="absolute top-4 right-4 z-20 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-colors"
+          >
+            <X className="h-6 w-6" />
+          </button>
+
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 flex items-center gap-2 bg-black/50 p-2 rounded-full">
+            <button
+              onClick={handleZoomOut}
+              disabled={imageZoom <= 0.5}
+              className="text-white p-2 hover:bg-white/20 rounded-full transition-colors disabled:opacity-50"
+            >
+              <Minus className="h-4 w-4" />
+            </button>
+            <span className="text-white text-sm min-w-[60px] text-center">
+              {Math.round(imageZoom * 100)}%
+            </span>
+            <button
+              onClick={handleZoomIn}
+              disabled={imageZoom >= 3}
+              className="text-white p-2 hover:bg-white/20 rounded-full transition-colors disabled:opacity-50"
+            >
+              <Plus className="h-4 w-4" />
+            </button>
+          </div>
+
+          {totalImages > 1 && (
+            <>
+              <button
+                onClick={onPrevious}
+                className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-3 rounded-full transition-colors z-10"
+              >
+                <ChevronLeft className="h-6 w-6" />
+              </button>
+              <button
+                onClick={onNext}
+                className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-3 rounded-full transition-colors z-10"
+              >
+                <ChevronRight className="h-6 w-6" />
+              </button>
+            </>
+          )}
+
+          <div
+            className="relative w-full h-full flex items-center justify-center cursor-grab active:cursor-grabbing"
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            onMouseLeave={handleMouseUp}
+            onWheel={handleWheel}
+          >
+            <Image
+              src={imageSrc}
+              alt={imageAlt}
+              width={1200}
+              height={1600}
+              className="max-w-none object-contain select-none"
+              style={{
+                transform: `scale(${imageZoom}) translate(${imagePan.x / imageZoom}px, ${imagePan.y / imageZoom}px)`,
+                transition: isDragging ? 'none' : 'transform 0.2s ease-out'
+              }}
+              priority
+            />
+          </div>
+
+          <div className="absolute bottom-4 right-4 bg-black/50 text-white text-xs p-2 rounded">
+            <p>Scroll to zoom • Drag to pan</p>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 };
 
