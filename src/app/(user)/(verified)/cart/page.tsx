@@ -44,8 +44,8 @@ export default function CartPage() {
     handleFetchCart();
   }, []);
 
-  // Show loading state while checking authentication
-  if (userLoading || cartLoading) {
+  // Show loading state while checking authentication or if user data is still loading
+  if (userLoading || cartLoading || (user === null && !userLoading)) {
     return <div className="text-center py-16">
       <Loader fullScreen />
     </div>;
@@ -172,7 +172,7 @@ export default function CartPage() {
   }
 
   return (
-    <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-[calc(75vh-4rem)] py-12 px-4 sm:px-6 lg:px-8">
       <div className="container max-w-7xl mx-auto flex flex-col gap-8">
         <Card className="backdrop-blur-sm bg-white/90 shadow-none rounded-2xl border-0 w-full">
           <CardHeader className="px-6 mx-16 py-8">

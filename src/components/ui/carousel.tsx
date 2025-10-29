@@ -17,6 +17,7 @@ interface CarouselProps {
   className?: string;
   autoPlay?: boolean;
   interval?: number;
+  maxCardWidth?: string; // Maximum width for cards when fewer items than cardsPerView
 }
 
 // Utility to get cards per view based on window width
@@ -44,6 +45,7 @@ export const Carousel: React.FC<CarouselProps> = ({
   className = "",
   autoPlay = true,
   interval = 5000,
+  maxCardWidth = "300px",
 }) => {
   const totalCards = React.Children.count(children);
   const cardsPerPage = useResponsiveCardsPerView(cardsPerView);
@@ -76,7 +78,7 @@ export const Carousel: React.FC<CarouselProps> = ({
 
   // Auto-slide effect
   useEffect(() => {
-    if (autoPlay) {
+    if (autoPlay && totalCards > cardsPerPage) {
       resetInterval();
     }
     return () => {
@@ -87,7 +89,7 @@ export const Carousel: React.FC<CarouselProps> = ({
 
   function resetInterval() {
     if (intervalRef.current) clearInterval(intervalRef.current);
-    if (autoPlay) {
+    if (autoPlay && totalCards > cardsPerPage) {
       intervalRef.current = setInterval(() => {
         setCurrentIndex((prev) => (prev === totalCards - 1 ? 0 : prev + 1));
       }, interval);
@@ -98,18 +100,24 @@ export const Carousel: React.FC<CarouselProps> = ({
     <div className={`w-full flex flex-col gap-6 ${className}`}>
       {/* Cards container */}
       <div className="relative w-full overflow-hidden">
-        <div className="flex gap-6">
+        <div className={`flex gap-6`}>
           {Array.from({ length: Math.min(cardsPerPage, totalCards) }).map((_, idx) => {
             const cardIndex = (currentIndex + idx) % totalCards;
+            const actualCardsToShow = Math.min(cardsPerPage, totalCards);
+            const hasAnimation = totalCards > cardsPerPage;
+            
             return (
               <motion.div
                 key={cardIndex}
-                className="flex-1"
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.3 }}
+                className={totalCards < cardsPerPage ? 'flex-shrink-0' : 'flex-1'}
+                initial={hasAnimation ? { opacity: 0, scale: 0.9 } : false}
+                animate={hasAnimation ? { opacity: 1, scale: 1 } : false}
+                transition={hasAnimation ? { duration: 0.3 } : undefined}
                 style={{
-                  width: `calc(${100 / cardsPerPage}% - ${(3 * (cardsPerPage - 1)) / cardsPerPage}px)`,
+                  width: totalCards < cardsPerPage 
+                    ? `calc(${100 / cardsPerPage}% - ${(3 * (cardsPerPage - 1)) / cardsPerPage}px)`
+                    : `calc(${100 / actualCardsToShow}% - ${(3 * (actualCardsToShow - 1)) / actualCardsToShow}px)`,
+                  maxWidth: totalCards < cardsPerPage ? maxCardWidth : 'none'
                 }}
               >
                 {childrenArray[cardIndex]}
@@ -119,44 +127,46 @@ export const Carousel: React.FC<CarouselProps> = ({
         </div>
       </div>
 
-      {/* Controls (dots and navigation arrows) */}
-      <div className="flex items-center justify-between w-full">
-        {/* Dots - one for each valid starting position */}
-        <div className="flex gap-2">
-          {Array.from({ length: totalPositions }).map((_, i) => (
-            <button
-              key={i}
-              onClick={() => handleDotClick(i)}
-              className={`h-2 w-2 rounded-full transition-colors duration-200 ${
-                i === currentIndex % totalPositions ? "bg-primary" : "bg-gray-300"
-              }`}
-              aria-label={`Go to slide ${i + 1}`}
-            />
-          ))}
-        </div>
+      {/* Controls (dots and navigation arrows) - only show if navigation is needed */}
+      {totalCards > cardsPerPage && (
+        <div className="flex items-center justify-between w-full">
+          {/* Dots - one for each valid starting position */}
+          <div className="flex gap-2">
+            {Array.from({ length: totalPositions }).map((_, i) => (
+              <button
+                key={i}
+                onClick={() => handleDotClick(i)}
+                className={`h-2 w-2 rounded-full transition-colors duration-200 ${
+                  i === currentIndex % totalPositions ? "bg-primary" : "bg-gray-300"
+                }`}
+                aria-label={`Go to slide ${i + 1}`}
+              />
+            ))}
+          </div>
 
-        {/* Arrows */}
-        <div className="flex gap-2">
-          <motion.button
-            onClick={handlePrev}
-            className="rounded-full border border-gray-300 p-2 bg-white hover:bg-gray-100 transition"
-            aria-label="Previous"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <ChevronLeft className="w-5 h-5 text-primary" />
-          </motion.button>
-          <motion.button
-            onClick={handleNext}
-            className="rounded-full border border-gray-300 p-2 bg-white hover:bg-gray-100 transition"
-            aria-label="Next"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <ChevronRight className="w-5 h-5 text-primary" />
-          </motion.button>
+          {/* Arrows */}
+          <div className="flex gap-2">
+            <motion.button
+              onClick={handlePrev}
+              className="rounded-full border border-gray-300 p-2 bg-white hover:bg-gray-100 transition"
+              aria-label="Previous"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <ChevronLeft className="w-5 h-5 text-primary" />
+            </motion.button>
+            <motion.button
+              onClick={handleNext}
+              className="rounded-full border border-gray-300 p-2 bg-white hover:bg-gray-100 transition"
+              aria-label="Next"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <ChevronRight className="w-5 h-5 text-primary" />
+            </motion.button>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

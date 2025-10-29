@@ -117,6 +117,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setError(null);
 
       const userData = await fetchData("/auth/me");
+      
       if (userData) {
         const processedUser: UserDetails = {
           ...userData,
@@ -193,7 +194,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     // User authentication state
     user,
-    loading: loading && !isInitialized,
+    loading: loading || !isInitialized,
     error,
     isLoggingOut,
 

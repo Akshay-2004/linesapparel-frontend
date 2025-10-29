@@ -34,18 +34,6 @@ const HomeBanner2 = ({ bannerData }: HomeBanner2Props) => {
             {bannerData.description}
           </p>
         </div>
-        {/* Right: Buttons */}
-        <div className="flex flex-row gap-4 mt-6 md:mt-0">
-          <Button className="bg-primary-5 hover:bg-primary-6 text-white font-semibold px-6 py-2 rounded transition">
-            {bannerData.buttonText}
-          </Button>
-          <Button
-            variant="outline"
-            className="border-2 border-primary-5 text-primary-5 hover:bg-primary-50  bg-transparent font-semibold px-6 py-2 rounded transition"
-          >
-            Learn More
-          </Button>
-        </div>
       </div>
     </section>
   );

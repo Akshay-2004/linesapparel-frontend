@@ -245,25 +245,7 @@ export default function ProfilePage() {
                   {!isEditing ? (
                     <>
                       <h2 className="text-2xl font-semibold text-gray-900">{user.name}</h2>
-                      <div className="flex items-center space-x-3 mt-1">
-                        <Badge className={getRoleBadgeColor(user.role)}>
-                          {user.role === EUserRole.superAdmin ? 'Super Admin' :
-                            user.role === EUserRole.admin ? 'Admin' : 'Client'}
-                        </Badge>
-                        <div className="flex items-center space-x-1">
-                          {user.verified ? (
-                            <>
-                              <CheckCircle className="h-4 w-4 text-green-500" />
-                              <span className="text-sm text-green-600">Verified</span>
-                            </>
-                          ) : (
-                            <>
-                              <XCircle className="h-4 w-4 text-red-500" />
-                              <span className="text-sm text-red-600">Not Verified</span>
-                            </>
-                          )}
-                        </div>
-                      </div>
+
                     </>
                   ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
