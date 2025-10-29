@@ -412,7 +412,7 @@ const ProductPage = () => {
   const price = variants[0]?.price || "0.00";
 
   const handleAddToCart = async () => {
-    if (!selectedSize) {
+    if (sizes.length > 0 && !selectedSize) {
       toast("Please select a size");
       return;
     }
@@ -428,7 +428,7 @@ const ProductPage = () => {
     // Find the selected variant ID based on size and color
     const selectedVariantObj = variants.find(
       (variant) =>
-        variant.title.includes(selectedSize) &&
+        (sizes.length === 0 || variant.title.includes(selectedSize)) &&
         (colors.length === 0 || variant.title.includes(selectedVariant))
     );
 
@@ -460,7 +460,7 @@ const ProductPage = () => {
   };
 
   const handleBuyNow = async () => {
-    if (!selectedSize) {
+    if (sizes.length > 0 && !selectedSize) {
       toast("Please select a size");
       return;
     }
@@ -476,7 +476,7 @@ const ProductPage = () => {
     // Find the selected variant ID based on size and color
     const selectedVariantId = variants.find(
       (variant) =>
-        variant.title.includes(selectedSize) &&
+        (sizes.length === 0 || variant.title.includes(selectedSize)) &&
         (colors.length === 0 || variant.title.includes(selectedVariant))
     )?.id;
 
