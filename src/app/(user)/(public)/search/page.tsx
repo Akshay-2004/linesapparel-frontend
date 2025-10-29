@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, Suspense } from 'react';
+import { useEffect, useState, Suspense, useCallback } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useApi } from '@/hooks/useApi';
 import { ProductCard } from '@/components/cards/ProductCard';
@@ -83,7 +83,7 @@ function SearchPageContent() {
   const [currentPage, setCurrentPage] = useState(1);
   const [cursor, setCursor] = useState<string | null>(null);
 
-  const performSearch = async (newQuery?: string, resetPage = false) => {
+  const performSearch = useCallback(async (newQuery?: string, resetPage = false) => {
     try {
       const query = newQuery !== undefined ? newQuery : searchQuery;
       
@@ -113,7 +113,7 @@ function SearchPageContent() {
       console.error('Search error:', error);
       toast.error('Failed to search products');
     }
-  };
+  }, [searchQuery, selectedVendors, selectedProductTypes, showAvailableOnly, priceRange, sortBy, cursor, fetchData]);
 
   const handleSearch = () => {
     setSearchQuery(tempSearchQuery);
@@ -129,9 +129,9 @@ function SearchPageContent() {
     }
   };
 
-  const handleFilterChange = () => {
+  const handleFilterChange = useCallback(() => {
     performSearch(undefined, true);
-  };
+  }, [performSearch]);
 
   const handleNextPage = () => {
     if (searchResults?.pageInfo.hasNextPage && searchResults.pageInfo.endCursor) {
@@ -159,7 +159,7 @@ function SearchPageContent() {
       // Load popular products or recent products if no search query
       performSearch('', true);
     }
-  }, []);
+  }, [searchParams, performSearch]); // Add performSearch as dependency
 
   useEffect(() => {
     handleFilterChange();
