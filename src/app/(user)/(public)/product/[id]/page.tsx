@@ -566,11 +566,13 @@ const ProductPage = () => {
       <Breadcrumb className="mb-6">
         <BreadcrumbList>
           <BreadcrumbItem>
-            <BreadcrumbLink href="#">Shop all</BreadcrumbLink>
+            <BreadcrumbLink href="/">Shop all</BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
-            <BreadcrumbLink href="#">{data.productType || 'Products'}</BreadcrumbLink>
+            <BreadcrumbLink href={`/products/${data.productType?.toLowerCase().replace(/\s+/g, '-') || 'products'}`}>
+              {data.productType || 'Products'}
+            </BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
