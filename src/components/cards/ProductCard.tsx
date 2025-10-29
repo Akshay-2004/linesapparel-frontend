@@ -42,9 +42,11 @@ export function ProductCard({
               ${price.toFixed(2)}
             </span>
           </div>
-          <p className="text-sm font-normal leading-tight text-gray-600">
-            {variant}
-          </p>
+          {variant && variant !== "Default Title" && (
+            <p className="text-sm font-normal leading-tight text-gray-600">
+              {variant}
+            </p>
+          )}
           {showButton && (
             <Button
               className="mt-3 rounded-none w-full text-primary-5 text-sm font-medium font-['Inter'] leading-normal"
