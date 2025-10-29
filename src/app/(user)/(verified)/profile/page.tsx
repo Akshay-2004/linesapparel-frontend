@@ -229,14 +229,6 @@ export default function ProfilePage() {
                   {getInitials(user.name)}
                 </AvatarFallback>
               </Avatar>
-              <button
-                type="button"
-                className="absolute -bottom-1 -right-1 h-8 w-8 rounded-full bg-white shadow flex items-center justify-center border hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                aria-label="Change profile photo"
-                onClick={handleAvatarEdit}
-              >
-                <Pencil className="h-4 w-4 text-gray-700" />
-              </button>
               <input
                 ref={fileInputRef}
                 type="file"
@@ -367,53 +359,6 @@ export default function ProfilePage() {
         </CardContent>
       </Card>
 
-      {/* Account Status */}
-      <Card className="shadow-lg">
-        <CardHeader className="bg-gradient-to-r from-gray-50 to-slate-50">
-          <CardTitle className="flex items-center space-x-3">
-            <Shield className="h-6 w-6 text-gray-600" />
-            <span>Account Status</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="p-6">
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="text-gray-600">Email Verification</span>
-              <div className="flex items-center space-x-2">
-                {user.verified ? (
-                  <>
-                    <CheckCircle className="h-5 w-5 text-green-500" />
-                    <span className="text-green-600 font-medium">Verified</span>
-                  </>
-                ) : (
-                  <>
-                    <XCircle className="h-5 w-5 text-red-500" />
-                    <span className="text-red-600 font-medium">Pending</span>
-                    <Button size="sm" variant="outline" className="ml-2">
-                      Resend Verification
-                    </Button>
-                  </>
-                )}
-              </div>
-            </div>
-
-            <div className="flex items-center justify-between">
-              <span className="text-gray-600">Account Type</span>
-              <Badge className={getRoleBadgeColor(user.role)}>
-                {user.role === EUserRole.superAdmin ? 'Super Admin' :
-                  user.role === EUserRole.admin ? 'Admin' : 'Client'}
-              </Badge>
-            </div>
-
-            <div className="flex items-center justify-between">
-              <span className="text-gray-600">Last Updated</span>
-              <span className="text-gray-900 font-medium">
-                {formatDate(user.updatedAt)}
-              </span>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
     </div>
   );
 }
