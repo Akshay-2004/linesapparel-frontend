@@ -17,7 +17,7 @@ import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox"
-import { MapPin, CreditCard, Loader2, Save, User } from "lucide-react"
+import { MapPin, CreditCard, Loader2, Save, User, ShoppingBag } from "lucide-react"
 import { useCartStore } from '@/store/cartStore'
 import { useApi } from '@/hooks/useApi'
 import { useRouter } from 'next/navigation'
@@ -68,7 +68,7 @@ interface AddressApiResponse {
 export default function CheckoutPage() {
     const { fetchData, loading } = useApi()
     const { cart, error, fetchCart, clearCart } = useCartStore();
-    const { variantId, quantity } = useBuyNowStore();
+    const { variantId, quantity, clearBuyNow } = useBuyNowStore();
     const { user, isAuthenticated } = useUserDetails();
     const router = useRouter()
     const [savedAddress, setSavedAddress] = useState<UserAddress | null>(null);
@@ -267,16 +267,19 @@ export default function CheckoutPage() {
 
         let line_items: LineItem[] = [];
 
-        if (cart?.items && cart.items.length > 0) {
-            line_items = cart.items.map((item: CartItem): LineItem => ({
-                variant_id: Number(item.variantId),
-                quantity: item.quantity,
-            }));
-        } else if (variantId && quantity) {
+        // Prioritize Buy Now items over cart items
+        if (variantId && quantity) {
+            // User clicked "Buy Now" - use only this item
             line_items = [{
                 variant_id: Number(variantId),
                 quantity: quantity,
             }];
+        } else if (cart?.items && cart.items.length > 0) {
+            // User is checking out from cart
+            line_items = cart.items.map((item: CartItem): LineItem => ({
+                variant_id: Number(item.variantId),
+                quantity: item.quantity,
+            }));
         } else {
             toast.error("No items to checkout.");
             return;
@@ -327,6 +330,11 @@ export default function CheckoutPage() {
                 localStorage.setItem('draft_order_id', res.draft_order_id.toString());
             }
 
+            // Clear Buy Now store if this was a Buy Now checkout
+            if (variantId && quantity) {
+                clearBuyNow();
+            }
+
             // Redirect to Shopify's payment portal
             if (res.invoice_url) {
                 window.location.href = res.invoice_url;
@@ -355,10 +363,23 @@ export default function CheckoutPage() {
                     <CardHeader className="space-y-6 pb-8 border-b border-border">
                         <div>
                             <h4 className="text-primary-6 text-sm font-medium mb-2">Secure & Fast Payment</h4>
-                            <CardTitle className="text-4xl font-bold text-foreground mb-4">Checkout</CardTitle>
+                            <CardTitle className="text-4xl font-bold text-foreground mb-4">
+                                {variantId && quantity ? "Quick Checkout" : "Checkout"}
+                            </CardTitle>
                             <CardDescription className="text-muted-foreground">
-                                Please fill in your shipping and billing information to complete your order.
+                                {variantId && quantity 
+                                    ? "You're purchasing a single item with Buy Now. Complete your order details below."
+                                    : "Please fill in your shipping and billing information to complete your order."
+                                }
                             </CardDescription>
+                            {variantId && quantity && (
+                                <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                                    <div className="flex items-center gap-2 text-blue-800 text-sm">
+                                        <ShoppingBag className="h-4 w-4" />
+                                        <span>Buy Now Mode: Processing single item purchase</span>
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     </CardHeader>
                     <CardContent className="pt-8 space-y-8">

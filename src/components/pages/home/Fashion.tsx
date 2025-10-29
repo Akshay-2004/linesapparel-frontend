@@ -1,6 +1,7 @@
 "use client";
 import { ProductCard } from "@/components/cards/ProductCard";
 import React, { useEffect, useState } from "react";
+import Link from "next/link";
 import whiteDress from "@/assets/products/whitefemaledress.jpg";
 import blueDress from "@/assets/products/bluefemaledress.png";
 import greenTshirt from "@/assets/products/greenTshirt.jpg";
@@ -140,17 +141,19 @@ const Fashion = ({ fashionData }: FashionProps) => {
                     key={product.id}
                     className="col-span-1 lg:col-span-3 min-h-[320px] sm:min-h-[360px] lg:min-h-[400px]  flex"
                   >
-                    <ProductCard
-                      image={
-                        product.images.edges[0]?.node.url || "/placeholder.jpg"
-                      }
-                      name={product.title}
-                      variant={product.variants.edges[0]?.node.title || ""}
-                      price={parseFloat(
-                        product.variants.edges[0]?.node.price || "0"
-                      )}
-                      showButton={false}
-                    />
+                    <Link href={`/product/${product.handle}`} className="w-full">
+                      <ProductCard
+                        image={
+                          product.images.edges[0]?.node.url || "/placeholder.jpg"
+                        }
+                        name={product.title}
+                        variant={product.variants.edges[0]?.node.title || ""}
+                        price={parseFloat(
+                          product.variants.edges[0]?.node.price || "0"
+                        )}
+                        showButton={false}
+                      />
+                    </Link>
                   </div>
                 ))}
                 {/* Banner cards using fashionData.banners */}
@@ -173,17 +176,19 @@ const Fashion = ({ fashionData }: FashionProps) => {
                     key={product.id}
                     className="col-span-1 lg:col-span-3 min-h-[320px] sm:min-h-[360px] lg:min-h-[400px]  flex"
                   >
-                    <ProductCard
-                      image={
-                        product.images.edges[0]?.node.url || "/placeholder.jpg"
-                      }
-                      name={product.title}
-                      variant={product.variants.edges[0]?.node.title || ""}
-                      price={parseFloat(
-                        product.variants.edges[0]?.node.price || "0"
-                      )}
-                      showButton={false}
-                    />
+                    <Link href={`/product/${product.handle}`} className="w-full">
+                      <ProductCard
+                        image={
+                          product.images.edges[0]?.node.url || "/placeholder.jpg"
+                        }
+                        name={product.title}
+                        variant={product.variants.edges[0]?.node.title || ""}
+                        price={parseFloat(
+                          product.variants.edges[0]?.node.price || "0"
+                        )}
+                        showButton={false}
+                      />
+                    </Link>
                   </div>
                 ))}
               </>
