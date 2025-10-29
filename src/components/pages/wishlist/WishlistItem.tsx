@@ -1,7 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Trash2, ShoppingCart } from 'lucide-react';
+import { Trash2 } from 'lucide-react';
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { WishlistItem as WishlistItemType } from '@/store/wishlistStore';
@@ -9,10 +9,9 @@ import { WishlistItem as WishlistItemType } from '@/store/wishlistStore';
 interface WishlistItemProps {
   item: WishlistItemType;
   onRemove: (productId: string) => void;
-  onAddToCart: (item: WishlistItemType) => void;
 }
 
-export function WishlistItem({ item, onRemove, onAddToCart }: WishlistItemProps) {
+export function WishlistItem({ item, onRemove }: WishlistItemProps) {
   return (
     <Card className="group hover:shadow-lg transition-all duration-300 border border-gray-200">
       <div className="relative overflow-hidden">
@@ -58,19 +57,11 @@ export function WishlistItem({ item, onRemove, onAddToCart }: WishlistItemProps)
       </CardContent>
       
       <CardFooter className="p-4 pt-0">
-        <div className="flex gap-2 w-full">
-          <Link href={`/product/${item.handle}`} className="flex-1">
-            <Button variant="outline" className="w-full">
-              View Details
-            </Button>
-          </Link>
-          <Button
-            onClick={() => onAddToCart(item)}
-          >
-            <ShoppingCart className="mr-1 h-4 w-4" />
-            Add to Cart
+        <Link href={`/product/${item.handle}`} className="w-full">
+          <Button variant="default" className="w-full">
+            View Product
           </Button>
-        </div>
+        </Link>
       </CardFooter>
     </Card>
   );

@@ -3,7 +3,7 @@
 import React, { useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Heart, ShoppingCart, ArrowLeft, Trash2 } from 'lucide-react';
+import { Heart, ArrowLeft, Trash2 } from 'lucide-react';
 import {
   Card,
   CardContent,
@@ -14,7 +14,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { useWishlistStore } from '@/store/wishlistStore';
 import { useUserDetails } from '@/hooks/useUserDetails';
-import { useCartStore } from '@/store/cartStore';
 import { toast } from 'sonner';
 import Loader from '@/components/shared/Loader';
 import { EmptyWishlistState } from '@/components/pages/wishlist/EmptyWishlistState';
@@ -23,7 +22,6 @@ import { WishlistItem } from '@/components/pages/wishlist/WishlistItem';
 export default function WishlistPage() {
   const { user, isAuthenticated } = useUserDetails();
   const { items, loading, error, fetchWishlist, removeFromWishlist } = useWishlistStore();
-  const { addToCart } = useCartStore();
 
   useEffect(() => {
     if (isAuthenticated() && user?.id) {
@@ -39,24 +37,6 @@ export default function WishlistPage() {
       toast.success("Removed from wishlist");
     } catch (error) {
       toast.error("Failed to remove from wishlist");
-    }
-  };
-
-  const handleAddToCart = async (item: any) => {
-    try {
-      // Extract product ID from Shopify format
-      const numericProductId = item.id.replace('gid://shopify/Product/', '');
-      
-      await addToCart({
-        productId: item.id,
-        variantId: numericProductId, // This might need adjustment based on your cart implementation
-        quantity: 1,
-        price: parseFloat(item.price),
-        title: item.title,
-      });
-      toast.success("Added to cart");
-    } catch (error) {
-      toast.error("Failed to add to cart");
     }
   };
 
@@ -116,7 +96,6 @@ export default function WishlistPage() {
                     key={item.id}
                     item={item}
                     onRemove={handleRemoveFromWishlist}
-                    onAddToCart={handleAddToCart}
                   />
                 ))}
               </div>
