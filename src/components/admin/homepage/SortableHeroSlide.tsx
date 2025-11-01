@@ -16,6 +16,7 @@ interface HeroSlide {
   pretitle?: string;
   title: string;
   subtitle: string;
+  link?: string;
 }
 
 interface SortableHeroSlideProps {
@@ -113,6 +114,18 @@ export const SortableHeroSlide: React.FC<SortableHeroSlideProps> = ({
               placeholder="Slide description or subtitle"
               rows={3}
             />
+          </div>
+          <div>
+            <Label className="text-sm font-medium text-gray-700">Link (Optional)</Label>
+            <Input
+              value={slide.link || ''}
+              onChange={(e) => onUpdate({ ...slide, link: e.target.value })}
+              className="mt-1"
+              placeholder="e.g., /products or https://example.com"
+            />
+            <p className="text-xs text-gray-500 mt-1">
+              Add a link to make this hero slide clickable. Can be a relative path (/products) or full URL.
+            </p>
           </div>
         </CardContent>
       </Card>

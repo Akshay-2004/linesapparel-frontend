@@ -48,6 +48,7 @@ const defaultHeroContent: IHeroContent = {
       pretitle: '',
       title: '',
       subtitle: '',
+      link: '',
     },
   ],
   autoPlay: true,
@@ -331,6 +332,7 @@ export default function HomepageManagement() {
       pretitle: '',
       title: '',
       subtitle: '',
+      link: '',
     };
     setHomepageData({
       ...homepageData,
