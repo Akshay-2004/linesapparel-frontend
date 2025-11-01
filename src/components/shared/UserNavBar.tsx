@@ -44,6 +44,7 @@ const UserNavBar = () => {
   const [showMobileSearch, setShowMobileSearch] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [isHovered, setIsHovered] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const { user, isAuthenticated } = useUserDetails();
   const { cart, fetchCart } = useCartStore();
   const { wishlisted, fetchWishlist } = useWishlistStore();
@@ -58,6 +59,18 @@ const UserNavBar = () => {
 
   // Check if on homepage
   const isHomepage = pathname === '/';
+
+  // Track scroll position for homepage
+  useEffect(() => {
+    if (!isHomepage) return;
+
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 50);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [isHomepage]);
 
   // Use dynamic navbar data or fallback to default
   const menuItems = React.useMemo(() => {
@@ -150,8 +163,8 @@ const UserNavBar = () => {
 
   return (
     <header 
-      className={`${isHomepage ? 'absolute' : 'sticky'} top-0 px-4 z-50 w-full border-b transition-all duration-300 ${
-        isHomepage 
+      className={`${isHomepage && !isScrolled ? 'absolute' : 'sticky'} top-0 px-4 z-50 w-full border-b transition-all duration-300 ${
+        isHomepage && !isScrolled
           ? isHovered 
             ? 'bg-white border-gray-200' 
             : 'bg-transparent border-transparent' 
@@ -183,7 +196,7 @@ const UserNavBar = () => {
 
         {/* Desktop Navigation */}
         <nav className={`hidden md:flex items-center space-x-4 lg:space-x-6 mx-6 ${
-          isHomepage && !isHovered ? 'text-white' : 'text-gray-900'
+          isHomepage && !isScrolled && !isHovered ? 'text-white' : 'text-gray-900'
         }`}>
           {navbarLoading ? (
             <div className="flex items-center space-x-4">
@@ -199,7 +212,7 @@ const UserNavBar = () => {
                 {menuItems.map((category, index) => (
                   <NavigationMenuItem key={index}>
                     <NavigationMenuTrigger className={
-                      isHomepage && !isHovered 
+                      isHomepage && !isScrolled && !isHovered 
                         ? 'text-white hover:text-white data-[state=open]:text-gray-900 !bg-transparent hover:!bg-transparent data-[state=open]:!bg-transparent' 
                         : ''
                     }>
@@ -232,14 +245,6 @@ const UserNavBar = () => {
                               </ul>
                             </div>
                           ))}
-                        </div>
-                        <div className="mt-5 pt-3 border-t">
-                          <Link
-                            href={`/${category.title.toLowerCase()}`}
-                            className="text-sm font-medium text-primary hover:underline"
-                          >
-                            View all {category.title}
-                          </Link>
                         </div>
                       </div>
                     </NavigationMenuContent>
@@ -315,7 +320,7 @@ const UserNavBar = () => {
                 variant="ghost" 
                 size="icon" 
                 onClick={toggleMobileSearch}
-                className={isHomepage && !isHovered ? 'text-white hover:text-white' : ''}
+                className={isHomepage && !isScrolled && !isHovered ? 'text-white hover:text-white' : ''}
               >
                 <Search className="h-5 w-5" />
                 <span className="sr-only">Search</span>
@@ -340,7 +345,7 @@ const UserNavBar = () => {
                     <Button 
                       variant="ghost" 
                       className={`hidden md:flex p-0 ${
-                        isHomepage && !isHovered ? 'text-white hover:text-white' : ''
+                        isHomepage && !isScrolled && !isHovered ? 'text-white hover:text-white' : ''
                       }`}
                     >
                       <UserIcon className="h-7 w-7" />
@@ -351,7 +356,7 @@ const UserNavBar = () => {
                   <Button
                     variant="ghost"
                     className={`hidden md:flex relative p-2 ${
-                      isHomepage && !isHovered ? 'text-white hover:text-white' : ''
+                      isHomepage && !isScrolled && !isHovered ? 'text-white hover:text-white' : ''
                     }`}
                   >
                     <Heart className="h-5 w-5" />
@@ -366,9 +371,9 @@ const UserNavBar = () => {
             ) : (
               <Link href="/sign-in">
                 <Button 
-                  variant={isHomepage && !isHovered ? "ghost" : "default"}
+                  variant={isHomepage && !isScrolled && !isHovered ? "ghost" : "default"}
                   className={`hidden md:flex ${
-                    isHomepage && !isHovered ? 'text-white hover:text-white border border-white' : ''
+                    isHomepage && !isScrolled && !isHovered ? 'text-white hover:text-white border border-white' : ''
                   }`}
                 >
                   Log In
@@ -377,9 +382,9 @@ const UserNavBar = () => {
             )}
             <Link href="/cart">
               <Button 
-                variant={isHomepage && !isHovered ? "ghost" : "outline"}
+                variant={isHomepage && !isScrolled && !isHovered ? "ghost" : "outline"}
                 className={`hidden md:flex relative ${
-                  isHomepage && !isHovered ? 'text-white hover:text-white border border-white' : ''
+                  isHomepage && !isScrolled && !isHovered ? 'text-white hover:text-white border border-white' : ''
                 }`}
               >
                 <ShoppingCart className="h-4 w-4" />
@@ -401,7 +406,7 @@ const UserNavBar = () => {
               variant="ghost" 
               size="icon" 
               className={`md:hidden ml-2 ${
-                isHomepage && !isHovered ? 'text-white hover:text-white' : ''
+                isHomepage && !isScrolled && !isHovered ? 'text-white hover:text-white' : ''
               }`}
             >
               <Menu className="h-5 w-5" />
