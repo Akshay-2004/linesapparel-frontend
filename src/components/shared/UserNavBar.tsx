@@ -43,6 +43,7 @@ import logo from "@/assets/Lines.png";
 const UserNavBar = () => {
   const [showMobileSearch, setShowMobileSearch] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [isHovered, setIsHovered] = useState(false);
   const { user, isAuthenticated } = useUserDetails();
   const { cart, fetchCart } = useCartStore();
   const { wishlisted, fetchWishlist } = useWishlistStore();
@@ -54,6 +55,9 @@ const UserNavBar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
+
+  // Check if on homepage
+  const isHomepage = pathname === '/';
 
   // Use dynamic navbar data or fallback to default
   const menuItems = React.useMemo(() => {
@@ -145,7 +149,17 @@ const UserNavBar = () => {
   };
 
   return (
-    <header className="sticky top-0 px-4 z-50 w-full border-b bg-white">
+    <header 
+      className={`${isHomepage ? 'absolute' : 'sticky'} top-0 px-4 z-50 w-full border-b transition-all duration-300 ${
+        isHomepage 
+          ? isHovered 
+            ? 'bg-white border-gray-200' 
+            : 'bg-transparent border-transparent' 
+          : 'bg-white border-gray-200'
+      }`}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
       <div className="flex h-14 items-center mx-6 md:mx-auto md:container">
         {/* Logo */}
         <Link href="/" className="flex items-center mr-6 h-10 w-auto">
@@ -168,7 +182,9 @@ const UserNavBar = () => {
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center space-x-4 lg:space-x-6 mx-6">
+        <nav className={`hidden md:flex items-center space-x-4 lg:space-x-6 mx-6 ${
+          isHomepage && !isHovered ? 'text-white' : 'text-gray-900'
+        }`}>
           {navbarLoading ? (
             <div className="flex items-center space-x-4">
               <div className="h-4 w-16 bg-gray-200 animate-pulse rounded"></div>
@@ -182,7 +198,11 @@ const UserNavBar = () => {
               <NavigationMenuList>
                 {menuItems.map((category, index) => (
                   <NavigationMenuItem key={index}>
-                    <NavigationMenuTrigger>
+                    <NavigationMenuTrigger className={
+                      isHomepage && !isHovered 
+                        ? 'text-white hover:text-white data-[state=open]:text-gray-900 !bg-transparent hover:!bg-transparent data-[state=open]:!bg-transparent' 
+                        : ''
+                    }>
                       {category.title}
                     </NavigationMenuTrigger>
                     <NavigationMenuContent>
@@ -291,7 +311,12 @@ const UserNavBar = () => {
                 </Button>
               </div>
             ) : (
-              <Button variant="ghost" size="icon" onClick={toggleMobileSearch}>
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                onClick={toggleMobileSearch}
+                className={isHomepage && !isHovered ? 'text-white hover:text-white' : ''}
+              >
                 <Search className="h-5 w-5" />
                 <span className="sr-only">Search</span>
               </Button>
@@ -312,7 +337,12 @@ const UserNavBar = () => {
                       className="rounded-full hidden md:block"
                     />
                   ) : (
-                    <Button variant="ghost" className="hidden md:flex p-0">
+                    <Button 
+                      variant="ghost" 
+                      className={`hidden md:flex p-0 ${
+                        isHomepage && !isHovered ? 'text-white hover:text-white' : ''
+                      }`}
+                    >
                       <UserIcon className="h-7 w-7" />
                     </Button>
                   )}
@@ -320,7 +350,9 @@ const UserNavBar = () => {
                 <Link href="/wishlist">
                   <Button
                     variant="ghost"
-                    className="hidden md:flex relative p-2"
+                    className={`hidden md:flex relative p-2 ${
+                      isHomepage && !isHovered ? 'text-white hover:text-white' : ''
+                    }`}
                   >
                     <Heart className="h-5 w-5" />
                     {wishlisted.length > 0 && (
@@ -333,13 +365,23 @@ const UserNavBar = () => {
               </>
             ) : (
               <Link href="/sign-in">
-                <Button variant="default" className="hidden md:flex">
+                <Button 
+                  variant={isHomepage && !isHovered ? "ghost" : "default"}
+                  className={`hidden md:flex ${
+                    isHomepage && !isHovered ? 'text-white hover:text-white border border-white' : ''
+                  }`}
+                >
                   Log In
                 </Button>
               </Link>
             )}
             <Link href="/cart">
-              <Button variant="outline" className="hidden md:flex relative">
+              <Button 
+                variant={isHomepage && !isHovered ? "ghost" : "outline"}
+                className={`hidden md:flex relative ${
+                  isHomepage && !isHovered ? 'text-white hover:text-white border border-white' : ''
+                }`}
+              >
                 <ShoppingCart className="h-4 w-4" />
                 <span>Cart</span>
                 {cartCount > 0 && (
@@ -355,7 +397,13 @@ const UserNavBar = () => {
         {/* Mobile Menu Button */}
         <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
           <SheetTrigger asChild>
-            <Button variant="ghost" size="icon" className="md:hidden ml-2">
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className={`md:hidden ml-2 ${
+                isHomepage && !isHovered ? 'text-white hover:text-white' : ''
+              }`}
+            >
               <Menu className="h-5 w-5" />
               <span className="sr-only">Toggle menu</span>
             </Button>
