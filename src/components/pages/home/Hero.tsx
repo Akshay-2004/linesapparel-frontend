@@ -72,16 +72,16 @@ const Hero = ({ heroData }: HeroProps) => {
         );
       })}
       
-      {/* Indicator bars */}
+      {/* Indicator dots */}
       <div className="absolute bottom-8 left-0 right-0 flex justify-center gap-4 z-30">
         {heroData.slides.map((_, index) => (
           <button
             key={index}
             onClick={() => goToSlide(index)}
-            className={`h-1 transition-all duration-300 cursor-pointer ${
+            className={`w-4 h-4 rounded-full transition-all duration-300 cursor-pointer ${
               index === currentSlide 
-                ? 'w-24 bg-white' 
-                : 'w-24 bg-white/50 hover:bg-white/70'
+                ? 'bg-white' 
+                : 'bg-white/50 hover:bg-white/70'
             }`}
             aria-label={`Go to slide ${index + 1}`}
           />
