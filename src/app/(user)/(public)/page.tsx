@@ -11,7 +11,6 @@ import Hero from "@/components/pages/home/Hero";
 import HomeBanner1 from "@/components/pages/home/HomeBanner1";
 import HomeBanner2 from "@/components/pages/home/HomeBanner2";
 import ProductSection from "@/components/pages/home/ProductSection";
-import Testimonials from "@/components/pages/home/Testimonials";
 
 import hero1 from '@/assets/home/hero 1.png'
 import hero2 from '@/assets/home/hero 2.png'
@@ -148,8 +147,6 @@ export default function Home() {
         remainingValidProductSections.map((section, index) => (
           <ProductSection key={`product-section-${index + 1}`} sectionData={section} />
         ))}
-
-      <Testimonials />
     </>
   );
 }

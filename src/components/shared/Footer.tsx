@@ -40,16 +40,11 @@ const Footer = () => {
               Customer Service
             </h3>
             <ul className="space-y-1">
-              {/* <li>
-                <Link href="/contact" className="hover:underline">
-                  Contact Us
+              <li>
+                <Link href="/reviews" className="hover:underline">
+                  Customer Reviews
                 </Link>
               </li>
-              <li>
-                <Link href="/faq" className="hover:underline">
-                  FAQ
-                </Link>
-              </li> */}
               <li>
                 <Link href="/legal/shipping-policy" className="hover:underline">
                   Shipping Info
