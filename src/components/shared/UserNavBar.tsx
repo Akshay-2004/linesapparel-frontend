@@ -199,7 +199,7 @@ const UserNavBar = () => {
     >
       {/* Full Search Mode */}
       {isFullSearchMode ? (
-        <div className="flex h-16 items-center mx-6 md:mx-auto md:container py-3">
+        <div className="flex h-16 items-center mx-6 md:mx-auto md:container py-12">
           <div className="flex items-center w-full">
             <Button
               variant="ghost"
