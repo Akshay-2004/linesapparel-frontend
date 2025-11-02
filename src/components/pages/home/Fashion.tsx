@@ -84,7 +84,7 @@ const Fashion = ({ fashionData }: FashionProps) => {
   ];
 
   return (
-    <section className="bg-white pb-6">
+    <section className="bg-white  pb-6">
       <div className="max-w-11/12 mx-auto p-4 sm:p-6 lg:p-8">
         <div className="container mx-auto px-2 sm:px-6 py-4 sm:py-6 bg-white">
           <div className="mb-10 sm:mb-16 text-center">

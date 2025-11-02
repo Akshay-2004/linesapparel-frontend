@@ -51,7 +51,7 @@ const Hero = ({ heroData }: HeroProps) => {
             
             {/* Content */}
             <div className="relative z-20 text-center text-white w-full">
-              <div className="bg-black/50 backdrop-blur-sm px-12 py-10 rounded-xs max-w-[1024px] mx-auto w-full sm:w-4/5 md:w-3/4 lg:w-1/2">
+              <div className="bg-black/50 backdrop-blur-sm px-12 py-10 rounded-md max-w-[1024px] mx-auto w-full sm:w-4/5 md:w-3/4 lg:w-1/2">
                   {slide.pretitle && (
                     <p className="text-4xl font-semibold mb-2">{slide.pretitle}</p>
                   )}
