@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import {
   Menu,
@@ -9,6 +9,7 @@ import {
   ChevronRight,
   User as UserIcon,
   Heart,
+  ChevronDown,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -17,13 +18,6 @@ import {
   SheetTrigger,
   SheetTitle,
 } from "@/components/ui/sheet";
-import {
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuItem,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-} from "@/components/ui/navigation-menu";
 import Image from "next/image";
 import { Input } from "@/components/ui/input";
 import {
@@ -37,8 +31,8 @@ import { useCartStore } from "@/store/cartStore";
 import { useWishlistStore } from "@/store/wishlistStore";
 import { useNavbarData } from "@/hooks/useNavbarData";
 import { usePathname, useRouter } from "next/navigation";
-import FullLogo from "@/assets/Lines.png";
-import logo from "@/assets/Lines.png";
+import logo1 from '@/assets/logo with out text.png';
+import logo2 from '@/assets/logo with text.png'
 
 const UserNavBar = () => {
   const [showMobileSearch, setShowMobileSearch] = useState(false);
@@ -47,6 +41,8 @@ const UserNavBar = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isHovered, setIsHovered] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [openDropdown, setOpenDropdown] = useState<number | null>(null);
+  const dropdownRefs = useRef<(HTMLDivElement | null)[]>([]);
   const { user, isAuthenticated } = useUserDetails();
   const { cart, fetchCart } = useCartStore();
   const { wishlisted, fetchWishlist } = useWishlistStore();
@@ -178,13 +174,18 @@ const UserNavBar = () => {
 
   return (
     <header 
-      className={`${isHomepage && !isScrolled ? 'absolute' : 'sticky'} top-0 px-4 z-50 w-full border-b transition-all duration-300 ${
-        isHomepage && !isScrolled
+      className={`${isHomepage && !isScrolled ? 'fixed' : 'sticky'} top-0 px-4 z-50 w-full border-b transition-all duration-500`}
+      style={{
+        backgroundColor: isHomepage && !isScrolled
           ? isHovered 
-            ? 'bg-white border-gray-200' 
-            : 'bg-transparent border-transparent' 
-          : 'bg-white border-gray-200'
-      }`}
+            ? 'rgb(255 255 255)' 
+            : 'transparent' 
+          : 'rgb(255 255 255)',
+        borderColor: isHomepage && !isScrolled && !isHovered 
+          ? 'transparent' 
+          : 'rgb(229 231 235)',
+        transition: 'all 500ms ease-in-out'
+      }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -198,7 +199,7 @@ const UserNavBar = () => {
               onClick={closeFullSearch}
               className="mr-4"
             >
-              <ChevronRight className="h-6 w-6 rotate-180" />
+              <ChevronRight className="h-7 w-7 rotate-180" />
               <span className="sr-only">Close search</span>
             </Button>
             <form onSubmit={handleSearchSubmit} className="flex-1 flex items-center">
@@ -225,9 +226,9 @@ const UserNavBar = () => {
         </div>
       ) : (
         /* Normal Navbar */
-        <div className="flex h-16 items-center mx-6 md:mx-auto md:container py-3">
+        <div className="flex h-16 items-center mx-6 md:mx-auto md:container py-12">
           {/* Desktop Navigation - Left */}
-          <nav className={`hidden md:flex items-center space-x-4 lg:space-x-6 ${
+          <nav className={`hidden md:flex items-center space-x-4 lg:space-x-6 transition-colors duration-500 ${
             isHomepage && !isScrolled && !isHovered ? 'text-white' : 'text-gray-900'
           }`}>
             {navbarLoading ? (
@@ -239,24 +240,50 @@ const UserNavBar = () => {
             ) : navbarError ? (
               <div className="text-sm text-red-500">Navigation unavailable</div>
             ) : (
-              <NavigationMenu>
-                <NavigationMenuList>
-                  {menuItems.map((category, index) => (
-                    <NavigationMenuItem key={index}>
-                      <NavigationMenuTrigger className={
-                        isHomepage && !isScrolled && !isHovered 
-                          ? 'text-white hover:text-white data-[state=open]:text-gray-900 !bg-transparent hover:!bg-transparent data-[state=open]:!bg-transparent' 
-                          : ''
-                      }>
-                        {category.title}
-                      </NavigationMenuTrigger>
-                      <NavigationMenuContent>
-                        <div className="bg-white p-4 w-[400px] lg:w-[500px]">
-                          <div
-                            className={`grid ${
-                              category.sections.length > 1 ? "grid-cols-2" : ""
-                            } gap-6`}
-                          >
+              <div className="flex items-center space-x-4 lg:space-x-6">
+                {menuItems.map((category, index) => (
+                  <div 
+                    key={index} 
+                    className="relative"
+                    ref={(el) => {
+                      dropdownRefs.current[index] = el;
+                    }}
+                    onMouseEnter={() => setOpenDropdown(index)}
+                    onMouseLeave={() => setOpenDropdown(null)}
+                  >
+                    <button
+                      className={`inline-flex items-center justify-center rounded-sm px-4 py-2 text-sm font-medium transition-all duration-500 ${
+                        isHomepage && !isScrolled && !isHovered
+                          ? 'text-white hover:text-white'
+                          : 'text-gray-900 hover:bg-gray-100'
+                      }`}
+                      style={{
+                        backgroundColor: isHomepage && !isScrolled && !isHovered 
+                          ? 'transparent' 
+                          : openDropdown === index 
+                            ? 'rgb(243 244 246)' 
+                            : 'transparent',
+                        transition: 'all 500ms ease-in-out'
+                      }}
+                    >
+                      {category.title}
+                      <ChevronDown 
+                        className={`ml-1 h-4 w-4 transition-transform duration-300 ${
+                          openDropdown === index ? 'rotate-180' : ''
+                        }`} 
+                      />
+                    </button>
+                    
+                    {/* Dropdown Menu */}
+                    {openDropdown === index && (
+                      <div 
+                        className="absolute left-0 top-full mt-1 bg-white border border-gray-200 rounded-sm shadow-lg z-50 animate-in fade-in-0 zoom-in-95 duration-200"
+                        style={{
+                          width: category.sections.length > 1 ? '500px' : '400px'
+                        }}
+                      >
+                        <div className="p-4">
+                          <div className={`grid ${category.sections.length > 1 ? "grid-cols-2" : ""} gap-6`}>
                             {category.sections.map((section, sectionIndex) => (
                               <div key={sectionIndex}>
                                 <h3 className="text-sm font-medium mb-3 text-primary border-b pb-2">
@@ -279,28 +306,68 @@ const UserNavBar = () => {
                             ))}
                           </div>
                         </div>
-                      </NavigationMenuContent>
-                    </NavigationMenuItem>
-                  ))}
-                </NavigationMenuList>
-              </NavigationMenu>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
             )}
           </nav>
 
           {/* Logo - Center */}
-          <Link href="/" className="flex items-center justify-center flex-1 h-10 w-auto">
+          <Link href="/" className="flex items-center justify-center flex-1 h-10 w-auto relative">
+            {/* Logo 1 - Fades out when scrolled/hovered */}
             <Image
-              src={FullLogo}
+              src={logo1}
               alt="Logo"
-              className="h-20 w-auto hidden md:block object-contain max-h-24"
+              className={`h-20 w-auto hidden md:block object-contain max-h-24 absolute transition-all duration-500 ${
+                isHomepage && !isScrolled && !isHovered 
+                  ? 'opacity-100 filter invert brightness-0' 
+                  : isHomepage && !isScrolled 
+                    ? 'opacity-100' 
+                    : 'opacity-0 pointer-events-none'
+              }`}
               width={180}
               height={60}
               priority
             />
+            {/* Logo 2 - Fades in when scrolled/hovered */}
             <Image
-              src={logo}
+              src={logo2}
               alt="Logo"
-              className="h-20 w-auto md:hidden object-contain max-h-24"
+              className={`h-20 w-auto hidden md:block object-contain max-h-24 transition-all duration-500 ${
+                isHomepage && !isScrolled 
+                  ? 'opacity-0 pointer-events-none' 
+                  : 'opacity-100'
+              }`}
+              width={180}
+              height={60}
+              priority
+            />
+            
+            {/* Mobile logos */}
+            <Image
+              src={logo1}
+              alt="Logo"
+              className={`h-20 w-auto md:hidden object-contain max-h-24 absolute transition-all duration-500 ${
+                isHomepage && !isScrolled && !isHovered 
+                  ? 'opacity-100 filter invert brightness-0' 
+                  : isHomepage && !isScrolled 
+                    ? 'opacity-100' 
+                    : 'opacity-0 pointer-events-none'
+              }`}
+              width={40}
+              height={32}
+              priority
+            />
+            <Image
+              src={logo2}
+              alt="Logo"
+              className={`h-20 w-auto md:hidden object-contain max-h-24 transition-all duration-500 ${
+                isHomepage && !isScrolled 
+                  ? 'opacity-0 pointer-events-none' 
+                  : 'opacity-100'
+              }`}
               width={40}
               height={32}
               priority
@@ -314,9 +381,9 @@ const UserNavBar = () => {
               variant="ghost" 
               size="icon" 
               onClick={toggleDesktopSearch}
-              className={`p-2 ${isHomepage && !isScrolled && !isHovered ? 'text-white hover:text-white' : ''}`}
+              className={`p-2 transition-colors duration-500 ${isHomepage && !isScrolled && !isHovered ? 'text-white hover:text-white' : ''}`}
             >
-              <Search className="h-7 w-7" />
+              <Search className="h-8 w-8" />
               <span className="sr-only">Search</span>
             </Button>
 
@@ -336,22 +403,22 @@ const UserNavBar = () => {
                     ) : (
                       <Button 
                         variant="ghost" 
-                        className={`hidden md:flex p-2 ${
+                        className={`hidden md:flex p-2 transition-colors duration-500 ${
                           isHomepage && !isScrolled && !isHovered ? 'text-white hover:text-white' : ''
                         }`}
                       >
-                        <UserIcon className="h-7 w-7" />
+                        <UserIcon className="h-8 w-8" />
                       </Button>
                     )}
                   </Link>
                   <Link href="/wishlist">
                     <Button
                       variant="ghost"
-                      className={`hidden md:flex relative p-2 ${
+                      className={`hidden md:flex relative p-2 transition-colors duration-500 ${
                         isHomepage && !isScrolled && !isHovered ? 'text-white hover:text-white' : ''
                       }`}
                     >
-                      <Heart className="h-7 w-7" />
+                      <Heart className="h-8 w-8" />
                       {wishlisted.length > 0 && (
                         <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full px-1.5 py-0.5 min-w-[20px] text-center">
                           {wishlisted.length}
@@ -364,22 +431,22 @@ const UserNavBar = () => {
                 <Link href="/sign-in">
                   <Button 
                     variant="ghost"
-                    className={`hidden md:flex p-2 ${
+                    className={`hidden md:flex p-2 transition-colors duration-500 ${
                       isHomepage && !isScrolled && !isHovered ? 'text-white hover:text-white' : ''
                     }`}
                   >
-                    <UserIcon className="h-7 w-7" />
+                    <UserIcon className="h-8 w-8" />
                   </Button>
                 </Link>
               )}
               <Link href="/cart">
                 <Button 
                   variant="ghost"
-                  className={`hidden md:flex relative p-2 ${
+                  className={`hidden md:flex relative p-2 transition-colors duration-500 ${
                     isHomepage && !isScrolled && !isHovered ? 'text-white hover:text-white' : ''
                   }`}
                 >
-                  <ShoppingCart className="h-7 w-7" />
+                  <ShoppingCart className="h-8 w-8" />
                   {cartCount > 0 && (
                     <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full px-1.5 py-0.5 min-w-[20px] text-center">
                       {cartCount}
@@ -413,7 +480,7 @@ const UserNavBar = () => {
                     size="icon"
                     className="ml-2"
                   >
-                    <Search className="h-6 w-6" />
+                    <Search className="h-7 w-7" />
                   </Button>
                 </form>
                 <Button
@@ -422,7 +489,7 @@ const UserNavBar = () => {
                   className="ml-2"
                   onClick={toggleMobileSearch}
                 >
-                  <ChevronRight className="h-6 w-6" />
+                  <ChevronRight className="h-7 w-7" />
                 </Button>
               </div>
             ) : (
@@ -430,9 +497,9 @@ const UserNavBar = () => {
                 variant="ghost" 
                 size="icon" 
                 onClick={toggleMobileSearch}
-                className={isHomepage && !isScrolled && !isHovered ? 'text-white hover:text-white' : ''}
+                className={`transition-colors duration-500 ${isHomepage && !isScrolled && !isHovered ? 'text-white hover:text-white' : ''}`}
               >
-                <Search className="h-6 w-6" />
+                <Search className="h-7 w-7" />
                 <span className="sr-only">Search</span>
               </Button>
             )}
@@ -442,11 +509,11 @@ const UserNavBar = () => {
               <Button 
                 variant="ghost" 
                 size="icon" 
-                className={`md:hidden ml-2 ${
+                className={`md:hidden ml-2 transition-colors duration-500 ${
                   isHomepage && !isScrolled && !isHovered ? 'text-white hover:text-white' : ''
                 }`}
               >
-                <Menu className="h-6 w-6" />
+                <Menu className="h-7 w-7" />
                 <span className="sr-only">Toggle menu</span>
               </Button>
             </SheetTrigger>
