@@ -28,7 +28,7 @@ const Hero = ({ heroData }: HeroProps) => {
   }
 
   return (
-    <div className="relative h-[90vh] w-full overflow-hidden">
+    <div className="relative h-screen w-full overflow-hidden">
       {heroData.slides.map((slide, index) => {
         const content = (
           <div 
