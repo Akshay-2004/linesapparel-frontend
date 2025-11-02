@@ -30,7 +30,7 @@ export function ProductCard({
           alt={name}
           width={400}
           height={500}
-          className="object-cover w-full h-full"
+          className="object-cover w-full rounded-md h-full"
           priority
         />
       </div>

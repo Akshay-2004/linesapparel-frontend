@@ -13,10 +13,10 @@ const HomeBanner1 = ({ bannerData }: HomeBanner1Props) => {
         src={bannerData.imageUrl}
         alt={bannerData.title}
         fill
-        className="absolute inset-0 w-full h-full object-cover"
+        className="absolute inset-0 w-full rounded-sm h-full object-cover"
       />
       <div className="absolute inset-0  " />
-      <div className="bg-black/50 backdrop-blur-sm px-12 py-10 rounded-xs max-w-[1280px] mx-auto w-full sm:w-4/5 md:w-3/4  flex flex-col items-center text-center">
+      <div className="bg-black/50 backdrop-blur-sm px-12 py-10 rounded-md max-w-[1280px] mx-auto w-full sm:w-4/5 md:w-3/4  flex flex-col items-center text-center">
         {bannerData.topText && (
           <p className="text-white text-base sm:text-lg font-semibold mb-2">
             {bannerData.topText}

@@ -14,7 +14,7 @@ const HomeBanner2 = ({ bannerData }: HomeBanner2Props) => {
         src={bannerData.imageUrl}
         alt={bannerData.title}
         layout="fill"
-        className="object-top object-cover"
+        className="object-top rounded-sm object-cover"
         priority
       />
 
@@ -23,7 +23,7 @@ const HomeBanner2 = ({ bannerData }: HomeBanner2Props) => {
       {/* Content */}
       <div className="relative z-10 flex flex-col md:flex-row items-center justify-between w-full max-w-6xl px-4 md:px-12">
         {/* Left: Text */}
-        <div className="bg-black/40 rounded md:rounded-none p-4 md:p-8 max-w-xl text-white">
+        <div className="bg-black/40 rounded md:rounded-md p-4 md:p-8 max-w-xl text-white">
           {bannerData.topText && (
             <p className="text-sm font-medium mb-2">{bannerData.topText}</p>
           )}
