@@ -175,7 +175,7 @@ const UserNavBar = () => {
     <>
       {/* Top Banner - Only visible on homepage when not scrolled */}
       {isHomepage && !isScrolled && (
-        <div className="w-full bg-primary text-white text-center py-2 text-sm font-medium transition-all duration-500">
+        <div className="w-full bg-primary text-white text-center py-2 text-sm font-semibold transition-all duration-500">
           Free shipping on all orders above $60
         </div>
       )}
@@ -196,7 +196,7 @@ const UserNavBar = () => {
     >
       {/* Full Search Mode */}
       {isFullSearchMode ? (
-        <div className="flex h-16 items-center mx-6 md:mx-auto md:container py-6 md:py-12">
+        <div className="flex h-auto items-center mx-6 md:mx-auto md:container py-6">
           <div className="flex items-center w-full justify-center">
             <form onSubmit={handleSearchSubmit} className="flex items-center max-w-2xl w-full gap-4">
               <div className="relative flex-1">
@@ -234,7 +234,7 @@ const UserNavBar = () => {
         </div>
       ) : (
         /* Normal Navbar */
-        <div className="flex h-16 items-center mx-4 md:mx-auto md:container py-6 md:py-12">
+        <div className="flex h-auto items-center mx-4 md:mx-auto md:container py-6">
           {/* Desktop Navigation - Left */}
           <nav className={`hidden md:flex items-center space-x-4 lg:space-x-6 transition-colors duration-500 ${
             isHomepage && !isScrolled && !isHovered && !isFullSearchMode ? 'text-white' : 'text-gray-900'
@@ -260,7 +260,7 @@ const UserNavBar = () => {
                     onMouseLeave={() => setOpenDropdown(null)}
                   >
                     <button
-                      className={`inline-flex items-center justify-center rounded-sm px-4 py-2 text-sm font-medium transition-all duration-500 ${
+                      className={`inline-flex items-center justify-center rounded-sm px-4 py-2 text-sm font-semibold transition-all duration-500 ${
                         isHomepage && !isScrolled && !isHovered && !isFullSearchMode
                           ? 'text-white hover:text-white'
                           : 'text-gray-900 hover:bg-gray-100'
@@ -294,7 +294,7 @@ const UserNavBar = () => {
                           <div className={`grid ${category.sections.length > 1 ? "grid-cols-2" : ""} gap-6`}>
                             {category.sections.map((section, sectionIndex) => (
                               <div key={sectionIndex}>
-                                <h3 className="text-sm font-medium mb-3 text-primary border-b pb-2">
+                                <h3 className="text-sm font-semibold mb-3 text-primary border-b pb-2">
                                   {section.title}
                                 </h3>
                                 <ul className="space-y-3">
@@ -302,7 +302,7 @@ const UserNavBar = () => {
                                     <li key={itemIndex}>
                                       <Link
                                         href={item.href}
-                                        className="group flex items-center gap-2 text-sm hover:text-primary transition-colors"
+                                        className="group flex items-center gap-2 text-sm font-semibold hover:text-primary transition-colors"
                                       >
                                         <div className="w-2 h-2 rounded-full bg-gray-300 group-hover:bg-primary transition-colors"></div>
                                         <span>{item.name}</span>
@@ -385,15 +385,13 @@ const UserNavBar = () => {
           {/* Right Side - Search & Auth */}
           <div className="flex items-center space-x-2">
             {/* Desktop Search */}
-            <Button 
-              variant="ghost" 
-              size="icon" 
+            <button 
               onClick={toggleDesktopSearch}
-              className={`hidden md:flex p-3 transition-colors duration-500 ${isHomepage && !isScrolled && !isHovered && !isFullSearchMode ? 'text-white hover:text-white' : ''}`}
+              className={`hidden md:flex items-center justify-center p-2.5 transition-colors duration-500 h-12 w-12 bg-transparent hover:bg-gray-100 rounded-md ${isHomepage && !isScrolled && !isHovered && !isFullSearchMode ? 'text-white hover:text-white' : 'text-gray-900'}`}
             >
-              <Search className="h-16 w-16" />
+              <Search className="h-10 w-10" />
               <span className="sr-only">Search</span>
-            </Button>
+            </button>
 
             {/* Authentication */}
             <div className="flex items-center space-x-2">
@@ -409,58 +407,54 @@ const UserNavBar = () => {
                         className="rounded-full hidden md:block"
                       />
                     ) : (
-                      <Button 
-                        variant="ghost" 
-                        className={`hidden md:flex p-3 transition-colors duration-500 ${
-                          isHomepage && !isScrolled && !isHovered && !isFullSearchMode ? 'text-white hover:text-white' : ''
+                      <button 
+                        className={`hidden md:flex items-center justify-center p-2.5 transition-colors duration-500 h-12 w-12 bg-transparent hover:bg-gray-100 rounded-md ${
+                          isHomepage && !isScrolled && !isHovered && !isFullSearchMode ? 'text-white hover:text-white' : 'text-gray-900'
                         }`}
                       >
-                        <UserIcon className="h-16 w-16" />
-                      </Button>
+                        <UserIcon className="h-10 w-10" />
+                      </button>
                     )}
                   </Link>
                   <Link href="/wishlist">
-                    <Button
-                      variant="ghost"
-                      className={`hidden md:flex relative p-3 transition-colors duration-500 ${
-                        isHomepage && !isScrolled && !isHovered && !isFullSearchMode ? 'text-white hover:text-white' : ''
+                    <button
+                      className={`hidden md:flex items-center justify-center relative p-2.5 transition-colors duration-500 h-12 w-12 bg-transparent hover:bg-gray-100 rounded-md ${
+                        isHomepage && !isScrolled && !isHovered && !isFullSearchMode ? 'text-white hover:text-white' : 'text-gray-900'
                       }`}
                     >
-                      <Heart className="h-16 w-16" />
+                      <Heart className="h-10 w-10" />
                       {wishlisted.length > 0 && (
                         <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full px-1.5 py-0.5 min-w-[20px] text-center">
                           {wishlisted.length}
                         </span>
                       )}
-                    </Button>
+                    </button>
                   </Link>
                 </>
               ) : (
                 <Link href="/sign-in">
-                  <Button 
-                    variant="ghost"
-                    className={`hidden md:flex p-3 transition-colors duration-500 ${
-                      isHomepage && !isScrolled && !isHovered && !isFullSearchMode ? 'text-white hover:text-white' : ''
+                  <button 
+                    className={`hidden md:flex items-center justify-center p-2.5 transition-colors duration-500 h-12 w-12 bg-transparent hover:bg-gray-100 rounded-md ${
+                      isHomepage && !isScrolled && !isHovered && !isFullSearchMode ? 'text-white hover:text-white' : 'text-gray-900'
                     }`}
                   >
-                    <UserIcon className="h-16 w-16" />
-                  </Button>
+                    <UserIcon className="h-10 w-10" />
+                  </button>
                 </Link>
               )}
               <Link href="/cart">
-                <Button 
-                  variant="ghost"
-                  className={`hidden md:flex relative p-3 transition-colors duration-500 ${
-                    isHomepage && !isScrolled && !isHovered && !isFullSearchMode ? 'text-white hover:text-white' : ''
+                <button 
+                  className={`hidden md:flex items-center justify-center relative p-2.5 transition-colors duration-500 h-12 w-12 bg-transparent hover:bg-gray-100 rounded-md ${
+                    isHomepage && !isScrolled && !isHovered && !isFullSearchMode ? 'text-white hover:text-white' : 'text-gray-900'
                   }`}
                 >
-                  <ShoppingCart className="h-16 w-16" />
+                  <ShoppingCart className="h-10 w-10" />
                   {cartCount > 0 && (
                     <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full px-1.5 py-0.5 min-w-[20px] text-center">
                       {cartCount}
                     </span>
                   )}
-                </Button>
+                </button>
               </Link>
             </div>
           </div>
@@ -470,14 +464,12 @@ const UserNavBar = () => {
             {/* Left: Menu Button */}
             <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
               <SheetTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className={`transition-colors duration-500 ${isHomepage && !isScrolled && !isHovered && !isFullSearchMode ? 'text-white hover:text-white' : ''}`}
+                <button
+                  className={`flex items-center justify-center transition-colors duration-500 h-12 w-12 bg-transparent hover:bg-gray-100 rounded-md ${isHomepage && !isScrolled && !isHovered && !isFullSearchMode ? 'text-white hover:text-white' : 'text-gray-900'}`}
                 >
-                  <Menu className="h-16 w-16" />
+                  <Menu className="h-10 w-10" />
                   <span className="sr-only">Toggle menu</span>
-                </Button>
+                </button>
               </SheetTrigger>
               <SheetContent side="left" className="w-80 px-3">
                 <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
@@ -515,7 +507,7 @@ const UserNavBar = () => {
                             <div className="space-y-4">
                               {category.sections.map((section, sectionIndex) => (
                                 <div key={sectionIndex}>
-                                  <div className="font-medium text-sm ml-2 mb-2 text-primary">
+                                  <div className="text-sm font-semibold ml-2 mb-2 text-primary">
                                     {section.title}
                                   </div>
                                   <ul className="ml-4 space-y-2">
@@ -526,7 +518,7 @@ const UserNavBar = () => {
                                           className="flex items-center hover:text-primary transition-colors"
                                         >
                                           <div className="w-2 h-2 bg-gray-300 rounded-full mr-2"></div>
-                                          <span className="text-sm">{item.name}</span>
+                                          <span className="text-sm font-semibold">{item.name}</span>
                                         </Link>
                                       </li>
                                     ))}
@@ -639,30 +631,26 @@ const UserNavBar = () => {
             {/* Right: Search & Cart */}
             <div className="flex items-center space-x-2">
               {/* Mobile Search */}
-              <Button 
-                variant="ghost" 
-                size="icon" 
+              <button 
                 onClick={toggleDesktopSearch}
-                className={`transition-colors duration-500 ${isHomepage && !isScrolled && !isHovered && !isFullSearchMode ? 'text-white hover:text-white' : ''}`}
+                className={`flex items-center justify-center transition-colors duration-500 h-12 w-12 bg-transparent hover:bg-gray-100 rounded-md ${isHomepage && !isScrolled && !isHovered && !isFullSearchMode ? 'text-white hover:text-white' : 'text-gray-900'}`}
               >
-                <Search className="h-16 w-16" />
+                <Search className="h-10 w-10" />
                 <span className="sr-only">Search</span>
-              </Button>
+              </button>
 
               {/* Mobile Cart */}
               <Link href="/cart">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className={`relative transition-colors duration-500 ${isHomepage && !isScrolled && !isHovered && !isFullSearchMode ? 'text-white hover:text-white' : ''}`}
+                <button
+                  className={`flex items-center justify-center relative transition-colors duration-500 h-12 w-12 bg-transparent hover:bg-gray-100 rounded-md ${isHomepage && !isScrolled && !isHovered && !isFullSearchMode ? 'text-white hover:text-white' : 'text-gray-900'}`}
                 >
-                  <ShoppingCart className="h-16 w-16" />
+                  <ShoppingCart className="h-10 w-10" />
                   {cartCount > 0 && (
                     <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full px-1.5 py-0.5 min-w-[20px] text-center">
                       {cartCount}
                     </span>
                   )}
-                </Button>
+                </button>
               </Link>
             </div>
           </div>
