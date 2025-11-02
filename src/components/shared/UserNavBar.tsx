@@ -36,7 +36,6 @@ import logo1 from '@/assets/logo with out text.png';
 import logo2 from '@/assets/logo with text.png'
 
 const UserNavBar = () => {
-  const [showMobileSearch, setShowMobileSearch] = useState(false);
   const [showDesktopSearch, setShowDesktopSearch] = useState(false);
   const [isFullSearchMode, setIsFullSearchMode] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -136,10 +135,6 @@ const UserNavBar = () => {
   const cartCount =
     cart?.items?.reduce((sum, item) => sum + (item.quantity || 0), 0) || 0;
 
-  const toggleMobileSearch = () => {
-    setShowMobileSearch(!showMobileSearch);
-  };
-
   const toggleDesktopSearch = () => {
     setIsFullSearchMode(!isFullSearchMode);
     if (!isFullSearchMode) {
@@ -159,7 +154,6 @@ const UserNavBar = () => {
     const trimmedQuery = query.trim();
     if (trimmedQuery) {
       router.push(`/search?q=${encodeURIComponent(trimmedQuery)}`);
-      setShowMobileSearch(false);
       setIsFullSearchMode(false);
       setSearchQuery("");
     }
@@ -187,7 +181,7 @@ const UserNavBar = () => {
       )}
 
       <header 
-      className={`${isHomepage && !isScrolled && !isFullSearchMode ? 'fixed top-9' : 'fixed'} top-0 px-4 z-50 w-full border-b transition-all duration-500`}
+      className={`${isHomepage && !isScrolled && !isFullSearchMode ? 'fixed top-9' : 'fixed'} top-0 px-2 md:px-4 z-50 w-full border-b transition-all duration-500`}
       style={{
         backgroundColor: isHomepage && !isScrolled && !isHovered && !isFullSearchMode
           ? 'transparent' 
@@ -202,7 +196,7 @@ const UserNavBar = () => {
     >
       {/* Full Search Mode */}
       {isFullSearchMode ? (
-        <div className="flex h-16 items-center mx-6 md:mx-auto md:container py-12">
+        <div className="flex h-16 items-center mx-6 md:mx-auto md:container py-6 md:py-12">
           <div className="flex items-center w-full justify-center">
             <form onSubmit={handleSearchSubmit} className="flex items-center max-w-2xl w-full gap-4">
               <div className="relative flex-1">
@@ -240,7 +234,7 @@ const UserNavBar = () => {
         </div>
       ) : (
         /* Normal Navbar */
-        <div className="flex h-16 items-center mx-8 md:mx-auto md:container py-12">
+        <div className="flex h-16 items-center mx-4 md:mx-auto md:container py-6 md:py-12">
           {/* Desktop Navigation - Left */}
           <nav className={`hidden md:flex items-center space-x-4 lg:space-x-6 transition-colors duration-500 ${
             isHomepage && !isScrolled && !isHovered && !isFullSearchMode ? 'text-white' : 'text-gray-900'
@@ -395,9 +389,9 @@ const UserNavBar = () => {
               variant="ghost" 
               size="icon" 
               onClick={toggleDesktopSearch}
-              className={`p-3 transition-colors duration-500 ${isHomepage && !isScrolled && !isHovered && !isFullSearchMode ? 'text-white hover:text-white' : ''}`}
+              className={`hidden md:flex p-3 transition-colors duration-500 ${isHomepage && !isScrolled && !isHovered && !isFullSearchMode ? 'text-white hover:text-white' : ''}`}
             >
-              <Search className="h-12 w-12" />
+              <Search className="h-16 w-16" />
               <span className="sr-only">Search</span>
             </Button>
 
@@ -421,7 +415,7 @@ const UserNavBar = () => {
                           isHomepage && !isScrolled && !isHovered && !isFullSearchMode ? 'text-white hover:text-white' : ''
                         }`}
                       >
-                        <UserIcon className="h-12 w-12" />
+                        <UserIcon className="h-16 w-16" />
                       </Button>
                     )}
                   </Link>
@@ -432,7 +426,7 @@ const UserNavBar = () => {
                         isHomepage && !isScrolled && !isHovered && !isFullSearchMode ? 'text-white hover:text-white' : ''
                       }`}
                     >
-                      <Heart className="h-12 w-12" />
+                      <Heart className="h-16 w-16" />
                       {wishlisted.length > 0 && (
                         <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full px-1.5 py-0.5 min-w-[20px] text-center">
                           {wishlisted.length}
@@ -449,7 +443,7 @@ const UserNavBar = () => {
                       isHomepage && !isScrolled && !isHovered && !isFullSearchMode ? 'text-white hover:text-white' : ''
                     }`}
                   >
-                    <UserIcon className="h-12 w-12" />
+                    <UserIcon className="h-16 w-16" />
                   </Button>
                 </Link>
               )}
@@ -460,7 +454,7 @@ const UserNavBar = () => {
                     isHomepage && !isScrolled && !isHovered && !isFullSearchMode ? 'text-white hover:text-white' : ''
                   }`}
                 >
-                  <ShoppingCart className="h-12 w-12" />
+                  <ShoppingCart className="h-16 w-16" />
                   {cartCount > 0 && (
                     <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full px-1.5 py-0.5 min-w-[20px] text-center">
                       {cartCount}
@@ -471,188 +465,207 @@ const UserNavBar = () => {
             </div>
           </div>
 
-          {/* Mobile Search */}
-          <div className="md:hidden flex items-center">
-            {showMobileSearch ? (
-              <div className="absolute left-0 top-0 w-full h-16 flex items-center px-4 bg-white z-50">
-                <form
-                  onSubmit={handleSearchSubmit}
-                  className="flex-1 flex items-center"
-                >
-                  <Input
-                    type="text"
-                    placeholder="Search..."
-                    className="flex-1"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    onKeyDown={handleKeyDown}
-                    autoFocus
-                  />
-                  <Button
-                    type="submit"
-                    variant="ghost"
-                    size="icon"
-                    className="ml-2"
-                  >
-                    <Search className="h-10 w-10" />
-                  </Button>
-                </form>
+          {/* Mobile Layout - Menu | Logo | Search | Cart */}
+          <div className="md:hidden flex items-center justify-between w-full">
+            {/* Left: Menu Button */}
+            <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
+              <SheetTrigger asChild>
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="ml-2"
-                  onClick={toggleMobileSearch}
+                  className={`transition-colors duration-500 ${isHomepage && !isScrolled && !isHovered && !isFullSearchMode ? 'text-white hover:text-white' : ''}`}
                 >
-                  <ChevronRight className="h-10 w-10" />
+                  <Menu className="h-16 w-16" />
+                  <span className="sr-only">Toggle menu</span>
                 </Button>
-              </div>
-            ) : (
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                onClick={toggleMobileSearch}
-                className={`transition-colors duration-500 ${isHomepage && !isScrolled && !isHovered && !isFullSearchMode ? 'text-white hover:text-white' : ''}`}
-              >
-                <Search className="h-10 w-10" />
-                <span className="sr-only">Search</span>
-              </Button>
-            )}
-          </div>
-          <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
-            <SheetTrigger asChild>
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                className={`md:hidden ml-2 transition-colors duration-500 ${
-                  isHomepage && !isScrolled && !isHovered && !isFullSearchMode ? 'text-white hover:text-white' : ''
-                }`}
-              >
-                <Menu className="h-10 w-10" />
-                <span className="sr-only">Toggle menu</span>
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="right" className="w-80 px-3">
-              <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
-              <div className="flex flex-col space-y-6 py-4">
-                <Link href="/" className="flex items-center">
-                  <Image
-                    src="/Lines.pnglogo full.png"
-                    alt="Logo"
-                    className="h-auto w-auto"
-                    width={120}
-                    height={40}
-                    priority
-                  />
-                </Link>
+              </SheetTrigger>
+              <SheetContent side="left" className="w-80 px-3">
+                <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
+                <div className="flex flex-col space-y-6 py-4">
+                  <Link href="/" className="flex items-center">
+                    <Image
+                      src={logo2}
+                      alt="Logo"
+                      className="h-auto w-auto"
+                      width={120}
+                      height={40}
+                      priority
+                    />
+                  </Link>
 
-                {/* Mobile Accordion Menu */}
-                {navbarLoading ? (
-                  <div className="space-y-4">
-                    <div className="h-8 bg-gray-200 animate-pulse rounded"></div>
-                    <div className="h-8 bg-gray-200 animate-pulse rounded"></div>
-                    <div className="h-8 bg-gray-200 animate-pulse rounded"></div>
-                  </div>
-                ) : navbarError ? (
-                  <div className="text-sm text-red-500 text-center py-4">
-                    Navigation unavailable
-                  </div>
-                ) : (
-                  <Accordion type="single" collapsible className="w-full">
-                    {menuItems.map((category, index) => (
-                      <AccordionItem value={`item-${index}`} key={index}>
-                        <AccordionTrigger className="font-medium py-2">
-                          {category.title}
-                        </AccordionTrigger>
-                        <AccordionContent>
-                          {category.sections.map((section, sectionIndex) => (
-                            <div key={sectionIndex} className="mb-4">
-                              <div className="font-medium text-sm ml-2 mb-2 text-primary">
-                                {section.title}
-                              </div>
-                              <ul className="ml-4 space-y-2">
-                                {section.items.map((item, itemIndex) => (
-                                  <li key={itemIndex}>
-                                    <Link
-                                      href={item.href}
-                                      className="flex items-center hover:text-primary transition-colors"
-                                    >
-                                      <div className="w-2 h-2 bg-gray-300 rounded-full mr-2"></div>
-                                      <span className="text-sm">{item.name}</span>
-                                    </Link>
-                                  </li>
-                                ))}
-                              </ul>
-                            </div>
-                          ))}
-                        </AccordionContent>
-                      </AccordionItem>
-                    ))}
-                  </Accordion>
-                )}
-
-                {/* Mobile Authentication */}
-                <div className="flex flex-col space-y-2">
-                  {isAuthenticated() ? (
-                    <>
-                      <Link href="/dashboard">
-                        <Button
-                          variant="default"
-                          className="w-full flex items-center justify-center"
-                        >
-                          {user?.image ? (
-                            <Image
-                              src={user.image}
-                              alt="User Avatar"
-                              width={28}
-                              height={28}
-                              className="rounded-full mr-2"
-                            />
-                          ) : (
-                            <UserIcon className="h-6 w-6 mr-2" />
-                          )}
-                          Dashboard
-                        </Button>
-                      </Link>
-                      <Link href="/whishlist">
-                        <Button
-                          variant="outline"
-                          className="w-full flex items-center justify-center relative"
-                        >
-                          <Heart className="h-5 w-5 mr-2" />
-                          <span>Wishlist</span>
-                          {wishlisted.length > 0 && (
-                            <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full px-1.5 py-0.5 min-w-[20px] text-center">
-                              {wishlisted.length}
-                            </span>
-                          )}
-                        </Button>
-                      </Link>
-                    </>
+                  {/* Mobile Accordion Menu */}
+                  {navbarLoading ? (
+                    <div className="space-y-4">
+                      <div className="h-8 bg-gray-200 animate-pulse rounded"></div>
+                      <div className="h-8 bg-gray-200 animate-pulse rounded"></div>
+                      <div className="h-8 bg-gray-200 animate-pulse rounded"></div>
+                    </div>
+                  ) : navbarError ? (
+                    <div className="text-sm text-red-500 text-center py-4">
+                      Navigation unavailable
+                    </div>
                   ) : (
-                    <Link href="/sign-in">
-                      <Button variant="default" className="w-full">
-                        Log In
+                    <Accordion type="single" collapsible className="w-full">
+                      {menuItems.map((category, index) => (
+                        <AccordionItem value={`item-${index}`} key={index}>
+                          <AccordionTrigger className="font-medium py-2">
+                            {category.title}
+                          </AccordionTrigger>
+                          <AccordionContent>
+                            <div className="space-y-4">
+                              {category.sections.map((section, sectionIndex) => (
+                                <div key={sectionIndex}>
+                                  <div className="font-medium text-sm ml-2 mb-2 text-primary">
+                                    {section.title}
+                                  </div>
+                                  <ul className="ml-4 space-y-2">
+                                    {section.items.map((item, itemIndex) => (
+                                      <li key={itemIndex}>
+                                        <Link
+                                          href={item.href}
+                                          className="flex items-center hover:text-primary transition-colors"
+                                        >
+                                          <div className="w-2 h-2 bg-gray-300 rounded-full mr-2"></div>
+                                          <span className="text-sm">{item.name}</span>
+                                        </Link>
+                                      </li>
+                                    ))}
+                                  </ul>
+                                </div>
+                              ))}
+                            </div>
+                          </AccordionContent>
+                        </AccordionItem>
+                      ))}
+                    </Accordion>
+                  )}
+
+                  {/* Mobile Authentication */}
+                  <div className="flex flex-col space-y-2">
+                    {isAuthenticated() ? (
+                      <>
+                        <Link href="/dashboard">
+                          <Button
+                            variant="default"
+                            className="w-full flex items-center justify-center"
+                          >
+                            {user?.image ? (
+                              <Image
+                                src={user.image}
+                                alt="User Avatar"
+                                width={28}
+                                height={28}
+                                className="rounded-full mr-2"
+                              />
+                            ) : (
+                              <UserIcon className="h-6 w-6 mr-2" />
+                            )}
+                            Dashboard
+                          </Button>
+                        </Link>
+                        <Link href="/wishlist">
+                          <Button
+                            variant="outline"
+                            className="w-full flex items-center justify-center relative"
+                          >
+                            <Heart className="h-5 w-5 mr-2" />
+                            <span>Wishlist</span>
+                            {wishlisted.length > 0 && (
+                              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full px-1.5 py-0.5 min-w-[20px] text-center">
+                                {wishlisted.length}
+                              </span>
+                            )}
+                          </Button>
+                        </Link>
+                      </>
+                    ) : (
+                      <Link href="/sign-in">
+                        <Button variant="default" className="w-full">
+                          Log In
+                        </Button>
+                      </Link>
+                    )}
+                    <Link href="/cart">
+                      <Button
+                        variant="outline"
+                        className="w-full flex items-center justify-center relative"
+                      >
+                        <ShoppingCart className="h-5 w-5 mr-2" />
+                        <span>Cart</span>
+                        {cartCount > 0 && (
+                          <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full px-1.5 py-0.5 min-w-[20px] text-center">
+                            {cartCount}
+                          </span>
+                        )}
                       </Button>
                     </Link>
-                  )}
-                  <Link href="/cart">
-                    <Button
-                      variant="outline"
-                      className="w-full flex items-center justify-center relative"
-                    >
-                      <ShoppingCart className="h-5 w-5 mr-2" />
-                      <span>Cart</span>
-                      {cartCount > 0 && (
-                        <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full px-1.5 py-0.5 min-w-[20px] text-center">
-                          {cartCount}
-                        </span>
-                      )}
-                    </Button>
-                  </Link>
+                  </div>
                 </div>
-              </div>
-            </SheetContent>
-          </Sheet>
+              </SheetContent>
+            </Sheet>
+
+            {/* Center: Logo */}
+            <Link href="/" className="flex items-center justify-center flex-1">
+              {/* Logo 1 - Fades out when scrolled/hovered */}
+              <Image
+                src={logo1}
+                alt="Logo"
+                className={`h-16 w-auto object-contain max-h-20 absolute transition-all duration-500 ${
+                  isHomepage && !isScrolled && !isHovered
+                    ? 'opacity-100 filter invert brightness-0'
+                    : isHomepage && !isScrolled
+                      ? 'opacity-100'
+                      : 'opacity-0 pointer-events-none'
+                }`}
+                width={120}
+                height={40}
+                priority
+              />
+              {/* Logo 2 - Fades in when scrolled/hovered */}
+              <Image
+                src={logo2}
+                alt="Logo"
+                className={`h-16 w-auto object-contain max-h-20 transition-all duration-500 ${
+                  isHomepage && !isScrolled
+                    ? 'opacity-0 pointer-events-none'
+                    : 'opacity-100'
+                }`}
+                width={120}
+                height={40}
+                priority
+              />
+            </Link>
+
+            {/* Right: Search & Cart */}
+            <div className="flex items-center space-x-2">
+              {/* Mobile Search */}
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                onClick={toggleDesktopSearch}
+                className={`transition-colors duration-500 ${isHomepage && !isScrolled && !isHovered && !isFullSearchMode ? 'text-white hover:text-white' : ''}`}
+              >
+                <Search className="h-16 w-16" />
+                <span className="sr-only">Search</span>
+              </Button>
+
+              {/* Mobile Cart */}
+              <Link href="/cart">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className={`relative transition-colors duration-500 ${isHomepage && !isScrolled && !isHovered && !isFullSearchMode ? 'text-white hover:text-white' : ''}`}
+                >
+                  <ShoppingCart className="h-16 w-16" />
+                  {cartCount > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full px-1.5 py-0.5 min-w-[20px] text-center">
+                      {cartCount}
+                    </span>
+                  )}
+                </Button>
+              </Link>
+            </div>
+          </div>
         </div>
       )}
     </header>

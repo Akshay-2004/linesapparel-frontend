@@ -105,12 +105,12 @@ const Hero = ({ heroData }: HeroProps) => {
           
           {/* Content */}
           <div className="relative z-20 text-center text-white w-full flex flex-col items-center">
-            <div className="bg-black/50 backdrop-blur-sm px-12 py-10 rounded-xs max-w-[1024px] mx-auto w-full sm:w-4/5 md:w-3/4 lg:w-1/2">
+            <div className="bg-black/50 backdrop-blur-sm px-6 md:px-12 py-6 md:py-10 rounded-xs max-w-[1024px] mx-auto w-full sm:w-4/5 md:w-3/4 lg:w-1/2">
               {slide.pretitle && (
-                <p className="text-4xl font-semibold mb-2">{slide.pretitle}</p>
+                <p className="text-xl md:text-4xl font-semibold mb-1">{slide.pretitle}</p>
               )}
-              <h1 className="text-7xl font-bold mb-4 text-secondary-2">{slide.title}</h1>
-              <p className="text-4xl font-semibold">{slide.subtitle}</p>
+              <h1 className="text-4xl md:text-7xl font-bold mb-2 text-secondary-2">{slide.title}</h1>
+              <p className="text-xl md:text-4xl font-semibold">{slide.subtitle}</p>
             </div>
           </div>
           
@@ -133,7 +133,7 @@ const Hero = ({ heroData }: HeroProps) => {
           <button
             key={index}
             onClick={() => goToSlide(index)}
-            className={`w-4 h-4 rounded-full transition-all duration-300 cursor-pointer ${
+            className={`size-3 md:size-4 rounded-full transition-all duration-300 cursor-pointer ${
               index === currentSlide 
                 ? 'bg-white' 
                 : 'bg-white/50 hover:bg-white/70'
