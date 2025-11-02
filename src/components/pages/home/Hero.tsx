@@ -28,7 +28,7 @@ const Hero = ({ heroData }: HeroProps) => {
   }
 
   return (
-    <div className="relative h-screen w-full overflow-hidden">
+    <div className="relative h-[98vh] w-full overflow-hidden">
       <style jsx>{`
         .button-89 {
           --b: 3px;

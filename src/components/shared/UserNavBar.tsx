@@ -173,8 +173,16 @@ const UserNavBar = () => {
   };
 
   return (
-    <header 
-      className={`${isHomepage && !isScrolled ? 'fixed' : 'sticky'} top-0 px-4 z-50 w-full border-b transition-all duration-500`}
+    <>
+      {/* Top Banner - Only visible on homepage when not scrolled */}
+      {isHomepage && !isScrolled && (
+        <div className="w-full bg-primary text-white text-center py-2 text-sm font-medium transition-all duration-500">
+          Free shipping on all orders above $60
+        </div>
+      )}
+
+      <header 
+      className={`${isHomepage && !isScrolled ? 'fixed top-8' : 'sticky'} top-0 px-4 z-50 w-full border-b transition-all duration-500`}
       style={{
         backgroundColor: isHomepage && !isScrolled
           ? isHovered 
@@ -642,6 +650,7 @@ const UserNavBar = () => {
         </div>
       )}
     </header>
+  </>
   );
 };
 
