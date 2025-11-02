@@ -387,7 +387,7 @@ const UserNavBar = () => {
             {/* Desktop Search */}
             <button 
               onClick={toggleDesktopSearch}
-              className={`hidden md:flex items-center justify-center p-2.5 transition-colors duration-500 h-12 w-12 bg-transparent hover:bg-gray-100 rounded-md ${isHomepage && !isScrolled && !isHovered && !isFullSearchMode ? 'text-white hover:text-white' : 'text-gray-900'}`}
+              className={`hidden md:flex items-center justify-center p-3 transition-colors duration-500 h-12 w-12 bg-transparent hover:bg-gray-100 rounded-md ${isHomepage && !isScrolled && !isHovered && !isFullSearchMode ? 'text-white hover:text-white' : 'text-gray-900'}`}
             >
               <Search className="h-10 w-10" />
               <span className="sr-only">Search</span>
@@ -408,7 +408,7 @@ const UserNavBar = () => {
                       />
                     ) : (
                       <button 
-                        className={`hidden md:flex items-center justify-center p-2.5 transition-colors duration-500 h-12 w-12 bg-transparent hover:bg-gray-100 rounded-md ${
+                        className={`hidden md:flex items-center justify-center p-3 transition-colors duration-500 h-12 w-12 bg-transparent hover:bg-gray-100 rounded-md ${
                           isHomepage && !isScrolled && !isHovered && !isFullSearchMode ? 'text-white hover:text-white' : 'text-gray-900'
                         }`}
                       >
@@ -418,7 +418,7 @@ const UserNavBar = () => {
                   </Link>
                   <Link href="/wishlist">
                     <button
-                      className={`hidden md:flex items-center justify-center relative p-2.5 transition-colors duration-500 h-12 w-12 bg-transparent hover:bg-gray-100 rounded-md ${
+                      className={`hidden md:flex items-center justify-center relative p-3 transition-colors duration-500 h-12 w-12 bg-transparent hover:bg-gray-100 rounded-md ${
                         isHomepage && !isScrolled && !isHovered && !isFullSearchMode ? 'text-white hover:text-white' : 'text-gray-900'
                       }`}
                     >
@@ -434,7 +434,7 @@ const UserNavBar = () => {
               ) : (
                 <Link href="/sign-in">
                   <button 
-                    className={`hidden md:flex items-center justify-center p-2.5 transition-colors duration-500 h-12 w-12 bg-transparent hover:bg-gray-100 rounded-md ${
+                    className={`hidden md:flex p-3 transition-colors duration-500 h-12 w-12 bg-transparent hover:bg-gray-100 rounded-md ${
                       isHomepage && !isScrolled && !isHovered && !isFullSearchMode ? 'text-white hover:text-white' : 'text-gray-900'
                     }`}
                   >
@@ -444,7 +444,7 @@ const UserNavBar = () => {
               )}
               <Link href="/cart">
                 <button 
-                  className={`hidden md:flex items-center justify-center relative p-2.5 transition-colors duration-500 h-12 w-12 bg-transparent hover:bg-gray-100 rounded-md ${
+                  className={`hidden md:flex items-center justify-center relative p-3 transition-colors duration-500 h-12 w-12 bg-transparent hover:bg-gray-100 rounded-md ${
                     isHomepage && !isScrolled && !isHovered && !isFullSearchMode ? 'text-white hover:text-white' : 'text-gray-900'
                   }`}
                 >
