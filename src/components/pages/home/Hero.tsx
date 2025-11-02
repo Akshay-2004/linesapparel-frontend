@@ -30,39 +30,57 @@ const Hero = ({ heroData }: HeroProps) => {
   return (
     <div className="relative h-[98vh] w-full overflow-hidden">
       <style jsx>{`
-        .button-89 {
-          --b: 3px;
-          --s: .45em;
-          --color: #ffffff;
-          
-          padding: calc(.5em + var(--s)) calc(.9em + var(--s));
-          color: var(--color);
-          --_p: var(--s);
-          background:
-            conic-gradient(from 90deg at var(--b) var(--b),#0000 90deg,var(--color) 0)
-            var(--_p) var(--_p)/calc(100% - var(--b) - 2*var(--_p)) calc(100% - var(--b) - 2*var(--_p));
-          transition: .3s linear, color 0s, background-color 0s;
-          outline: var(--b) solid #0000;
-          outline-offset: .6em;
+        .cssbuttons-io {
+          position: relative;          
           font-size: 18px;
+          letter-spacing: 0.05em;
           font-weight: 600;
-          border: 0;
-          user-select: none;
-          -webkit-user-select: none;
-          touch-action: manipulation;
+          border-radius: 0.4em;
           cursor: pointer;
+          border: none;
+          background: black;
+          color: black;
+          overflow: hidden;
         }
 
-        .button-89:hover,
-        .button-89:focus-visible {
-          --_p: 0px;
-          outline-color: var(--color);
-          outline-offset: .05em;
+        .cssbuttons-io span {
+          position: relative;
+          z-index: 10;
+          transition: color 0.4s;
+          display: inline-flex;
+          align-items: center;
+          padding: 0.8em 1.2em 0.8em 1.05em;
         }
 
-        .button-89:active {
-          background: var(--color);
-          color: #000;
+        .cssbuttons-io:hover span {
+          color: white;
+        }
+
+        .cssbuttons-io::before,
+        .cssbuttons-io::after {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          z-index: 0;
+        }
+
+        .cssbuttons-io::before {
+          content: "";
+          background: #fff;
+          width: 120%;
+          left: -10%;
+          transform: skew(30deg);
+          transition: transform 0.4s cubic-bezier(0.3, 1, 0.8, 1);
+        }
+
+        .cssbuttons-io:hover::before {
+          transform: translate3d(100%, 0, 0);
+        }
+
+        .cssbuttons-io:active {
+          transform: scale(0.95);
         }
       `}</style>
       
@@ -94,18 +112,18 @@ const Hero = ({ heroData }: HeroProps) => {
               <h1 className="text-7xl font-bold mb-4 text-secondary-2">{slide.title}</h1>
               <p className="text-4xl font-semibold">{slide.subtitle}</p>
             </div>
-            
-            {/* Button - positioned below text area */}
-            {slide.link && (
-              <div className="mt-8">
-                <Link href={slide.link}>
-                  <button className="button-89" role="button">
-                    Shop Now
-                  </button>
-                </Link>
-              </div>
-            )}
           </div>
+          
+          {/* Button - positioned above indicator dots */}
+          {slide.link && (
+            <div className="absolute bottom-20 md:bottom-36 left-0 right-0 flex justify-center z-30">
+              <Link href={slide.link}>
+                <button className="cssbuttons-io" role="button">
+                  <span>SHOP NOW</span>
+                </button>
+              </Link>
+            </div>
+          )}
         </div>
       ))}
       
