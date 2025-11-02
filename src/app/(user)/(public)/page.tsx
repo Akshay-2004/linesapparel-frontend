@@ -17,6 +17,7 @@ import hero2 from '@/assets/home/hero 2.png'
 import hero3 from '@/assets/home/hero 3.png'
 import hero4 from '@/assets/home/hero 4.png'
 import { StaticImageData } from 'next/image'
+import InstagramFeed from '@/components/pages/home/InstagramFeed';
 
 // Define the slide type
 type HeroSlide = {
@@ -147,6 +148,7 @@ export default function Home() {
         remainingValidProductSections.map((section, index) => (
           <ProductSection key={`product-section-${index + 1}`} sectionData={section} />
         ))}
+        <InstagramFeed />
     </>
   );
 }
