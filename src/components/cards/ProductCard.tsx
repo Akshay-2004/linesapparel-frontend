@@ -36,7 +36,7 @@ export function ProductCard({
       </div>
       <CardContent className="px-0 w-full">
         <div className="flex flex-col items-start gap-0 font-['Roboto']">
-          <div className="flex justify-between w-full">
+          <div className="flex flex-col w-full">
             <h3 className="text-lg font-semibold leading-relaxed">{name}</h3>
             <span className="text-2xl font-semibold leading-9">
               ${price.toFixed(2)}

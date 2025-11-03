@@ -53,6 +53,7 @@ const UserNavBar = () => {
   } = useNavbarData();
   const [isExitingSearch, setIsExitingSearch] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [closeTimeout, setCloseTimeout] = useState<NodeJS.Timeout | null>(null);
   const pathname = usePathname();
   const router = useRouter();
 
@@ -256,8 +257,15 @@ const UserNavBar = () => {
                     ref={(el) => {
                       dropdownRefs.current[index] = el;
                     }}
-                    onMouseEnter={() => setOpenDropdown(index)}
-                    onMouseLeave={() => setOpenDropdown(null)}
+                    onMouseEnter={() => {
+                      if (closeTimeout) clearTimeout(closeTimeout);
+                      setCloseTimeout(null);
+                      setOpenDropdown(index);
+                    }}
+                    onMouseLeave={() => {
+                      const timeout = setTimeout(() => setOpenDropdown(null), 300);
+                      setCloseTimeout(timeout);
+                    }}
                   >
                     <button
                       className={`inline-flex items-center justify-center rounded-sm px-4 py-2 text-sm font-semibold transition-all duration-500 ${
@@ -288,6 +296,14 @@ const UserNavBar = () => {
                         className="absolute left-0 top-full mt-1 bg-white border border-gray-200 rounded-sm shadow-lg z-50 animate-in fade-in-0 zoom-in-95 duration-200"
                         style={{
                           width: category.sections.length > 1 ? '500px' : '400px'
+                        }}
+                        onMouseEnter={() => {
+                          if (closeTimeout) clearTimeout(closeTimeout);
+                          setCloseTimeout(null);
+                        }}
+                        onMouseLeave={() => {
+                          const timeout = setTimeout(() => setOpenDropdown(null), 300);
+                          setCloseTimeout(timeout);
                         }}
                       >
                         <div className="p-4">
@@ -434,7 +450,7 @@ const UserNavBar = () => {
               ) : (
                 <Link href="/sign-in">
                   <button 
-                    className={`hidden md:flex p-3 transition-colors duration-500 h-12 w-12 bg-transparent hover:bg-gray-100 rounded-md ${
+                    className={`hidden md:flex items-center justify-center p-3 transition-colors duration-500 h-12 w-12 bg-transparent hover:bg-gray-100 rounded-md ${
                       isHomepage && !isScrolled && !isHovered && !isFullSearchMode ? 'text-white hover:text-white' : 'text-gray-900'
                     }`}
                   >
@@ -465,9 +481,9 @@ const UserNavBar = () => {
             <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
               <SheetTrigger asChild>
                 <button
-                  className={`flex items-center justify-center transition-colors duration-500 h-12 w-12 bg-transparent hover:bg-gray-100 rounded-md ${isHomepage && !isScrolled && !isHovered && !isFullSearchMode ? 'text-white hover:text-white' : 'text-gray-900'}`}
+                  className={`flex items-center justify-center transition-colors duration-500 h-10 w-10 md:h-12 md:w-12 p-2 md:p-3 bg-transparent hover:bg-gray-100 rounded-md ${isHomepage && !isScrolled && !isHovered && !isFullSearchMode ? 'text-white hover:text-white' : 'text-gray-900'}`}
                 >
-                  <Menu className="h-10 w-10" />
+                  <Menu className="h-8 w-8 md:h-10 md:w-10" />
                   <span className="sr-only">Toggle menu</span>
                 </button>
               </SheetTrigger>
@@ -633,18 +649,18 @@ const UserNavBar = () => {
               {/* Mobile Search */}
               <button 
                 onClick={toggleDesktopSearch}
-                className={`flex items-center justify-center transition-colors duration-500 h-12 w-12 bg-transparent hover:bg-gray-100 rounded-md ${isHomepage && !isScrolled && !isHovered && !isFullSearchMode ? 'text-white hover:text-white' : 'text-gray-900'}`}
+                className={`flex items-center justify-center transition-colors duration-500 h-10 w-10 md:h-12 md:w-12 p-2 md:p-3 bg-transparent hover:bg-gray-100 rounded-md ${isHomepage && !isScrolled && !isHovered && !isFullSearchMode ? 'text-white hover:text-white' : 'text-gray-900'}`}
               >
-                <Search className="h-10 w-10" />
+                <Search className="h-8 w-8 md:h-10 md:w-10" />
                 <span className="sr-only">Search</span>
               </button>
 
               {/* Mobile Cart */}
               <Link href="/cart">
                 <button
-                  className={`flex items-center justify-center relative transition-colors duration-500 h-12 w-12 bg-transparent hover:bg-gray-100 rounded-md ${isHomepage && !isScrolled && !isHovered && !isFullSearchMode ? 'text-white hover:text-white' : 'text-gray-900'}`}
+                  className={`flex items-center justify-center relative transition-colors duration-500 h-10 w-10 md:h-12 md:w-12 p-2 md:p-3 bg-transparent hover:bg-gray-100 rounded-md ${isHomepage && !isScrolled && !isHovered && !isFullSearchMode ? 'text-white hover:text-white' : 'text-gray-900'}`}
                 >
-                  <ShoppingCart className="h-10 w-10" />
+                  <ShoppingCart className="h-8 w-8 md:h-10 md:w-10" />
                   {cartCount > 0 && (
                     <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full px-1.5 py-0.5 min-w-[20px] text-center">
                       {cartCount}
