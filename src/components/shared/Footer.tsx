@@ -1,194 +1,121 @@
 import React from "react";
 import Link from "next/link";
-import {
-  FaFacebook,
-  FaInstagram,
-  FaTwitter,
-  FaLinkedin,
-  FaYoutube,
-} from "react-icons/fa";
-import Logo from "@/assets/logowhite.png";
-import Image from "next/image";
 import { FaShopify } from "react-icons/fa";
+import { useInterestService } from "@/services/interest.service";
+import { toast } from "sonner";
 
 const Footer = () => {
+  const [email, setEmail] = React.useState("");
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const { createInterest } = useInterestService();
+
+  const handleSubscribe = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!email.trim()) {
+      toast.error("Please enter your email address");
+      return;
+    }
+
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      toast.error("Please enter a valid email address");
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      await createInterest({ email: email.trim() });
+      toast.success("Thank you for subscribing! We'll keep you updated.");
+      setEmail("");
+    } catch (error: any) {
+      const errorMessage =
+        error?.response?.data?.message ||
+        error?.message ||
+        "Failed to subscribe. Please try again.";
+      toast.error(errorMessage);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
-    <footer className="bg-neutral-900 text-gray-200">
+    <footer className="bg-white border-t border-gray-200">
       <div className="container mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
-          {/* Logo & Contact */}
-          <div className="flex items-start flex-col gap-4">
-            <Image
-              src={Logo}
-              alt="Logo"
-              className="object-contain h-8 w-auto mb-2"
-            />
-            <p className="text-sm text-gray-400">
-              LinesApparel is a premium online fashion destination offering
-              curated collections of clothing and accessories for modern
-              lifestyles.
-            </p>
-            <p className="text-sm text-gray-400">
-              2081, Cathers Drive, Nanaimo, V9R6R9, Canada
-            </p>
-            <p className="text-sm text-gray-400">Contact: +1(236)238 2587</p>
-          </div>
+        {/* Top Navigation Links */}
+        <div className="flex flex-wrap justify-center gap-6 mb-8 text-sm">
+          <Link href="/reviews" className="text-gray-700 hover:text-gray-900 uppercase">
+            Reviews
+          </Link>
+          <Link href="/contact" className="text-gray-700 hover:text-gray-900 uppercase">
+            Get in Touch
+          </Link>
+          <Link href="/legal/terms-of-service" className="text-gray-700 hover:text-gray-900 uppercase">
+            Terms of Service
+          </Link>
+          <Link href="/legal/privacy-policy" className="text-gray-700 hover:text-gray-900 uppercase">
+            Privacy Policy
+          </Link>
+          <Link href="/legal/refund-policy" className="text-gray-700 hover:text-gray-900 uppercase">
+            Returns and Refunds
+          </Link>
+        </div>
 
-          {/* Customer Service */}
-          <div>
-            <h3 className="uppercase font-bold text-gray-100 text-xs mb-2">
-              Customer Service
-            </h3>
-            <ul className="space-y-1">
-              <li>
-                <Link href="/reviews" className="hover:underline">
-                  Customer Reviews
-                </Link>
-              </li>
-              <li>
-                <Link href="/legal/shipping-policy" className="hover:underline">
-                  Shipping Info
-                </Link>
-              </li>
-              <li>
-                <Link href="/legal/refund-policy" className="hover:underline">
-                  Returns & Exchanges
-                </Link>
-              </li>
-              <li>
-                <Link href="/legal/cookie-policy" className="hover:underline">
-                  Cookie Policy
-                </Link>
-              </li>
-            </ul>
-          </div>
+        <hr className="my-8 border-gray-200" />
 
-          {/* Company */}
-          <div>
-            <h3 className="uppercase font-bold text-gray-100 text-xs mb-2">
-              Company
-            </h3>
-            <ul className="space-y-1">
-              {/* <li>
-                <Link href="/about" className="hover:underline">
-                  About LinesApparel
-                </Link>
-              </li> */}
-              <li>
-                <Link
-                  href="/legal/terms-of-service"
-                  className="hover:underline"
-                >
-                  Terms & Conditions
-                </Link>
-              </li>
-              <li>
-                <Link href="/legal/privacy-policy" className="hover:underline">
-                  Privacy Policy
-                </Link>
-              </li>
-              <li>
-                <Link href="/contact" className="hover:underline">
-                  Contact Us
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Connect With Us */}
-          <div>
-            <h3 className="uppercase font-bold text-gray-100 text-xs mb-2">
-              Connect With Us
-            </h3>
-            <div className="flex gap-3 mb-2">
-              <a
-                href="https://facebook.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Facebook"
-                className="hover:text-gray-100"
-              >
-                <FaFacebook size={20} />
-              </a>
-              <a
-                href="https://instagram.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Instagram"
-                className="hover:text-gray-100"
-              >
-                <FaInstagram size={20} />
-              </a>
-              <a
-                href="https://twitter.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Twitter"
-                className="hover:text-gray-100"
-              >
-                <FaTwitter size={20} />
-              </a>
-              <a
-                href="https://linkedin.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="LinkedIn"
-                className="hover:text-gray-100"
-              >
-                <FaLinkedin size={20} />
-              </a>
-              <a
-                href="https://youtube.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="YouTube"
-                className="hover:text-gray-100"
-              >
-                <FaYoutube size={20} />
-              </a>
-            </div>
-            <div className="text-xs text-gray-400">1M+ People like this</div>
-          </div>
-
-          {/* Newsletter */}
-          {/* <div>
-            <h3 className="uppercase font-bold text-gray-100 text-xs mb-2">
-              Keep Up To Date
-            </h3>
-            <form className="flex">
+        {/* Member List Section */}
+        <div className="text-center mb-8">
+          <h2 className="text-2xl font-bold text-gray-900 mb-4 uppercase">
+            Member List
+          </h2>
+          <p className="text-gray-600 mb-6 uppercase text-sm">
+            Get early access to new drops, meet-ups and more
+          </p>
+          
+          {/* Email Subscribe Form */}
+          <form onSubmit={handleSubscribe} className="max-w-md mx-auto">
+            <div className="flex gap-2">
               <input
                 type="email"
-                placeholder="Enter Email Id"
-                className="rounded-l px-3 py-2 text-sm bg-neutral-800 border border-neutral-700 focus:outline-none focus:ring-2 focus:ring-gray-100"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Email"
+                required
+                disabled={isSubmitting}
+                className="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
               />
               <button
                 type="submit"
-                className="bg-gray-100 text-black font-semibold px-4 rounded-r hover:bg-yellow-500 transition"
+                disabled={isSubmitting}
+                className="px-6 py-2 bg-gray-900 text-white rounded-md hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Subscribe
+                {isSubmitting ? "..." : "→"}
               </button>
-            </form>
-          </div> */}
+            </div>
+          </form>
         </div>
 
-        <hr className="my-8 border-neutral-700" />
+        <hr className="my-8 border-gray-200" />
 
-        <div className="flex flex-col md:flex-row justify-between items-center gap-2">
+        {/* Bottom Section */}
+        <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-600">
           <div className="flex items-center gap-3">
-            <span className="text-sm font-semibold text-gray-300">
-              Powered by
-            </span>
-            <FaShopify className="h-6 w-auto" /> Shopify
+            <span className="font-semibold text-gray-900">Powered by</span>
+            <FaShopify className="h-6 w-6 text-gray-900" />
+            <span className="text-gray-900">Shopify</span>
           </div>
+          
           <div className="flex flex-col items-center md:items-end gap-1">
-            <p className="text-xs text-gray-400">
+            <p className="text-xs text-gray-500">
               © 2025 LinesApparel. All rights reserved.
             </p>
             <a
               href="https://tryntest.in"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-xs text-gray-500 hover:text-gray-300 transition-colors"
+              className="text-xs text-gray-400 hover:text-gray-600 transition-colors"
             >
               Crafted by Try N Test Foundation
             </a>
