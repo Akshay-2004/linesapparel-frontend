@@ -18,6 +18,7 @@ import hero3 from '@/assets/home/hero 3.png'
 import hero4 from '@/assets/home/hero 4.png'
 import { StaticImageData } from 'next/image'
 import InstagramFeed from '@/components/pages/home/InstagramFeed';
+import { InterestPopup } from '@/components/modals/InterestPopup';
 
 // Define the slide type
 type HeroSlide = {
@@ -92,10 +93,25 @@ const hasValidProductSectionContent = (section: any) => {
 
 export default function Home() {
   const [homepageData, setHomepageData] = useState<IHomepageData | null>(null);
+  const [showInterestPopup, setShowInterestPopup] = useState(false);
   const { getHomepage, loading, error } = useHomepageService();
 
   useEffect(() => {
     loadHomepageData();
+  }, []);
+
+  useEffect(() => {
+    // Check if user has already submitted interest
+    const hasSubmitted = localStorage.getItem('interest_submitted');
+
+    if (!hasSubmitted) {
+      // Show popup after 10 seconds
+      const timer = setTimeout(() => {
+        setShowInterestPopup(true);
+      }, 10000);
+
+      return () => clearTimeout(timer);
+    }
   }, []);
 
   const loadHomepageData = async () => {
@@ -110,6 +126,10 @@ export default function Home() {
       console.error('Failed to load homepage data:', err);
       toast.error('Failed to load homepage content');
     }
+  };
+
+  const handleCloseInterestPopup = () => {
+    setShowInterestPopup(false);
   };
 
   if (loading) {
@@ -149,6 +169,12 @@ export default function Home() {
           <ProductSection key={`product-section-${index + 1}`} sectionData={section} />
         ))}
         <InstagramFeed />
+
+      {/* Interest Popup */}
+      <InterestPopup
+        isOpen={showInterestPopup}
+        onClose={handleCloseInterestPopup}
+      />
     </>
   );
 }
