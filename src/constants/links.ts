@@ -17,6 +17,7 @@ import {
   Star,
   Mail,
   Heading, // Better option for inquiries
+  Heart,
 } from "lucide-react";
 
 export interface NavItem {
@@ -66,5 +67,6 @@ export const navigation: NavItem[] = [
     ],
   },
   { name: "Inquiries", href: "/dashboard/inquiries", icon: Mail },
+  { name: "Interests", href: "/dashboard/interests", icon: Heart },
   { name: "Settings", href: "/dashboard/settings", icon: Settings },
 ];
