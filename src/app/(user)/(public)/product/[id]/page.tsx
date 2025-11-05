@@ -639,14 +639,64 @@ const ProductPage = () => {
       </Breadcrumb>
 
       <div className="flex flex-col lg:flex-row gap-8">
-        {/* Left Section - Product Info (previously on right) */}
-        <div className="lg:w-2/5">
-          <h1 className="text-4xl font-bold text-gray-800 mb-6">
+        {/* Left Section - Product Gallery */}
+        <div className="lg:w-1/2">
+          {/* Product Gallery - Now on left side */}
+          <div className="w-full">
+            {/* Main Image */}
+            <div className="mb-4 overflow-hidden bg-gray-50 rounded-md h-64 sm:h-80 md:h-96 lg:h-[500px] flex items-center justify-center relative group">
+              <Image
+                src={productImages[activeImageIndex]}
+                alt={data.title}
+                width={600}
+                height={800}
+                className="max-w-full max-h-full object-contain"
+                priority
+              />
+              {/* Enlarge Button */}
+              <button
+                onClick={openEnlargedImage}
+                className="absolute bottom-4 right-4 bg-white/80 hover:bg-white text-gray-800 p-2 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                title="Enlarge image"
+              >
+                <ZoomIn className="h-5 w-5" />
+              </button>
+            </div>
+
+            {/* Thumbnail Gallery */}
+            <div className="flex gap-3 overflow-x-auto h-28 items-center px-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+              {productImages.map((img, index) => (
+                <button
+                  key={index}
+                  className={cn(
+                    "min-w-[100px] h-24 border-2 rounded-lg overflow-hidden flex-shrink-0 transition-all duration-200",
+                    activeImageIndex === index
+                      ? "border-black shadow-md scale-105"
+                      : "border-gray-200 hover:border-gray-400"
+                  )}
+                  onClick={() => setActiveImageIndex(index)}
+                >
+                  <Image
+                    src={img}
+                    alt={`${data.title} view ${index + 1}`}
+                    width={100}
+                    height={96}
+                    className="w-full h-full object-cover"
+                  />
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Right Section - Product Info */}
+        <div className="lg:w-1/2">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-800 mb-6">
             {data.title}
           </h1>
 
           <div className="flex items-center mb-4">
-            <div className="text-3xl font-bold text-black">${price}</div>
+            <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-black">${price}</div>
             <div className="mx-3 h-8 border-l border-gray-300"></div>
             <div className="flex items-center">
               <div className="flex text-amber-400">
@@ -792,62 +842,12 @@ const ProductPage = () => {
               </AccordionContent>
             </AccordionItem>
           </Accordion>
-        </div>
 
-        {/* Right Section - Product Gallery and Reviews */}
-        <div className="lg:w-3/5">
-          {/* Product Gallery - Now on right side, full width */}
-          <div className="w-full">
-            {/* Main Image */}
-            <div className="mb-4 overflow-hidden bg-gray-50 rounded-md h-[500px] flex items-center justify-center relative group">
-              <Image
-                src={productImages[activeImageIndex]}
-                alt={data.title}
-                width={600}
-                height={800}
-                className="max-w-full max-h-full object-contain"
-                priority
-              />
-              {/* Enlarge Button */}
-              <button
-                onClick={openEnlargedImage}
-                className="absolute bottom-4 right-4 bg-white/80 hover:bg-white text-gray-800 p-2 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-                title="Enlarge image"
-              >
-                <ZoomIn className="h-5 w-5" />
-              </button>
-            </div>
-
-            {/* Thumbnail Gallery */}
-            <div className="flex gap-2 overflow-x-auto pb-2">
-              {productImages.map((img, index) => (
-                <button
-                  key={index}
-                  className={cn(
-                    "min-w-[80px] h-20 border rounded overflow-hidden",
-                    activeImageIndex === index
-                      ? "border-black"
-                      : "border-gray-200"
-                  )}
-                  onClick={() => setActiveImageIndex(index)}
-                >
-                  <Image
-                    src={img}
-                    alt={`${data.title} view ${index + 1}`}
-                    width={80}
-                    height={80}
-                    className="w-full h-full object-cover"
-                  />
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Ratings & Reviews Section - below gallery */}
-          <div className="w-full mt-8">
+          {/* Ratings & Reviews Section - below the product info */}
+          <div className="mt-8">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-2">
-                <h2 className="text-2xl font-bold">Ratings & Reviews</h2>
+                <h2 className="text-lg sm:text-xl lg:text-2xl font-bold">Ratings & Reviews</h2>
                 <Star className="h-6 w-6" />
               </div>
               <Button
@@ -987,10 +987,10 @@ const ProductPage = () => {
                   {/* Rating Summary */}
                   <div className="md:w-1/4">
                     <div className="text-center mb-4 flex items-end justify-center">
-                      <div className="text-6xl font-bold">
+                      <div className="text-4xl sm:text-5xl lg:text-6xl font-bold">
                         {reviews?.averageRating ? reviews.averageRating.toFixed(1) : '0.0'}
                       </div>
-                      <div className="text-lg text-gray-800">/5</div>
+                      <div className="text-sm sm:text-base lg:text-lg text-gray-800">/5</div>
                     </div>
 
                     <div className="flex justify-center mb-2">
@@ -1005,7 +1005,7 @@ const ProductPage = () => {
                       ))}
                     </div>
 
-                    <div className="text-center text-lg text-gray-500 mb-6">
+                    <div className="text-center text-sm sm:text-base lg:text-lg text-gray-500 mb-6">
                       Based on {reviews?.totalReviews || 0} reviews
                     </div>
                   </div>
@@ -1031,7 +1031,7 @@ const ProductPage = () => {
 
                 {/* Customer Reviews */}
                 <div>
-                  <h3 className="text-xl font-bold mb-4">
+                  <h3 className="text-base sm:text-lg lg:text-xl font-bold mb-4">
                     Customer Reviews ({reviews?.totalReviews || 0})
                   </h3>
 
