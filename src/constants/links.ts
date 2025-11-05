@@ -68,5 +68,6 @@ export const navigation: NavItem[] = [
   },
   { name: "Inquiries", href: "/dashboard/inquiries", icon: Mail },
   { name: "Interests", href: "/dashboard/interests", icon: Heart },
+  { name: "Text Banners", href: "/dashboard/text-banners", icon: Heading },
   { name: "Settings", href: "/dashboard/settings", icon: Settings },
 ];

@@ -75,21 +75,19 @@ export function useApi<T>(): UseApiReturn<T> {
           },
         };
 
-        const response: AxiosResponse<{ data: T }> = await api.request<{
-          data: T;
-        }>({
+        const response: AxiosResponse = await api.request({
           url,
           ...requestConfig,
         });
 
         setState({
-          data: response.data.data,
+          data: response.data.data !== undefined ? response.data.data : response.data,
           error: null,
           loading: false,
           uploadProgress: 100,
         });
 
-        return response.data.data;
+        return response.data.data !== undefined ? response.data.data : response.data;
       } catch (error) {
         const axiosError = error as AxiosError<ApiError>;
         const errorMessage =
