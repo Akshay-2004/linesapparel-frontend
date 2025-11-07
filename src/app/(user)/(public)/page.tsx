@@ -11,6 +11,7 @@ import Hero from "@/components/pages/home/Hero";
 import HomeBanner1 from "@/components/pages/home/HomeBanner1";
 import HomeBanner2 from "@/components/pages/home/HomeBanner2";
 import ProductSection from "@/components/pages/home/ProductSection";
+import ProductSectionNew from "@/components/pages/home/ProductSectionNew";
 
 import hero1 from '@/assets/home/hero 1.png'
 import hero2 from '@/assets/home/hero 2.png'
@@ -164,10 +165,15 @@ export default function Home() {
       {firstValidProductSection && <ProductSection sectionData={firstValidProductSection} />}
       {validBanners[1] && <HomeBanner2 bannerData={validBanners[1]} />}
 
-      {remainingValidProductSections.length > 0 &&
-        remainingValidProductSections.map((section, index) => (
-          <ProductSection key={`product-section-${index + 1}`} sectionData={section} />
-        ))}
+      {remainingValidProductSections.length > 0 && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 container mx-auto">
+          {remainingValidProductSections.map((section, index) => (
+            <div key={`product-section-new-${index}`} className="col-span-1">
+              <ProductSectionNew sectionData={section} />
+            </div>
+          ))}
+        </div>
+      )}
         <InstagramFeed />
 
       {/* Interest Popup */}
