@@ -139,7 +139,7 @@ const Fashion = ({ fashionData }: FashionProps) => {
                 {fetchedProducts.slice(0, 2).map((product, index) => (
                   <div
                     key={product.id}
-                    className="col-span-1 lg:col-span-3 min-h-[320px] sm:min-h-[360px] lg:min-h-[400px]  flex"
+                    className="col-span-1 lg:col-span-3 col-start-1 min-h-[320px] sm:min-h-[360px] lg:min-h-[400px]  flex"
                   >
                     <Link href={`/product/${product.handle}`} className="w-full">
                       <ProductCard
@@ -174,7 +174,7 @@ const Fashion = ({ fashionData }: FashionProps) => {
                 {fetchedProducts.slice(2).map((product, index) => (
                   <div
                     key={product.id}
-                    className="col-span-1 lg:col-span-3 min-h-[320px] sm:min-h-[360px] lg:min-h-[400px]  flex"
+                    className="col-span-1 lg:col-span-3 col-start-1 min-h-[320px] sm:min-h-[360px] lg:min-h-[400px] flex"
                   >
                     <Link href={`/product/${product.handle}`} className="w-full">
                       <ProductCard

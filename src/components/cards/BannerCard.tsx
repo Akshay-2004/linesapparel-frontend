@@ -21,8 +21,8 @@ const BannerCard = ({
   const isStaticImage = typeof image !== "string";
 
   return (
-    <section className="h-full w-full">
-      <div className="h-full w-full border border-red-200 overflow-hidden bg-white">
+    <section className="h-full w-full py-2 rounded-md">
+      <div className="h-full w-full overflow-hidden bg-white shadow-md rounded-sm">
         <div className="grid grid-cols-1 md:grid-cols-2 h-full">
           <div className="order-1 h-full">
             {isStaticImage ? (
