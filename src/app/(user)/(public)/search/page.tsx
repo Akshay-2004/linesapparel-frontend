@@ -273,7 +273,7 @@ function SearchPageContent() {
                     name={product.title}
                     variant={product.variants.edges[0]?.node.title || ''}
                     price={parseFloat(product.variants.edges[0]?.node.priceV2.amount || '0')}
-                    originalPrice={
+                    compareAtPrice={
                       product.variants.edges[0]?.node.compareAtPriceV2 
                         ? parseFloat(product.variants.edges[0].node.compareAtPriceV2.amount)
                         : undefined

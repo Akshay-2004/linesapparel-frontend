@@ -12,6 +12,7 @@ import HomeBanner1 from "@/components/pages/home/HomeBanner1";
 import HomeBanner2 from "@/components/pages/home/HomeBanner2";
 import ProductSection from "@/components/pages/home/ProductSection";
 import ProductSectionNew from "@/components/pages/home/ProductSectionNew";
+import AllProductSection from "@/components/pages/home/AllProductSection";
 
 import hero1 from '@/assets/home/hero 1.png'
 import hero2 from '@/assets/home/hero 2.png'
@@ -164,6 +165,7 @@ export default function Home() {
       {validBanners[0] && <HomeBanner1 bannerData={validBanners[0]} />}
       {firstValidProductSection && <ProductSection sectionData={firstValidProductSection} />}
       {validBanners[1] && <HomeBanner2 bannerData={validBanners[1]} />}
+      <AllProductSection />
 
       {remainingValidProductSections.length > 0 && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 container mx-auto">

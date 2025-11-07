@@ -1,69 +1,41 @@
 'use client';
 
 import React, { useEffect } from 'react';
-import { IProductSectionContent } from '@/types/homepage.interface';
 import { ProductCard } from '@/components/cards/ProductCard';
 import ProductTitleSection from "@/components/shared/ProductTitleSection";
 import { useApi } from '@/hooks/useApi';
 import Link from 'next/link';
 import { ProductSkeleton } from '@/components/skeletons/ProductSkeleton';
 
-interface ProductSectionNewProps {
-  sectionData: IProductSectionContent;
-}
-
-export default function ProductSectionNew({ sectionData }: ProductSectionNewProps) {
-  const {
-    title,
-    description,
-    topText,
-    buttonText,
-    buttonLink,
-    tag,
-    carouselSettings
-  } = sectionData;
-
-  interface ShopifyProductNode {
-    id: string;
-    handle: string;
-    title: string;
-    variants: {
-      edges: { node: { title: string; price: string; compareAtPrice?: string; handle?: string } }[];
-    };
-    images: {
-      edges: { node: { url: string } }[];
-    };
-  }
+export default function AllProductSection() {
 
   interface ShopifyProductsData {
-    products?: {
-      edges: { node: ShopifyProductNode }[];
-    };
+    products?: any[];
   }
 
   const { fetchData, data, loading } = useApi<ShopifyProductsData>()
 
-  const getProductByTag = async () => {
+  const getAllProducts = async () => {
     try {
-      const response = await fetchData(`/shopify/collections/handle/${tag}?limit=2`)
+      const response = await fetchData(`/shopify/products?limit=8`)
     } catch (error) {
       console.error('Error fetching products:', error);
     }
   }
 
   useEffect(() => {
-    getProductByTag()
-  }, [tag])
+    getAllProducts()
+  }, [])
 
   // Transform Shopify products data into our format
-  const shopifyProducts = data?.products?.edges?.map(({ node }) => ({
-    id: node.id,
-    handle: node.handle,
-    name: node.title,
-    variant: node.variants.edges[0]?.node.title || '',
-    price: parseFloat(node.variants.edges[0]?.node.price || '0'),
-    compareAtPrice: node.variants.edges[0]?.node.compareAtPrice ? parseFloat(node.variants.edges[0]?.node.compareAtPrice) : undefined,
-    image: node.images.edges[0]?.node.url || '',
+  const shopifyProducts = data?.products?.map((product: any) => ({
+    id: product.id,
+    handle: product.handle,
+    name: product.title,
+    variant: product.variants?.[0]?.title || '',
+    price: parseFloat(product.variants?.[0]?.price || '0'),
+    compareAtPrice: product.variants?.[0]?.compare_at_price ? parseFloat(product.variants?.[0]?.compare_at_price) : undefined,
+    image: product.images?.[0]?.src || '',
     showButton: true
   })) || [];
 
@@ -74,28 +46,28 @@ export default function ProductSectionNew({ sectionData }: ProductSectionNewProp
     <section className="bg-white py-12 md:py-16">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <ProductTitleSection
-          description={description || "Discover our curated collection of premium products"}
-          title={title}
-          topText={topText || "Featured Collection"}
-          buttonText={buttonText || "View All"}
-          buttonLink={buttonLink || "/products"}
+          description="Discover our complete collection of premium products"
+          title="All Products"
+          topText="Explore Everything"
+          buttonText="View All"
+          buttonLink="/products"
         />
 
         <div className="mt-8">
           {loading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-              {[...Array(2)].map((_, index) => (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 lg:gap-6">
+              {[...Array(8)].map((_, index) => (
                 <div
                   key={`skeleton-${index}`}
-                  className="h-full min-h-[400px] flex"
+                  className="h-full min-h-[300px] flex"
                 >
                   <ProductSkeleton />
                 </div>
               ))}
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-              {displayProducts.map((product: {
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 lg:gap-6">
+              {displayProducts.slice(0, displayProducts.length >= 8 ? 8 : Math.min(4, displayProducts.length)).map((product: {
                 id: string;
                 name: string;
                 variant: string;
@@ -108,7 +80,7 @@ export default function ProductSectionNew({ sectionData }: ProductSectionNewProp
                 <Link
                   href={`/product/${product.handle}`}
                   key={product.id}
-                  className="h-full min-h-56 flex"
+                  className="h-full min-h-[300px] flex"
                 >
                   <ProductCard
                     name={product.name}

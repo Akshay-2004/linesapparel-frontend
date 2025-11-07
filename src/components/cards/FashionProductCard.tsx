@@ -10,7 +10,6 @@ type ProductCardProps = {
   showButton?: boolean;
   // Optional props for backward compatibility
   originalPrice?: number;
-  compareAtPrice?: number;
   rating?: number;
   isNew?: boolean;
   discount?: number;
@@ -22,11 +21,10 @@ export function ProductCard({
   price,
   image,
   showButton = true,
-  compareAtPrice,
 }: ProductCardProps) {
   return (
     <Card className="w-full rounded-sm pb-0 p-4 my-2 custom-shadow hover:scale-105 transition-transform duration-200 "  >
-      <div className="overflow-hidden aspect-square w-full">
+      <div className="overflow-hidden aspect-[3/4] w-full">
         <Image
           src={image}
           alt={name}
@@ -39,36 +37,24 @@ export function ProductCard({
       <CardContent className="px-0 w-full">
         <div className="flex flex-col items-start gap-0 font-['Roboto']">
           <div className="flex flex-col w-full">
-            <h3 
-              className="text-base font-semibold leading-relaxed truncate" 
-              title={name}
-            >
-              {name}
-            </h3>
-            <div className="flex items-center gap-2">
-              <span className="text-xl font-semibold leading-9">
-                ${price.toFixed(2)}
-              </span>
-              {compareAtPrice && compareAtPrice > price && (
-                <span className="text-base text-gray-500 line-through">
-                  ${compareAtPrice.toFixed(2)}
-                </span>
-              )}
-            </div>
+            <h3 className="text-lg font-semibold leading-relaxed">{name}</h3>
+            <span className="text-2xl font-semibold leading-9">
+              ${price.toFixed(2)}
+            </span>
           </div>
           {/* {variant && variant !== "Default Title" && (
             <p className="text-sm font-normal leading-tight text-gray-600">
               {variant}
             </p>
           )} */}
-          {/* {showButton && (
+          {showButton && (
             <Button
               className="mt-3 rounded-none w-full text-primary-7 text-base font-medium leading-normal"
               variant="outline"
             >
               View
             </Button>
-          )} */}
+          )}
         </div>
       </CardContent>
     </Card>

@@ -46,14 +46,17 @@ export function WishlistItem({ item, onRemove }: WishlistItemProps) {
             {item.title}
           </h3>
         </Link>
-        <p className="text-xl font-bold text-gray-900">
-          ${parseFloat(item.price).toFixed(2)}
-        </p>
-        {item.compareAtPrice && parseFloat(item.compareAtPrice) > parseFloat(item.price) && (
-          <p className="text-sm text-gray-500 line-through">
-            ${parseFloat(item.compareAtPrice).toFixed(2)}
+        
+        <div className="flex items-center gap-2">
+          <p className="text-xl font-bold text-gray-900">
+            ${parseFloat(item.price).toFixed(2)}
           </p>
-        )}
+          {item.compareAtPrice && parseFloat(item.compareAtPrice) > parseFloat(item.price) && (
+            <p className="text-sm text-gray-500 line-through">
+              ${parseFloat(item.compareAtPrice).toFixed(2)}
+            </p>
+          )}
+        </div>
       </CardContent>
       
       <CardFooter className="p-4 pt-0">

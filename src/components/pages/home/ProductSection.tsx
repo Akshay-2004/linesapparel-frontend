@@ -31,7 +31,7 @@ export default function ProductSection({ sectionData }: ProductSectionProps) {
     handle: string; // <-- add this line
     title: string;
     variants: {
-      edges: { node: { title: string; price: string; handle?: string } }[];
+      edges: { node: { title: string; price: string; compareAtPrice?: string; handle?: string } }[];
     };
     images: {
       edges: { node: { url: string } }[];
@@ -65,6 +65,7 @@ export default function ProductSection({ sectionData }: ProductSectionProps) {
     name: node.title,
     variant: node.variants.edges[0]?.node.title || '',
     price: parseFloat(node.variants.edges[0]?.node.price || '0'),
+    compareAtPrice: node.variants.edges[0]?.node.compareAtPrice ? parseFloat(node.variants.edges[0]?.node.compareAtPrice) : undefined,
     image: node.images.edges[0]?.node.url || '',
     showButton: true
   })) || [];
@@ -110,6 +111,7 @@ export default function ProductSection({ sectionData }: ProductSectionProps) {
                 name: string;
                 variant: string;
                 price: number;
+                compareAtPrice?: number;
                 image: string;
                 showButton: boolean;
                 handle: string;
@@ -117,12 +119,13 @@ export default function ProductSection({ sectionData }: ProductSectionProps) {
                 <Link
                   href={`/product/${product.handle}`}
                   key={product.id}
-                  className="h-full min-h-[400px] flex"
+                  className="h-full min-h-56 flex"
                 >
                   <ProductCard
                     name={product.name}
                     variant={product.variant}
                     price={product.price}
+                    compareAtPrice={product.compareAtPrice}
                     image={product.image || "/placeholder.jpg"}
                     showButton={product.showButton}
                   />

@@ -1,5 +1,5 @@
 "use client";
-import { ProductCard } from "@/components/cards/ProductCard";
+import { ProductCard } from "@/components/cards/FashionProductCard";
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import whiteDress from "@/assets/products/whitefemaledress.jpg";
@@ -160,7 +160,7 @@ const Fashion = ({ fashionData }: FashionProps) => {
                 {fashionData.banners.map((banner, index) => (
                   <div
                     key={index}
-                    className="col-span-1 sm:col-span-2 lg:col-span-6 mt-4 sm:mt-0 min-h-[200px] sm:min-h-[320px] lg:min-h-[400px] flex"
+                    className="col-span-1 sm:col-span-2 lg:col-span-6 mt-4 sm:mt-0 min-h-[200px] sm:min-h-[320px] flex"
                   >
                     <BannerCard
                       description={banner.description}
