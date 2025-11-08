@@ -26,6 +26,7 @@ type EnhancedProductFilterSheetProps = {
   setPriceRange: (range: [number, number]) => void;
   showAvailableOnly: boolean;
   setShowAvailableOnly: (show: boolean) => void;
+  onApply?: () => void;
 };
 
 export function EnhancedProductFilterSheet({
@@ -40,6 +41,7 @@ export function EnhancedProductFilterSheet({
   setPriceRange,
   showAvailableOnly,
   setShowAvailableOnly,
+  onApply,
 }: EnhancedProductFilterSheetProps) {
   const handleVendorChange = (vendor: string, checked: boolean) => {
     if (checked) {
@@ -202,12 +204,15 @@ export function EnhancedProductFilterSheet({
 
         <SheetFooter className="flex flex-col space-y-2 mt-6">
           <SheetClose asChild>
-            <Button variant="outline" onClick={clearAllFilters} className="w-full">
+            <Button variant="outline" onClick={() => {
+              clearAllFilters();
+              onApply?.();
+            }} className="w-full">
               Clear All Filters
             </Button>
           </SheetClose>
           <SheetClose asChild>
-            <Button className="w-full">
+            <Button className="w-full" onClick={onApply}>
               Apply Filters
             </Button>
           </SheetClose>

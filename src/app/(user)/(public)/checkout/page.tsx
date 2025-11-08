@@ -366,20 +366,6 @@ export default function CheckoutPage() {
                             <CardTitle className="text-4xl font-bold text-foreground mb-4">
                                 {variantId && quantity ? "Quick Checkout" : "Checkout"}
                             </CardTitle>
-                            <CardDescription className="text-muted-foreground">
-                                {variantId && quantity 
-                                    ? "You're purchasing a single item with Buy Now. Complete your order details below."
-                                    : "Please fill in your shipping and billing information to complete your order."
-                                }
-                            </CardDescription>
-                            {variantId && quantity && (
-                                <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                                    <div className="flex items-center gap-2 text-blue-800 text-sm">
-                                        <ShoppingBag className="h-4 w-4" />
-                                        <span>Buy Now Mode: Processing single item purchase</span>
-                                    </div>
-                                </div>
-                            )}
                         </div>
                     </CardHeader>
                     <CardContent className="pt-8 space-y-8">

@@ -52,6 +52,9 @@ interface Product {
   title: string;
   description: string;
   productType: string;
+  vendor: string;
+  tags: string[];
+  availableForSale: boolean;
   images: {
     edges: Array<{
       node: {
@@ -65,14 +68,26 @@ interface Product {
       node: {
         id: string;
         title: string;
-        price: string;
-        compareAtPrice: string | null;
+        priceV2: {
+          amount: string;
+          currencyCode: string;
+        };
+        compareAtPriceV2?: {
+          amount: string;
+          currencyCode: string;
+        };
+        sku: string;
         availableForSale: boolean;
-        inventoryQuantity: number;
+        quantityAvailable: number;
+        selectedOptions: Array<{
+          name: string;
+          value: string;
+        }>;
       };
     }>;
   };
   options: Array<{
+    id: string;
     name: string;
     values: string[];
   }>;
@@ -167,6 +182,7 @@ const ProductPage = () => {
   const [selectedVariant, setSelectedVariant] = useState("");
   const [quantity, setQuantity] = useState(1);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const [selectedVariantObj, setSelectedVariantObj] = useState<any>(null);
   // Removed cartQuantity because 'quantity' does not exist on CartState
   const { addToCart } = useCartStore();
 
@@ -261,6 +277,23 @@ const ProductPage = () => {
     }
   }, [params.id]);
 
+  // Extract values from API data with null checks - moved here to avoid conditional hooks
+  const productImages = data?.images?.edges?.map((edge) => edge.node.url) || [];
+  const variants = data?.variants?.edges?.map((edge) => edge.node) || [];
+  const sizes = data?.options?.find((opt) => opt.name === "Size")?.values || [];
+  const colors = data?.options?.find((opt) => opt.name === "Color")?.values || [];
+
+  // Get current pricing and currency - moved here to avoid conditional hooks
+  const currentPrice = selectedVariantObj?.priceV2?.amount || variants[0]?.priceV2?.amount || "0.00";
+  const compareAtPrice = selectedVariantObj?.compareAtPriceV2?.amount || variants[0]?.compareAtPriceV2?.amount;
+  const currency = selectedVariantObj?.priceV2?.currencyCode || variants[0]?.priceV2?.currencyCode || 'CAD';
+  const hasDiscount = compareAtPrice && parseFloat(compareAtPrice) > parseFloat(currentPrice);
+  const discountPercentage = hasDiscount ? Math.round(((parseFloat(compareAtPrice) - parseFloat(currentPrice)) / parseFloat(compareAtPrice)) * 100) : 0;
+
+  // Calculate inventory for selected variant - moved here to avoid conditional hooks
+  const inventoryQuantity = selectedVariantObj?.quantityAvailable ?? 0;
+  const isInStock = selectedVariantObj?.availableForSale ?? inventoryQuantity > 0;
+
   useEffect(() => {
     getProduct();
   }, [getProduct]);
@@ -292,6 +325,42 @@ const ProductPage = () => {
 
     fetchReviews();
   }, [data?.id]);
+
+  // Set default selected variant when data loads
+  useEffect(() => {
+    if (variants.length > 0 && !selectedVariantObj) {
+      setSelectedVariantObj(variants[0]);
+      // Auto-select first available size and color if they exist
+      if (sizes.length > 0 && !selectedSize) {
+        const firstVariant = variants[0];
+        const sizeOption = firstVariant.selectedOptions.find(opt => opt.name === 'Size');
+        if (sizeOption) setSelectedSize(sizeOption.value);
+      }
+      if (colors.length > 0 && !selectedVariant) {
+        const firstVariant = variants[0];
+        const colorOption = firstVariant.selectedOptions.find(opt => opt.name === 'Color');
+        if (colorOption) setSelectedVariant(colorOption.value);
+      }
+    }
+  }, [variants, sizes, colors, selectedVariantObj, selectedSize, selectedVariant]);
+
+  // Update selected variant when size or color changes
+  useEffect(() => {
+    if (variants.length > 0) {
+      const newVariant = variants.find(
+        (variant) => {
+          const variantSize = variant.selectedOptions.find(opt => opt.name === 'Size')?.value;
+          const variantColor = variant.selectedOptions.find(opt => opt.name === 'Color')?.value;
+          
+          return (sizes.length === 0 || variantSize === selectedSize) &&
+                 (colors.length === 0 || variantColor === selectedVariant);
+        }
+      );
+      if (newVariant && newVariant.id !== selectedVariantObj?.id) {
+        setSelectedVariantObj(newVariant);
+      }
+    }
+  }, [selectedSize, selectedVariant, variants, sizes, colors]);
 
   const handleReviewSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -407,17 +476,6 @@ const ProductPage = () => {
     );
   }
 
-  // Extract values from API data with null checks
-  const productImages = data.images?.edges?.map((edge) => edge.node.url) || [];
-  const variants = data.variants?.edges?.map((edge) => edge.node) || [];
-  const sizes = [
-    ...new Set(data.options?.find((opt) => opt.name === "Size")?.values || []),
-  ];
-  const colors = [
-    ...new Set(data.options?.find((opt) => opt.name === "Color")?.values || []),
-  ];
-  const price = variants[0]?.price || "0.00";
-
   const handleAddToCart = async () => {
     if (sizes.length > 0 && !selectedSize) {
       toast("Please select a size");
@@ -434,9 +492,13 @@ const ProductPage = () => {
 
     // Find the selected variant ID based on size and color
     const selectedVariantObj = variants.find(
-      (variant) =>
-        (sizes.length === 0 || variant.title.includes(selectedSize)) &&
-        (colors.length === 0 || variant.title.includes(selectedVariant))
+      (variant) => {
+        const variantSize = variant.selectedOptions.find(opt => opt.name === 'Size')?.value;
+        const variantColor = variant.selectedOptions.find(opt => opt.name === 'Color')?.value;
+        
+        return (sizes.length === 0 || variantSize === selectedSize) &&
+               (colors.length === 0 || variantColor === selectedVariant);
+      }
     );
 
     if (!selectedVariantObj) {
@@ -455,7 +517,7 @@ const ProductPage = () => {
         productId: data.id,
         variantId: cleanVariantId,
         quantity,
-        price: Number(selectedVariantObj.price),
+        price: Number(selectedVariantObj.priceV2.amount),
         title: data.title,
       });
       toast("Added to cart!");
@@ -482,9 +544,13 @@ const ProductPage = () => {
 
     // Find the selected variant ID based on size and color
     const selectedVariantId = variants.find(
-      (variant) =>
-        (sizes.length === 0 || variant.title.includes(selectedSize)) &&
-        (colors.length === 0 || variant.title.includes(selectedVariant))
+      (variant) => {
+        const variantSize = variant.selectedOptions.find(opt => opt.name === 'Size')?.value;
+        const variantColor = variant.selectedOptions.find(opt => opt.name === 'Color')?.value;
+        
+        return (sizes.length === 0 || variantSize === selectedSize) &&
+               (colors.length === 0 || variantColor === selectedVariant);
+      }
     )?.id;
 
     if (!selectedVariantId) {
@@ -696,7 +762,25 @@ const ProductPage = () => {
           </h1>
 
           <div className="flex items-center mb-4">
-            <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-black">${price}</div>
+            <div className="flex items-center gap-2">
+              {hasDiscount ? (
+                <>
+                  <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-black">
+                    {currency === 'INR' ? '₹' : currency === 'USD' ? '$' : currency === 'CAD' ? 'C$' : currency + ' '}{currentPrice}
+                  </div>
+                  <div className="text-lg sm:text-xl text-gray-500 line-through">
+                    {currency === 'INR' ? '₹' : currency === 'USD' ? '$' : currency === 'CAD' ? 'C$' : currency + ' '}{compareAtPrice}
+                  </div>
+                  <div className="text-sm bg-red-100 text-red-600 px-2 py-1 rounded">
+                    {discountPercentage}% OFF
+                  </div>
+                </>
+              ) : (
+                <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-black">
+                  {currency === 'INR' ? '₹' : currency === 'USD' ? '$' : currency === 'CAD' ? 'C$' : currency + ' '}{currentPrice}
+                </div>
+              )}
+            </div>
             <div className="mx-3 h-8 border-l border-gray-300"></div>
             <div className="flex items-center">
               <div className="flex text-amber-400">
@@ -737,21 +821,34 @@ const ProductPage = () => {
                 </Button>
               </div>
               <div className="flex flex-wrap gap-2">
-                {sizes.map((size) => (
-                  <button
-                    key={size}
-                    onClick={() => setSelectedSize(size)}
-                    className={cn(
-                      "h-10 w-10 flex items-center justify-center rounded-full border",
-                      selectedSize === size
-                        ? "border-black bg-black text-white"
-                        : "border-gray-300 hover:border-gray-400"
-                    )}
-                  >
-                    {size}
-                  </button>
-                ))}
+                {sizes.map((size) => {
+                  const sizeVariant = variants.find(v => 
+                    v.selectedOptions.find(opt => opt.name === 'Size' && opt.value === size)
+                  );
+                  const sizeInStock = sizeVariant?.availableForSale ?? (sizeVariant?.quantityAvailable ?? 0) > 0;
+                  
+                  return (
+                    <button
+                      key={size}
+                      onClick={() => setSelectedSize(size)}
+                      disabled={!sizeInStock}
+                      className={cn(
+                        "h-10 w-10 flex items-center justify-center rounded-full border",
+                        selectedSize === size
+                          ? "border-black bg-black text-white"
+                          : "border-gray-300 hover:border-gray-400",
+                        !sizeInStock && "opacity-50 cursor-not-allowed border-gray-200 text-gray-400"
+                      )}
+                      title={!sizeInStock ? 'Out of stock' : undefined}
+                    >
+                      {size}
+                    </button>
+                  );
+                })}
               </div>
+              {selectedSize && !isInStock && (
+                <p className="text-red-500 text-sm mt-2">This size is currently out of stock</p>
+              )}
             </div>
           )}
 

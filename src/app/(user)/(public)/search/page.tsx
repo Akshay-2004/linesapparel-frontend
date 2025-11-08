@@ -89,8 +89,8 @@ function SearchPageContent() {
       
       const params = new URLSearchParams();
       if (query) params.append('query', query);
-      if (selectedVendors.length > 0) params.append('vendor', selectedVendors[0]); // API takes single vendor
-      if (selectedProductTypes.length > 0) params.append('productType', selectedProductTypes[0]); // API takes single type
+      if (selectedVendors.length > 0) params.append('vendor', selectedVendors.join(','));
+      if (selectedProductTypes.length > 0) params.append('productType', selectedProductTypes.join(','));
       if (showAvailableOnly) params.append('available', 'true');
       if (priceRange[0] > 0) params.append('priceMin', priceRange[0].toString());
       if (priceRange[1] < 1000) params.append('priceMax', priceRange[1].toString());
@@ -129,10 +129,6 @@ function SearchPageContent() {
     }
   };
 
-  const handleFilterChange = useCallback(() => {
-    performSearch(undefined, true);
-  }, [performSearch]);
-
   const handleNextPage = () => {
     if (searchResults?.pageInfo.hasNextPage && searchResults.pageInfo.endCursor) {
       setCursor(searchResults.pageInfo.endCursor);
@@ -162,8 +158,8 @@ function SearchPageContent() {
   }, [searchParams, performSearch]); // Add performSearch as dependency
 
   useEffect(() => {
-    handleFilterChange();
-  }, [selectedVendors, selectedProductTypes, priceRange, sortBy, showAvailableOnly]);
+    performSearch(undefined, true);
+  }, [sortBy]);
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-7xl">
@@ -214,6 +210,10 @@ function SearchPageContent() {
           setPriceRange={setPriceRange}
           showAvailableOnly={showAvailableOnly}
           setShowAvailableOnly={setShowAvailableOnly}
+          onApply={() => {
+            console.log('Applying search filters');
+            performSearch(undefined, true);
+          }}
         />
         
         <div className="flex items-center space-x-4">
