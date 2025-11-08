@@ -16,7 +16,16 @@ interface ShopifyProductNode {
   handle: string;
   title: string;
   variants: {
-    edges: { node: { title: string; price: string; handle?: string } }[];
+    edges: { 
+      node: { 
+        title: string; 
+        priceV2: {
+          amount: string;
+          currencyCode: string;
+        };
+        handle?: string;
+      } 
+    }[];
   };
   images: {
     edges: { node: { url: string } }[];
@@ -149,7 +158,7 @@ const Fashion = ({ fashionData }: FashionProps) => {
                         name={product.title}
                         variant={product.variants.edges[0]?.node.title || ""}
                         price={parseFloat(
-                          product.variants.edges[0]?.node.price || "0"
+                          product.variants.edges[0]?.node.priceV2?.amount || "0"
                         )}
                         showButton={false}
                       />
@@ -184,7 +193,7 @@ const Fashion = ({ fashionData }: FashionProps) => {
                         name={product.title}
                         variant={product.variants.edges[0]?.node.title || ""}
                         price={parseFloat(
-                          product.variants.edges[0]?.node.price || "0"
+                          product.variants.edges[0]?.node.priceV2?.amount || "0"
                         )}
                         showButton={false}
                       />
