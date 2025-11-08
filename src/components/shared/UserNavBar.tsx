@@ -11,6 +11,7 @@ import {
   Heart,
   ChevronDown,
   X,
+  ChevronLeft,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -32,8 +33,17 @@ import { useCartStore } from "@/store/cartStore";
 import { useWishlistStore } from "@/store/wishlistStore";
 import { useNavbarData } from "@/hooks/useNavbarData";
 import { usePathname, useRouter } from "next/navigation";
+import { useApi } from "@/hooks/useApi";
 import logo1 from '@/assets/logo with out text.png';
-import logo2 from '@/assets/logo with text.png'
+import logo2 from '@/assets/logo with text.png';
+
+interface TextBanner {
+  _id: string;
+  content: string;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
 
 const UserNavBar = () => {
   const [showDesktopSearch, setShowDesktopSearch] = useState(false);
@@ -43,6 +53,10 @@ const UserNavBar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<number | null>(null);
   const dropdownRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const [currentBannerIndex, setCurrentBannerIndex] = useState(0);
+  const [textBanners, setTextBanners] = useState<TextBanner[]>([]);
+  const bannerIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  
   const { user, isAuthenticated } = useUserDetails();
   const { cart, fetchCart } = useCartStore();
   const { wishlisted, fetchWishlist } = useWishlistStore();
@@ -51,6 +65,8 @@ const UserNavBar = () => {
     loading: navbarLoading,
     error: navbarError,
   } = useNavbarData();
+  const { fetchData: fetchTextBanners } = useApi<{ success: boolean; data: TextBanner[] }>();
+  
   const [isExitingSearch, setIsExitingSearch] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [closeTimeout, setCloseTimeout] = useState<NodeJS.Timeout | null>(null);
@@ -59,6 +75,89 @@ const UserNavBar = () => {
 
   // Check if on homepage
   const isHomepage = pathname === '/';
+
+  // Fetch text banners
+  useEffect(() => {
+    const getTextBanners = async () => {
+      try {
+        const response = await fetchTextBanners('/text-banners/active', {
+          method: 'GET',
+        });
+        if (response?.success && response?.data && Array.isArray(response.data)) {
+          setTextBanners(response.data);
+        }
+      } catch (error) {
+        console.error('Error fetching text banners:', error);
+        // Fallback to default banner if API fails
+        setTextBanners([{
+          _id: 'fallback',
+          content: 'Free shipping on all orders above $60',
+          isActive: true,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        }]);
+      }
+    };
+
+    getTextBanners();
+  }, []);
+
+  // Auto-rotate banners
+  useEffect(() => {
+    if (textBanners.length > 1) {
+      bannerIntervalRef.current = setInterval(() => {
+        setCurrentBannerIndex((prevIndex) => 
+          (prevIndex + 1) % textBanners.length
+        );
+      }, 4000); // Change banner every 4 seconds
+
+      return () => {
+        if (bannerIntervalRef.current) {
+          clearInterval(bannerIntervalRef.current);
+        }
+      };
+    }
+  }, [textBanners.length]);
+
+  // Cleanup interval on unmount
+  useEffect(() => {
+    return () => {
+      if (bannerIntervalRef.current) {
+        clearInterval(bannerIntervalRef.current);
+      }
+    };
+  }, []);
+
+  // Banner navigation functions
+  const goToPreviousBanner = () => {
+    setCurrentBannerIndex((prevIndex) => 
+      prevIndex === 0 ? textBanners.length - 1 : prevIndex - 1
+    );
+    // Reset auto-rotation timer when manually navigating
+    if (bannerIntervalRef.current) {
+      clearInterval(bannerIntervalRef.current);
+      bannerIntervalRef.current = setInterval(() => {
+        setCurrentBannerIndex((prevIndex) => 
+          (prevIndex + 1) % textBanners.length
+        );
+      }, 4000);
+    }
+  };
+
+  const goToNextBanner = () => {
+    setCurrentBannerIndex((prevIndex) => 
+      (prevIndex + 1) % textBanners.length
+    );
+    // Reset auto-rotation timer when manually navigating
+    if (bannerIntervalRef.current) {
+      clearInterval(bannerIntervalRef.current);
+      bannerIntervalRef.current = setInterval(() => {
+        setCurrentBannerIndex((prevIndex) => 
+          (prevIndex + 1) % textBanners.length
+        );
+      }, 4000);
+    }
+  };
 
   // Track scroll position for homepage
   useEffect(() => {
@@ -175,9 +274,41 @@ const UserNavBar = () => {
   return (
     <>
       {/* Top Banner - Only visible on homepage when not scrolled */}
-      {isHomepage && !isScrolled && (
-        <div className="w-full bg-primary text-white text-center py-2 text-sm font-semibold transition-all duration-500">
-          Free shipping on all orders above $60
+      {isHomepage && !isScrolled && textBanners.length > 0 && (
+        <div className="w-full bg-primary text-white text-center py-2 text-sm font-semibold transition-all duration-500 relative overflow-hidden">
+          <div className="flex items-center justify-between max-w-7xl mx-auto px-4">
+            {/* Previous Button */}
+            {textBanners.length > 1 && (
+              <button
+                onClick={goToPreviousBanner}
+                className="text-white hover:text-gray-200 transition-colors duration-200 p-1 hover:bg-white/10 rounded"
+                aria-label="Previous banner"
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </button>
+            )}
+            
+            {/* Banner Text */}
+            <div className="flex-1 flex items-center justify-center min-h-[24px]">
+              <div
+                key={currentBannerIndex}
+                className="animate-in fade-in-0 slide-in-from-right-2 duration-300"
+              >
+                {textBanners[currentBannerIndex]?.content}
+              </div>
+            </div>
+
+            {/* Next Button */}
+            {textBanners.length > 1 && (
+              <button
+                onClick={goToNextBanner}
+                className="text-white hover:text-gray-200 transition-colors duration-200 p-1 hover:bg-white/10 rounded"
+                aria-label="Next banner"
+              >
+                <ChevronRight className="h-4 w-4" />
+              </button>
+            )}
+          </div>
         </div>
       )}
 
