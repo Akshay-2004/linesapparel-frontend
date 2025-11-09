@@ -83,8 +83,8 @@ const UserNavBar = () => {
         const response = await fetchTextBanners('/text-banners/active', {
           method: 'GET',
         });
-        if (response?.success && response?.data && Array.isArray(response.data)) {
-          setTextBanners(response.data);
+        if (response && response && Array.isArray(response)) {
+          setTextBanners(response);
         }
       } catch (error) {
         console.error('Error fetching text banners:', error);
