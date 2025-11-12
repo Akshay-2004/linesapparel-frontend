@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { useUserDetails } from "@/hooks/useUserDetails";
 import VerifyOTPForm from "@/components/pages/Auth/VerifyOTPForm";
-import logo from "@/assets/logo.png";
+import logo from "@/assets/logo with text.png";
 import LoginImage from "@/assets/products/StrapiMidiDress.png";
 import { Loader2 } from "lucide-react";
 
