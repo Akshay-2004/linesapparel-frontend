@@ -14,9 +14,9 @@ export default function SignIn() {
             <Image
               alt="Your Company"
               src={logo}
-              width={100}
-              height={100}
-              className="h-8 sm:h-10 w-auto"
+              width={140}
+              height={140}
+              className="h-14 sm:h-18 w-auto"
             />
             <h2 className="mt-6 sm:mt-8 text-xl sm:text-2xl font-bold text-gray-900">
               Sign in to your account
