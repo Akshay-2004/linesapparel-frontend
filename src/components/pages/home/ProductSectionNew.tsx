@@ -71,7 +71,7 @@ export default function ProductSectionNew({ sectionData }: ProductSectionNewProp
   const displayProducts = shopifyProducts.length > 0 ? shopifyProducts : [];
 
   return (
-    <section className="bg-white py-12 md:py-16">
+    <section className="bg-white py-8 md:py-16">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <ProductTitleSection
           description={description || "Discover our curated collection of premium products"}
@@ -83,7 +83,7 @@ export default function ProductSectionNew({ sectionData }: ProductSectionNewProp
 
         <div className="mt-8">
           {loading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+            <div className="grid grid-cols-2 md:grid-cols-2 gap-2 max-w-4xl mx-auto">
               {[...Array(2)].map((_, index) => (
                 <div
                   key={`skeleton-${index}`}
@@ -94,7 +94,7 @@ export default function ProductSectionNew({ sectionData }: ProductSectionNewProp
               ))}
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+            <div className="grid grid-cols-2 md:grid-cols-2 gap-2 max-w-4xl mx-auto">
               {displayProducts.map((product: {
                 id: string;
                 name: string;

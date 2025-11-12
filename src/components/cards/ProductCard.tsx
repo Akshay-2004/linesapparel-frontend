@@ -25,8 +25,9 @@ export function ProductCard({
   compareAtPrice,
 }: ProductCardProps) {
   return (
-    <Card className="w-full rounded-sm pb-0 p-4 my-2 custom-shadow hover:scale-105 transition-transform duration-200 "  >
-      <div className="overflow-hidden aspect-square w-full">
+    <Card className="w-full rounded-sm pb-0 py-0 border-0 shadow-none hover:scale-105 transition-transform duration-200 "  >
+      <CardContent className="px-0 w-full">
+      <div className="overflow-hidden aspect-square w-full shadow-lg rounded-md mb-2">
         <Image
           src={image}
           alt={name}
@@ -36,7 +37,6 @@ export function ProductCard({
           priority
         />
       </div>
-      <CardContent className="px-0 w-full">
         <div className="flex flex-col items-start gap-0 font-['Roboto']">
           <div className="flex flex-col w-full">
             <h3 

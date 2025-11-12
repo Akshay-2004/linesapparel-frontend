@@ -87,7 +87,7 @@ export default function ProductSection({ sectionData }: ProductSectionProps) {
         <div className="mt-6">
           {loading ? (
             <Carousel
-              cardsPerView={{ base: 1, md: 2, lg: 4 }}
+              cardsPerView={{ base: 2, md: 2, lg: 4 }}
               autoPlay={false}
               interval={4000}
             >
@@ -102,7 +102,7 @@ export default function ProductSection({ sectionData }: ProductSectionProps) {
             </Carousel>
           ) : (
             <Carousel
-              cardsPerView={{ base: 1, md: 2, lg: 4 }}
+              cardsPerView={{ base: 2, md: 2, lg: 4 }}
               autoPlay={true}
               interval={4000}
             >

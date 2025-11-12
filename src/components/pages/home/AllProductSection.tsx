@@ -80,7 +80,7 @@ export default function AllProductSection() {
                 <Link
                   href={`/product/${product.handle}`}
                   key={product.id}
-                  className="h-full min-h-[300px] flex"
+                  className="h-full md:min-h-[300px] flex"
                 >
                   <ProductCard
                     name={product.name}
