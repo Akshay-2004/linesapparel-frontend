@@ -164,7 +164,7 @@ export default function Home() {
       {homepageData && hasValidFashionContent(homepageData.fashion) && <Fashion fashionData={homepageData.fashion} />}
       {validBanners[0] && <HomeBanner1 bannerData={validBanners[0]} />}
       {firstValidProductSection && <ProductSection sectionData={firstValidProductSection} />}
-      {validBanners[1] && <HomeBanner2 bannerData={validBanners[1]} />}
+      {validBanners[1] && <HomeBanner1 bannerData={validBanners[1]} />}
       <AllProductSection />
 
       {remainingValidProductSections.length > 0 && (

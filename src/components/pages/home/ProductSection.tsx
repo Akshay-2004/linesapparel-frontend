@@ -4,7 +4,6 @@ import React, { useEffect } from 'react';
 import { IProductSectionContent } from '@/types/homepage.interface';
 import { ProductCard } from '@/components/cards/ProductCard';
 import ProductTitleSection from "@/components/shared/ProductTitleSection";
-import Carousel from "@/components/ui/carousel";
 import { useApi } from '@/hooks/useApi';
 import Link from 'next/link';
 import { ProductSkeleton } from '@/components/skeletons/ProductSkeleton';
@@ -48,7 +47,7 @@ export default function ProductSection({ sectionData }: ProductSectionProps) {
 
   const getProductByTag = async () => {
     try {
-      const response = await fetchData(`/shopify/collections/handle/${tag}?limit=6`)
+      const response = await fetchData(`/shopify/collections/handle/${tag}?limit=4`)
     } catch (error) {
       console.error('Error fetching products:', error);
     }
@@ -84,14 +83,10 @@ export default function ProductSection({ sectionData }: ProductSectionProps) {
           buttonLink={buttonLink || "/products"}
         />
 
-        <div className="mt-6">
+        <div className="mt-8">
           {loading ? (
-            <Carousel
-              cardsPerView={{ base: 2, md: 2, lg: 4 }}
-              autoPlay={false}
-              interval={4000}
-            >
-              {[...Array(6)].map((_, index) => (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 container mx-auto">
+              {[...Array(4)].map((_, index) => (
                 <div
                   key={`skeleton-${index}`}
                   className="h-full min-h-[400px] flex"
@@ -99,13 +94,9 @@ export default function ProductSection({ sectionData }: ProductSectionProps) {
                   <ProductSkeleton />
                 </div>
               ))}
-            </Carousel>
+            </div>
           ) : (
-            <Carousel
-              cardsPerView={{ base: 2, md: 2, lg: 4 }}
-              autoPlay={true}
-              interval={4000}
-            >
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 container mx-auto">
               {displayProducts.map((product: {
                 id: string;
                 name: string;
@@ -131,7 +122,7 @@ export default function ProductSection({ sectionData }: ProductSectionProps) {
                   />
                 </Link>
               ))}
-            </Carousel>
+            </div>
           )}
         </div>
       </div>

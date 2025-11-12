@@ -16,7 +16,7 @@ const HomeBanner1 = ({ bannerData }: HomeBanner1Props) => {
         className="absolute inset-0 w-full rounded-sm h-full object-cover"
       />
       <div className="absolute inset-0  " />
-      <div className="bg-black/50 backdrop-blur-sm px-12 py-10 rounded-md max-w-[1280px] mx-auto w-full sm:w-4/5 md:w-3/4  flex flex-col items-center text-center">
+      <div className="bg-black/50 backdrop-blur-sm px-12 py-10 rounded-md max-w-[1280px] w-full mx-4 sm:w-4/5 md:w-3/4  flex flex-col items-center text-center">
         {bannerData.topText && (
           <p className="text-white text-base sm:text-lg font-semibold mb-2">
             {bannerData.topText}
