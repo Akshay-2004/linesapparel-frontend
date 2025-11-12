@@ -40,13 +40,13 @@ export function ProductCard({
         <div className="flex flex-col items-start gap-0 font-['Roboto']">
           <div className="flex flex-col w-full">
             <h3 
-              className="text-base font-semibold leading-relaxed truncate" 
+              className="text-sm font-medium leading-relaxed truncate" 
               title={name}
             >
               {name}
             </h3>
             <div className="flex items-center gap-2">
-              <span className="text-xl font-semibold leading-9">
+              <span className="text-lg font-medium leading-9">
                 ${price.toFixed(2)}
               </span>
               {compareAtPrice && compareAtPrice > price && (

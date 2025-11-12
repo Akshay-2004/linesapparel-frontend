@@ -21,25 +21,16 @@ const BannerCard = ({
   const isStaticImage = typeof image !== "string";
 
   return (
-    <section className="h-full w-full py-2 rounded-md">
-      <div className="h-full w-full overflow-hidden bg-white shadow-md rounded-sm">
-        <div className="grid grid-cols-1 md:grid-cols-2 h-full">
-          <div className="order-1 h-full">
-            {isStaticImage ? (
-              <Image
-                src={image}
-                alt={title}
-                className="w-full h-full object-cover"
-              />
-            ) : (
-              <Image
-                src={image}
-                alt={title}
-                width={400}
-                height={300}
-                className="w-full h-full object-cover"
-              />
-            )}
+    <section className="w-full h-full py-2 rounded-md">
+      <div className="w-full h-full overflow-hidden bg-white shadow-md rounded-sm">
+        <div className="grid grid-cols-1 md:grid-cols-2 w-full h-full">
+          <div className="order-1 overflow-hidden h-full relative min-h-[200px] md:min-h-0">
+            <Image
+              src={image}
+              alt={title}
+              fill
+              className="object-cover"
+            />
           </div>
           <div className="order-2 flex flex-col justify-center p-6">
             <span className="text-secondary-7 text-base font-semibold leading-normal mb-2">

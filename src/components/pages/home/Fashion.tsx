@@ -1,5 +1,5 @@
 "use client";
-import { ProductCard } from "@/components/cards/FashionProductCard";
+import { ProductCard } from "@/components/cards/ProductCard";
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import whiteDress from "@/assets/products/whitefemaledress.jpg";
@@ -94,7 +94,7 @@ const Fashion = ({ fashionData }: FashionProps) => {
 
   return (
     <section className="bg-white  pb-6">
-      <div className="max-w-11/12 mx-auto p-4 sm:p-6 lg:p-8">
+      <div className="p-2 sm:p-4 lg:p-8">
         <div className="container mx-auto px-2 sm:px-6 py-4 sm:py-6 bg-white">
           <div className="mb-10 sm:mb-16 text-center">
             <h4 className="text-primary-6 text-base font-semibold font-['Roboto'] leading-normal">
@@ -107,99 +107,136 @@ const Fashion = ({ fashionData }: FashionProps) => {
               {fashionData.description}
             </p>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-4">
+          <div className="flex flex-col gap-2 sm:gap-4">
             {/* Loading state */}
             {loading && (
               <>
-                {/* Product skeletons */}
-                {[...Array(2)].map((_, index) => (
-                  <div
-                    key={`product-skeleton-${index}`}
-                    className="col-span-1 lg:col-span-3 min-h-[320px] sm:min-h-[360px] lg:min-h-[400px] flex"
-                  >
-                    <ProductSkeleton />
+                {/* First Row - 2 Product skeletons + 1 Banner skeleton */}
+                <div className="flex flex-col lg:flex-row gap-2 sm:gap-4">
+                  {/* Product skeletons in a row on mobile */}
+                  <div className="flex gap-2 sm:gap-4 lg:contents">
+                    {[...Array(2)].map((_, index) => (
+                      <div
+                        key={`product-skeleton-${index}`}
+                        className="w-[calc(50%-4px)] sm:w-[calc(50%-8px)] lg:w-[calc(25%-12px)] flex"
+                      >
+                        <ProductSkeleton />
+                      </div>
+                    ))}
                   </div>
-                ))}
-                {/* Banner skeletons */}
-                {fashionData.banners.map((_, index) => (
-                  <div
-                    key={`banner-skeleton-${index}`}
-                    className="col-span-1 sm:col-span-2 lg:col-span-6 mt-4 sm:mt-0 min-h-[200px] sm:min-h-[320px] lg:min-h-[400px] flex"
-                  >
-                    <BannerCardSkeleton />
+                  {/* Banner skeleton */}
+                  {fashionData.banners[0] && (
+                    <div className="w-full lg:flex-1 flex">
+                      <BannerCardSkeleton />
+                    </div>
+                  )}
+                </div>
+
+                {/* Second Row - 1 Banner skeleton + 2 Product skeletons */}
+                <div className="flex flex-col lg:flex-row gap-2 sm:gap-4">
+                  {/* Banner skeleton */}
+                  {fashionData.banners[1] && (
+                    <div className="w-full lg:flex-1 flex">
+                      <BannerCardSkeleton />
+                    </div>
+                  )}
+                  {/* Product skeletons in a row on mobile */}
+                  <div className="flex gap-2 sm:gap-4 lg:contents">
+                    {[...Array(2)].map((_, index) => (
+                      <div
+                        key={`product-skeleton-${index + 2}`}
+                        className="w-[calc(50%-4px)] sm:w-[calc(50%-8px)] lg:w-[calc(25%-12px)] flex"
+                      >
+                        <ProductSkeleton />
+                      </div>
+                    ))}
                   </div>
-                ))}
-                {/* Additional product skeletons */}
-                {[...Array(2)].map((_, index) => (
-                  <div
-                    key={`product-skeleton-${index + 2}`}
-                    className="col-span-1 lg:col-span-3 min-h-[320px] sm:min-h-[360px] lg:min-h-[400px] flex"
-                  >
-                    <ProductSkeleton />
-                  </div>
-                ))}
+                </div>
               </>
             )}
 
             {/* Loaded state */}
             {!loading && fetchedProducts && (
               <>
-                {/* Product cards */}
-                {fetchedProducts.slice(0, 2).map((product, index) => (
-                  <div
-                    key={product.id}
-                    className="col-span-1 lg:col-span-3 col-start-1 min-h-[320px] sm:min-h-[360px] lg:min-h-[400px]  flex"
-                  >
-                    <Link href={`/product/${product.handle}`} className="w-full">
-                      <ProductCard
-                        image={
-                          product.images.edges[0]?.node.url || "/placeholder.jpg"
-                        }
-                        name={product.title}
-                        variant={product.variants.edges[0]?.node.title || ""}
-                        price={parseFloat(
-                          product.variants.edges[0]?.node.priceV2?.amount || "0"
-                        )}
-                        showButton={false}
+                {/* First Row - 2 Product cards + 1 Banner */}
+                <div className="flex flex-col lg:flex-row gap-2 sm:gap-4">
+                  {/* First 2 Product cards in a row on mobile */}
+                  <div className="flex gap-2 sm:gap-4 lg:contents">
+                    {fetchedProducts.slice(0, 2).map((product, index) => (
+                      <div
+                        key={product.id}
+                        className="w-[calc(50%-4px)] sm:w-[calc(50%-8px)] lg:w-[calc(25%-12px)]"
+                      >
+                        <Link href={`/product/${product.handle}`} className="w-full h-full block">
+                          <ProductCard
+                            image={
+                              product.images.edges[0]?.node.url || "/placeholder.jpg"
+                            }
+                            name={product.title}
+                            variant={product.variants.edges[0]?.node.title || ""}
+                            price={parseFloat(
+                              product.variants.edges[0]?.node.priceV2?.amount || "0"
+                            )}
+                            showButton={false}
+                          />
+                        </Link>
+                      </div>
+                    ))}
+                  </div>
+                  
+                  {/* First Banner */}
+                  {fashionData.banners[0] && (
+                    <div className="w-full lg:flex-1 flex">
+                      <BannerCard
+                        description={fashionData.banners[0].description}
+                        image={fashionData.banners[0].imageUrl}
+                        title={fashionData.banners[0].title}
+                        topText={fashionData.banners[0].topText}
+                        buttonText={fashionData.banners[0].buttonText}
                       />
-                    </Link>
-                  </div>
-                ))}
-                {/* Banner cards using fashionData.banners */}
-                {fashionData.banners.map((banner, index) => (
-                  <div
-                    key={index}
-                    className="col-span-1 sm:col-span-2 lg:col-span-6 mt-4 sm:mt-0 min-h-[200px] sm:min-h-[320px] flex"
-                  >
-                    <BannerCard
-                      description={banner.description}
-                      image={banner.imageUrl}
-                      title={banner.title}
-                      topText={banner.topText}
-                      buttonText={banner.buttonText}
-                    />
-                  </div>
-                ))}
-                {fetchedProducts.slice(2).map((product, index) => (
-                  <div
-                    key={product.id}
-                    className="col-span-1 lg:col-span-3 col-start-1 min-h-[320px] sm:min-h-[360px] lg:min-h-[400px] flex"
-                  >
-                    <Link href={`/product/${product.handle}`} className="w-full">
-                      <ProductCard
-                        image={
-                          product.images.edges[0]?.node.url || "/placeholder.jpg"
-                        }
-                        name={product.title}
-                        variant={product.variants.edges[0]?.node.title || ""}
-                        price={parseFloat(
-                          product.variants.edges[0]?.node.priceV2?.amount || "0"
-                        )}
-                        showButton={false}
+                    </div>
+                  )}
+                </div>
+
+                {/* Second Row - 1 Banner + 2 Product cards */}
+                <div className="flex flex-col lg:flex-row gap-2 sm:gap-4">
+                  {/* Second Banner */}
+                  {fashionData.banners[1] && (
+                    <div className="w-full lg:flex-1 flex">
+                      <BannerCard
+                        description={fashionData.banners[1].description}
+                        image={fashionData.banners[1].imageUrl}
+                        title={fashionData.banners[1].title}
+                        topText={fashionData.banners[1].topText}
+                        buttonText={fashionData.banners[1].buttonText}
                       />
-                    </Link>
+                    </div>
+                  )}
+
+                  {/* Last 2 Product cards in a row on mobile */}
+                  <div className="flex gap-2 sm:gap-4 lg:contents">
+                    {fetchedProducts.slice(2).map((product, index) => (
+                      <div
+                        key={product.id}
+                        className="w-[calc(50%-4px)] sm:w-[calc(50%-8px)] lg:w-[calc(25%-12px)]"
+                      >
+                        <Link href={`/product/${product.handle}`} className="w-full h-full block">
+                          <ProductCard
+                            image={
+                              product.images.edges[0]?.node.url || "/placeholder.jpg"
+                            }
+                            name={product.title}
+                            variant={product.variants.edges[0]?.node.title || ""}
+                            price={parseFloat(
+                              product.variants.edges[0]?.node.priceV2?.amount || "0"
+                            )}
+                            showButton={false}
+                          />
+                        </Link>
+                      </div>
+                    ))}
                   </div>
-                ))}
+                </div>
               </>
             )}
           </div>
