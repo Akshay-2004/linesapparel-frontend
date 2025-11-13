@@ -27,7 +27,7 @@ export default function SignIn() {
                 href="/sign-up"
                 className="font-semibold text-primary hover:text-primary/90"
               >
-                register now
+                Register Now
               </Link>
             </p>
           </div>

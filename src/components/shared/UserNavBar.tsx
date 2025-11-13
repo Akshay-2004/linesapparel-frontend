@@ -294,7 +294,9 @@ const UserNavBar = () => {
                 key={currentBannerIndex}
                 className="animate-in fade-in-0 slide-in-from-right-2 duration-300"
               >
+                <Link href="/products">
                 {textBanners[currentBannerIndex]?.content}
+                </Link>
               </div>
             </div>
 

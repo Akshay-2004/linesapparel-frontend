@@ -161,12 +161,12 @@ export default function Home() {
   return (
     <>
       {homepageData && hasValidHeroContent(homepageData.hero) && <Hero heroData={homepageData.hero} />}
-      {homepageData && hasValidFashionContent(homepageData.fashion) && <Fashion fashionData={homepageData.fashion} />}
-      {validBanners[0] && <HomeBanner1 bannerData={validBanners[0]} />}
+      {/* {validBanners[0] && <HomeBanner1 bannerData={validBanners[0]} />} */}
       {firstValidProductSection && <ProductSection sectionData={firstValidProductSection} />}
-      {validBanners[1] && <HomeBanner1 bannerData={validBanners[1]} />}
+      {/* {validBanners[1] && <HomeBanner1 bannerData={validBanners[1]} />} */}
       <AllProductSection />
 
+      {homepageData && hasValidFashionContent(homepageData.fashion) && <Fashion fashionData={homepageData.fashion} />}
       {remainingValidProductSections.length > 0 && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 container mx-auto">
           {remainingValidProductSections.map((section, index) => (
